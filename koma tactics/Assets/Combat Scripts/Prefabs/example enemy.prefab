@@ -333,17 +333,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hpText: {fileID: 2445417662035874066}
+  unitSprite: {fileID: 8686200987546085631}
   box_portrait: {fileID: 21300000, guid: 0964fe523a50db04fbd4bb0a891aee63, type: 3}
   active_portrait: {fileID: 21300000, guid: d692c2a687c50db43be207e5eafe7ceb, type: 3}
   unitName: default enemy
   isAlly: 0
-  aff: 2
+  aff: 1
   movement: 3
-  hpMax: 2
+  hpMax: 5
   hp: 0
   brkMax: 7
   brk: 0
-  ap: 0
+  ap: 1
   controlRange: 1
   pwCost: 0
   phys_atk: 5

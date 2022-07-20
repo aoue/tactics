@@ -12,6 +12,7 @@ public class Unit : MonoBehaviour
 
     //ui
     [SerializeField] private TextMeshPro hpText;
+    [SerializeField] private SpriteRenderer unitSprite;
 
     //stats
     [SerializeField] private Sprite box_portrait; //the small one.
@@ -34,7 +35,9 @@ public class Unit : MonoBehaviour
     [SerializeField] private int magic_def;
 
     //state
+    private int unitBox_index;
     private bool isDead;
+    private bool isBroken;
 
 
     //traitList[0] is locked, and is the unit's default attack ability. VITALLY IMPORTANT.
@@ -42,7 +45,19 @@ public class Unit : MonoBehaviour
     private List<UnitType> unitTypes; //given by traits. Things like flying, aquatic, etc... Only influences bonus dmg taken, e.g. anti-air does bonus vs. flying units.
 
 
-    public void dec_ap() { ap -= 1; }
+    public void dec_ap()
+    {
+        //Debug.Log("unit ap = 0");
+        ap = 0;
+    }
+    void brk_self()
+    {
+        //called when the unit breaks.
+        isBroken = true;
+        brk = brkMax;
+        ap = 0;
+        unitSprite.color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
+    }
 
     //adjust unit status
     public void start_of_mission()
@@ -53,6 +68,7 @@ public class Unit : MonoBehaviour
         brk = brkMax;
         ap = 1;
         update_hpText();
+        unitBox_index = -1;
 
         //setup types array
         unitTypes = new List<UnitType>();
@@ -64,21 +80,28 @@ public class Unit : MonoBehaviour
             }
         }
     }
-    public void take_dmg(int dmg, bool hittingYourself)
+    public void refresh()
+    {
+        //called at the start of a round.
+        ap = 1;
+        unitSprite.color = new Color(1f, 1f, 1f);
+    }
+    public void take_dmg(int dmg)
     {
         //causes dmg to the unit.
         //Any dmg is dealt to both hp and brk.
         //if brk reaches 0, then the unit breaks. (ap = 0)
-        if (hittingYourself) hp = Mathf.Max(1, hp - dmg);
-        else hp = Mathf.Max(0, hp - dmg);
+        hp = Mathf.Max(0, hp - dmg);
 
-        brk -= dmg;
-
-        if (brk <= 0)
+        if (!isBroken)
         {
-            brk = brkMax;
-            ap = 0;
+            brk -= dmg;
+            if (brk <= 0)
+            {
+                brk_self();
+            }
         }
+
         if (hp == 0)
         {
             isDead = true;
@@ -98,6 +121,7 @@ public class Unit : MonoBehaviour
     {
         hpText.text = hp + "HP";
     }
+    public void set_unitBoxIndex(int set) { unitBox_index = set; }
 
     //getters
     public Sprite get_box_p() { return box_portrait; }
@@ -118,6 +142,8 @@ public class Unit : MonoBehaviour
     public int get_maga() { return magic_atk; }
     public int get_magd() { return magic_def; }
     public bool get_isDead() { return isDead; }
+    public bool get_isBroken() { return isBroken; }
+    public int get_unitBoxIndex() { return unitBox_index; }
     public Trait[] get_traitList() { return traitList; }
 
 }

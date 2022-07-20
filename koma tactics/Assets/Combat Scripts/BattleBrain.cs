@@ -15,7 +15,7 @@ public class BattleBrain
         {0.75f, 1.5f, 1.0f }
     };
 
-    public int calc_damage(Unit u1, Unit u2, Trait t)
+    public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile)
     {
         //use attacker's phys a or mag a?
         int atk;
@@ -26,7 +26,9 @@ public class BattleBrain
         if (t.get_usesPhysDefense()) def = u2.get_physd();
         else def = u2.get_magd();
 
-        int dmg = Mathf.Max(1, (atk + t.get_power()) - def);
+        float coverMod = 1f - occupied_tile.get_cover();
+
+        int dmg = Mathf.Max(1, (int)(((atk + t.get_power()) - def) * coverMod));
 
         //once calc is done
         //(also, yes, order of traits here will definitely matter, because of order of operations.)

@@ -13,6 +13,7 @@ public class Tile : MonoBehaviour
     [SerializeField] private string descr;
 
     //for marking zone of control. start disabled.
+    [SerializeField] private SpriteRenderer targetIcon;
     [SerializeField] private SpriteRenderer pZoC;
     [SerializeField] private SpriteRenderer eZoC;
 
@@ -26,6 +27,7 @@ public class Tile : MonoBehaviour
 
     public bool isValid { get; set; }
 
+    //State
     public void set_coords(int newX, int newY)
     {
         x = newX;
@@ -34,7 +36,6 @@ public class Tile : MonoBehaviour
         //(temporary)
         isValid = false;
     }
-
     public void place_unit(Unit u)
     {
         heldUnit = u;
@@ -49,6 +50,7 @@ public class Tile : MonoBehaviour
         return true;
     }
 
+    //Mouse
     void OnMouseEnter()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
@@ -69,24 +71,49 @@ public class Tile : MonoBehaviour
         }
 
     }
+
+    //Visuals
+    public void highlight_target_mv()
+    {
+        targetIcon.color = new Color(0f, 0f, 1f);
+        targetIcon.enabled = true;
+    }
+    public void highlight_target(bool isAttack)
+    {
+        //if attack; dark red
+        //if not; dark green
+        if (isAttack)
+        {
+            targetIcon.color = new Color(200f / 255f, 0f, 0f);
+        }
+        else 
+        {
+            targetIcon.color = new Color(0f, 200f / 255f, 0f);
+
+        }
+
+        targetIcon.enabled = true;
+    }
+    public void hide_target_icon()
+    {
+        targetIcon.enabled = false;
+    }
     public void highlight_mv()
     {
         //the tile has been told by the combatGrid to highlight for movement.
         //set sheen to blue.
         gameObject.GetComponent<SpriteRenderer>().color = new Color(204f/255f, 255f/255f, 255f/255f);
     }
-    public void highlight_atk()
+    public void highlight_atk(bool isAttack)
     {
-        //the tile has been told by the combatGrid to highlight for movement.
-        //set sheen to red.
-        //255,105,97
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 105f / 255f, 97f / 255f);
+        //the tile has been told by the combatGrid to highlight for attack. red: attack, green: heal.
+        if (isAttack) gameObject.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 105f / 255f, 97f / 255f);
+        else gameObject.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 105f / 255f, 97f / 255f);
     }
     public void remove_highlight()
     {
         gameObject.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
     }
-
     public void set_ZoC_color()
     {
         //updates tiles ZoC images based on playerControlled
@@ -97,6 +124,7 @@ public class Tile : MonoBehaviour
         else eZoC.enabled = false;
     }
 
+    //Getters
     public int get_movementCost() { return movementCost; }
     public string get_tileName() { return tileName; }
     public string get_descr() { return descr; }

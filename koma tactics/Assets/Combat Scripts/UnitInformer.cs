@@ -41,6 +41,7 @@ public class UnitInformer : MonoBehaviour
     public Unit get_heldUnit() { return heldUnit; }
 
     private string[] unitTypeConverter = new string[2] { "Flying", "Amphib." };
+    private string[] affConverter = new string[3] { "Light", "Medium", "Heavy" };
 
     public void fill(Unit u, int pw, bool allowButtonsInteractable)
     {
@@ -52,19 +53,20 @@ public class UnitInformer : MonoBehaviour
             heldUnit = u;
             //portrait
             active_portrait.sprite = u.get_active_p();
+            active_portrait.gameObject.SetActive(true);
 
             //main stats window
-            string buildUnitTypeStr = "";
+            string buildUnitTypeStr = affConverter[u.get_aff()];
             foreach(Trait t in u.get_traitList())
             {
                 //if not nothing, add.
                 if (t != null && t.get_unitType() != UnitType.NOTHING)
                 {
-                    buildUnitTypeStr += " " + unitTypeConverter[(int)t.get_unitType() - 1] + ",";
+                    buildUnitTypeStr += "-" + unitTypeConverter[(int)t.get_unitType() - 1];
                 }               
             }
             nameText.text = u.get_unitName();
-            unitTypesText.text = buildUnitTypeStr.TrimEnd(',');
+            unitTypesText.text = buildUnitTypeStr;
             affImage.sprite = affSprites[u.get_aff()];
 
             stats_1.text = "HP: " + u.get_hp() + " / " + u.get_hpMax()
@@ -124,6 +126,7 @@ public class UnitInformer : MonoBehaviour
     public void hide()
     {
         gameObject.SetActive(false);
+        active_portrait.gameObject.SetActive(false);
     }
 
 }

@@ -16,7 +16,7 @@ public class Trait : MonoBehaviour
     //NO DOUBLE DIPPING. (seriously, it's not even possible.)
     //(this is also good design; seperating choices makes the decisions more meaningful.)
 
-    //Damaging Type legend:
+    //AoE Type legend:
     // -single: only the square clicked
     // -all between: for line only; all tiles between origin and dest tile.
     // -all: every single tile that is within range.
