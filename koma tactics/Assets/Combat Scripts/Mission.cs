@@ -4,6 +4,20 @@ using UnityEngine;
 
 public class Mission : MonoBehaviour
 {
+    //mission objective notes.
+    //victory:
+    // -defeat all units in boss list
+    // -move unit to tile
+    // -survive turns
+    // -reach certain PW
+    // -kill x enemies (where x < total number of enemies)
+    //defeat:
+    // -unit killed (e.g. the train)
+    // -all units killed
+    // -turns pass
+    // -enemy unit reaches tile
+
+
     //tiles
     [SerializeField] Tile empty;
     [SerializeField] Tile lightlyWooded;
@@ -14,13 +28,18 @@ public class Mission : MonoBehaviour
     //enemy auto-deployed units
     [SerializeField] Enemy[] defEnemies;
 
+    //mission settings
+    // -win cond
+    // -loss cond
+    [SerializeField] private int starting_power;
+
     public virtual Tile[,] get_layout()
     {
         //returns an array representing the map
         Tile[,] layout = new Tile[5, 5] {
             { empty, lightlyWooded, empty, empty, empty},
             { empty, empty, empty, lightlyWooded, empty},
-            { empty, empty, empty, empty, empty},
+            { lightlyWooded, empty, empty, empty, empty},
             { empty, empty, lightlyWooded, lightlyWooded, empty},
             { lightlyWooded, empty, empty, empty, empty}
         };
@@ -46,6 +65,6 @@ public class Mission : MonoBehaviour
     //getters
     public virtual int get_layout_x_dim() { return 5; }
     public virtual int get_layout_y_dim() { return 5; }
-
+    public int get_starting_power() { return starting_power; }
 
 }

@@ -142,7 +142,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileName: Lightly Wooded
   movementCost: 2
-  descr: 
+  coverReduction: 0.2
+  descr: A few trees making moving here diificult.
   pZoC: {fileID: 3351592588349823734}
   eZoC: {fileID: 6285219180270651985}
 --- !u!222 &5033814340394539928

@@ -9,6 +9,7 @@ public class Tile : MonoBehaviour
 
     [SerializeField] private string tileName;
     [SerializeField] private int movementCost; //-1 for impassable.
+    [SerializeField] private float coverReduction; //high means more dmg reduction. From 0 to 1.
     [SerializeField] private string descr;
 
     //for marking zone of control. start disabled.
@@ -74,6 +75,13 @@ public class Tile : MonoBehaviour
         //set sheen to blue.
         gameObject.GetComponent<SpriteRenderer>().color = new Color(204f/255f, 255f/255f, 255f/255f);
     }
+    public void highlight_atk()
+    {
+        //the tile has been told by the combatGrid to highlight for movement.
+        //set sheen to red.
+        //255,105,97
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 105f / 255f, 97f / 255f);
+    }
     public void remove_highlight()
     {
         gameObject.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
@@ -92,5 +100,6 @@ public class Tile : MonoBehaviour
     public int get_movementCost() { return movementCost; }
     public string get_tileName() { return tileName; }
     public string get_descr() { return descr; }
-
+    public float get_cover() { return coverReduction; }
+    public Unit get_heldUnit() { return heldUnit; }
 }

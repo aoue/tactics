@@ -227,7 +227,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileName: Empty
   movementCost: 1
-  descr: 
+  coverReduction: 0
+  descr: There's nothing there.
   pZoC: {fileID: 2077694349289995101}
   eZoC: {fileID: 7309305052524014586}
 --- !u!222 &8614815216704928307

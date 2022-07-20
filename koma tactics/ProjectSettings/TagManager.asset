@@ -45,3 +45,6 @@ TagManager:
   - name: Event Layer
     uniqueID: 1608436981
     locked: 0
+  - name: Unit Layer
+    uniqueID: 3814925201
+    locked: 0
