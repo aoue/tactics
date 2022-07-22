@@ -14,8 +14,7 @@ public class Tile : MonoBehaviour
 
     //for marking zone of control. start disabled.
     [SerializeField] private SpriteRenderer targetIcon;
-    [SerializeField] private SpriteRenderer pZoC;
-    [SerializeField] private SpriteRenderer eZoC;
+    [SerializeField] private SpriteRenderer zocRenderer;
 
     //control markers. Restrict movement of the opposing side if true.
     public bool player_controlled { get; set; }
@@ -28,6 +27,8 @@ public class Tile : MonoBehaviour
     public bool isValid { get; set; }
 
     //State
+    public virtual BaseOwnership get_ownership() { return BaseOwnership.NEUTRAL; }
+    public virtual void set_ownerShip(BaseOwnership o) { }
     public void set_coords(int newX, int newY)
     {
         x = newX;
@@ -104,6 +105,12 @@ public class Tile : MonoBehaviour
         //set sheen to blue.
         gameObject.GetComponent<SpriteRenderer>().color = new Color(204f/255f, 255f/255f, 255f/255f);
     }
+    public void highlight_deploy()
+    {
+        //the tile has been told by the combatGrid to highlight for movement.
+        //set sheen to blue.
+        gameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+    }
     public void highlight_atk(bool isAttack)
     {
         //the tile has been told by the combatGrid to highlight for attack. red: attack, green: heal.
@@ -118,10 +125,25 @@ public class Tile : MonoBehaviour
     {
         //updates tiles ZoC images based on playerControlled
         //and enemyControlled
-        if (player_controlled) pZoC.enabled = true;
-        else pZoC.enabled = false;
-        if (enemy_controlled) eZoC.enabled = true;
-        else eZoC.enabled = false;
+        if (player_controlled && enemy_controlled)
+        {
+            zocRenderer.color = new Color(111f / 255f, 0f, 161f / 255f);
+            zocRenderer.enabled = true;
+        }
+        else if (player_controlled)
+        {
+            zocRenderer.color = new Color(32f / 255f, 201f / 255f, 1f);
+            zocRenderer.enabled = true;
+        }
+        else if (enemy_controlled)
+        {
+            zocRenderer.color = Color.red;
+            zocRenderer.enabled = true;
+        }
+        else
+        {
+            zocRenderer.enabled = false;
+        }
     }
 
     //Getters

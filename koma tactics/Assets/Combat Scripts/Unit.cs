@@ -35,15 +35,14 @@ public class Unit : MonoBehaviour
     [SerializeField] private int magic_def;
 
     //state
-    private int unitBox_index;
     private bool isDead;
     private bool isBroken;
+    private bool deployed; //stops player from redeploying units after they die.
 
 
     //traitList[0] is locked, and is the unit's default attack ability. VITALLY IMPORTANT.
     [SerializeField] private Trait[] traitList; //ability/trait list. Passives and non-passives, together.
     private List<UnitType> unitTypes; //given by traits. Things like flying, aquatic, etc... Only influences bonus dmg taken, e.g. anti-air does bonus vs. flying units.
-
 
     public void dec_ap()
     {
@@ -60,15 +59,16 @@ public class Unit : MonoBehaviour
     }
 
     //adjust unit status
+    public void set_deployed(bool d) { deployed = d; }
     public void start_of_mission()
     {
         //reset unit state at the start of a mission.
+        deployed = true;
         isDead = false;
         hp = hpMax;
         brk = brkMax;
         ap = 1;
         update_hpText();
-        unitBox_index = -1;
 
         //setup types array
         unitTypes = new List<UnitType>();
@@ -121,7 +121,6 @@ public class Unit : MonoBehaviour
     {
         hpText.text = hp + "HP";
     }
-    public void set_unitBoxIndex(int set) { unitBox_index = set; }
 
     //getters
     public Sprite get_box_p() { return box_portrait; }
@@ -141,9 +140,9 @@ public class Unit : MonoBehaviour
     public int get_physd() { return phys_def; }
     public int get_maga() { return magic_atk; }
     public int get_magd() { return magic_def; }
+    public bool get_isDeployed() { return deployed; }
     public bool get_isDead() { return isDead; }
     public bool get_isBroken() { return isBroken; }
-    public int get_unitBoxIndex() { return unitBox_index; }
     public Trait[] get_traitList() { return traitList; }
 
 }

@@ -21,6 +21,10 @@ public class Mission : MonoBehaviour
     [SerializeField] Tile empty;
     [SerializeField] Tile lightlyWooded;
 
+    [SerializeField] Tile baseTileN;
+    [SerializeField] Tile baseTileP;
+    [SerializeField] Tile baseTileE;
+
     //player auto-deployed units
     [SerializeField] Unit[] defUnits;
 
@@ -35,7 +39,7 @@ public class Mission : MonoBehaviour
     [SerializeField] private string loss_obj_descr;
 
     //mission win/loss conditions
-    public virtual bool is_mission_won(List<Unit> pl, List<Unit> el, Tile[,] grid)
+    public virtual bool is_mission_won(Unit[] pl, List<Unit> el, Tile[,] grid)
     {
         //default is all enemy units dead
         if (el.Count == 0)
@@ -44,14 +48,17 @@ public class Mission : MonoBehaviour
         }
         return false;
     }
-    public virtual bool is_mission_lost(List<Unit> pl, List<Unit> el, Tile[,] grid)
+    public virtual bool is_mission_lost(Unit[] pl, List<Unit> el, Tile[,] grid)
     {
         //default is all player units dead
-        if (pl.Count == 0)
+        for(int i = 0; i < pl.Length; i++)
         {
-            return true;
+            if (pl[i] != null)
+            {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     //mission setup
@@ -62,7 +69,7 @@ public class Mission : MonoBehaviour
             { empty, lightlyWooded, empty, empty, empty},
             { empty, empty, empty, lightlyWooded, empty},
             { lightlyWooded, empty, empty, empty, empty},
-            { empty, empty, lightlyWooded, lightlyWooded, empty},
+            { baseTileP, empty, lightlyWooded, lightlyWooded, empty},
             { lightlyWooded, empty, empty, empty, empty}
         };
         //the mission layout will look like above^.

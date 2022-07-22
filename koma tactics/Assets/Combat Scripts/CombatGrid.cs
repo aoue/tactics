@@ -29,17 +29,19 @@ public class CombatGrid : MonoBehaviour
     [SerializeField] private Slider pwSlider;
     [SerializeField] private Text pwText;
     [SerializeField] private Button nextRoundButton;
-    [SerializeField] private Button briefingButton;
     [SerializeField] private Image[] turnPatternImages;
     [SerializeField] private Image turnPatternMarker;
     [SerializeField] private Image briefingDisplay;
     [SerializeField] private Text briefingWinText;
     [SerializeField] private Text briefingLossText;
+    [SerializeField] private GameObject deploymentObj;
+    [SerializeField] private Sprite defaultUnitShortcutSprite;
 
     private Tile[,] myGrid;
     private State gameState;
 
     //game state
+    private BaseOwnership pastBaseState; //used to revert base's state on movement cancel.
     private int past_active_unit_x; //for returning the unit to its org positin on right click
     private int past_active_unit_y;//for returning the unit to its org positin on right click
     private Unit active_unit; //the unit being ordered
@@ -52,20 +54,30 @@ public class CombatGrid : MonoBehaviour
     private bool[] turnPattern; //list of bools representing the turn pattern. True: player's turn, False: enemy turn.
     private int pw; //power (i.e. the party's global mana pool.)
     private BattleBrain brain;
-    private List<Unit> playerUnits;
+
+    [SerializeField] private Unit[] reserveParty;
+    private Unit[] playerUnits;
     private List<Unit> enemyUnits;
+
     private HashSet<Tile> visited; //for tile selection and highlighting.
     private List<Tile> targetHighlightGroup; //for showing what tiles will be highlighted for an attack.
-    private Tile movementHighlightTile; 
+    private Tile movementHighlightTile;
+
+    private List<Tile> baseList; //used to check all base tiles. (for power and deployment highlighting)
+    
 
     void Start()
     {
+        playerUnits = new Unit[8];
+        brain = new BattleBrain();
+        baseList = new List<Tile>();
+        visited = new HashSet<Tile>();
+        targetHighlightGroup = new List<Tile>();
+
         display_grid(baseMission);
         display_units(baseMission);
         cam.setup(map_x_border, map_y_border);
-        brain = new BattleBrain();
-
-        targetHighlightGroup = new List<Tile>();
+        
 
         //starting power depends on the mission
         pw = baseMission.get_starting_power();
@@ -85,16 +97,18 @@ public class CombatGrid : MonoBehaviour
             {
                 case State.DEPLOYING:
                     //if we're in deploying: return to unit select, hide deployment screen stuff
-
-                    //implement once deployment screens are implemented
-
+                    hide_deployment_menu();
+                    disable_deployment();
                     break;
                 case State.SELECT_MOVEMENT:
                     //if we're in movement select: return to unit select, cancel movement highlights
                     active_unit = null;
                     clear_highlights();
-                    movementHighlightTile.hide_target_icon();
-                    movementHighlightTile = null;
+                    if (movementHighlightTile != null)
+                    {
+                        movementHighlightTile.hide_target_icon();
+                        movementHighlightTile = null;
+                    }                   
                     start_player_turn();
 
                     gameState = State.SELECT_UNIT;
@@ -104,6 +118,7 @@ public class CombatGrid : MonoBehaviour
 
                     //change unit pos in game
                     myGrid[active_unit.x, active_unit.y].remove_unit();
+                    myGrid[active_unit.x, active_unit.y].set_ownerShip(pastBaseState);
                     active_unit.x = past_active_unit_x;
                     active_unit.y = past_active_unit_y;
                     myGrid[active_unit.x, active_unit.y].place_unit(active_unit);
@@ -192,6 +207,12 @@ public class CombatGrid : MonoBehaviour
                 newObj.set_coords(i, j);
 
                 myGrid[i, j] = newObj;
+
+                if (newObj is BaseTile)
+                {
+                    //Debug.Log("adding tile to baselist");
+                    baseList.Add(newObj);
+                }
             }
         }
     }
@@ -199,8 +220,12 @@ public class CombatGrid : MonoBehaviour
     {
         //does the initial deployment on units based on the mission setup.
 
+        foreach(Unit u in reserveParty)
+        {
+            u.set_deployed(false);
+        }
+
         //show a unit on a tile.
-        playerUnits = new List<Unit>();
         for (int i = 0; i < m.get_deployment_spots().Length; i++)
         {
             int x_pos = m.get_deployment_spots()[i].Item2;
@@ -210,6 +235,7 @@ public class CombatGrid : MonoBehaviour
             Vector3 instPos = get_pos_from_coords(x_pos, y_pos);
 
             //cause unit to be shown.
+            m.get_deployment_spots()[i].Item1.set_deployed(true);
             Unit inst_u = Instantiate(m.get_deployment_spots()[i].Item1, instPos, transform.rotation);
 
             //tile.place_unit()
@@ -219,12 +245,11 @@ public class CombatGrid : MonoBehaviour
 
             inst_u.x = x_pos;
             inst_u.y = y_pos;
-            playerUnits.Add(inst_u);
+            playerUnits[i] = (inst_u);
 
             //setup the shortcut button:
             // -hide text
             // -put unit's box image into the slot.
-            inst_u.set_unitBoxIndex(i);
             unit_shortcut_buttons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "";
             unit_shortcut_buttons[i].GetComponent<Image>().sprite = inst_u.get_box_p();
         }
@@ -274,6 +299,7 @@ public class CombatGrid : MonoBehaviour
         foreach(Unit u in playerUnits)
         {
             //east and west tiles:
+            if (u == null) continue;
             for(int i = u.x - u.get_controlRange(); i < u.x + u.get_controlRange() + 1; i++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
@@ -352,43 +378,37 @@ public class CombatGrid : MonoBehaviour
             turnPatternImages[i].enabled = false;
         }
     }
-    public void click_briefing_button()
+    public void hover_briefing_button()
     {
-        //called when player clicks briefing button.
+        //called when player hovers briefing button.
         //gets information from mission to display:
         // -win objective
         // -lose objective
-
-        //functions as a toggle
-        if (briefingDisplay.gameObject.active)
-        {
-            briefingDisplay.gameObject.SetActive(false);
-        }
-        else
-        {
-            briefingWinText.text = baseMission.get_winDescr();
-            briefingLossText.text = baseMission.get_lossDescr();
-            briefingDisplay.gameObject.SetActive(true);
-        }
+        briefingWinText.text = baseMission.get_winDescr();
+        briefingLossText.text = baseMission.get_lossDescr();
+        briefingDisplay.gameObject.SetActive(true);
+        
+    }
+    public void unhover_briefing_button()
+    {
+        briefingDisplay.gameObject.SetActive(false);
     }
 
     //Control
     public void start_player_turn()
     {
-        
-        if (visited == null) visited = new HashSet<Tile>();
         //go through all the party units.
         //for each one, if the unit has ap > 0
         //then set its tile to isValid so we can select them.
         foreach (Unit u in playerUnits)
         {
+            if (u == null) continue;
             if (u.get_ap() > 0)
             {
-                myGrid[u.x, u.y].highlight_mv();
+                myGrid[u.x, u.y].highlight_deploy();
                 myGrid[u.x, u.y].isValid = true;
                 visited.Add(myGrid[u.x, u.y]);
-            }
-            
+            }           
         }
     }  
     void next_turn()
@@ -401,11 +421,17 @@ public class CombatGrid : MonoBehaviour
             gameState = State.BETWEEN_ROUNDS;
             //we're at the start of a round.
             // -add to pw
-            pw = Mathf.Min(pw + 1, 30);
+            foreach(BaseTile b in baseList)
+            {
+                if (b.get_ownership() == BaseOwnership.PLAYER)
+                {
+                    pw = Mathf.Min(pw + b.get_pwGeneration(), 30);
+                }
+            }
+            update_pw();
+            enable_all_unitShortcuts();
             // -calc turn pattern
             turn_order();
-            // -enable deployment
-            enable_deployment();
             // -wait for player to click round start button.
             nextRoundButton.interactable = true;
             //Debug.Log("new round: waiting for player to hit start round button");
@@ -413,6 +439,7 @@ public class CombatGrid : MonoBehaviour
         }
         else
         {
+            disable_empty_unitShortcuts();
             if (turnPatternIndex + 1 == turnPattern.Length)
             {
                 //loop back around
@@ -431,13 +458,23 @@ public class CombatGrid : MonoBehaviour
             if ( turnPattern[turnPatternIndex] )
             {
                 //if no player actions possible; 
-                if (player_actions_possible()) start_player_turn();               
+                if (player_actions_possible())
+                {
+                    gameState = State.SELECT_UNIT;
+                    start_player_turn();
+                }
+                                
                 else next_turn();
             }
             //else: enemy turn
             else
             {
-                if (enemy_actions_possible()) start_enemy_turn();              
+                if (enemy_actions_possible())
+                {
+                    gameState = State.ENEMY;
+                    start_enemy_turn();
+                }
+                             
                 else next_turn();
             }
 
@@ -460,7 +497,17 @@ public class CombatGrid : MonoBehaviour
         // 2:3 (player turn -> enemy turn -> player turn -> enemy turn -> enemy turn)
         // 1:2 (player turn -> enemy turn -> enemy turn)
 
-        float unitRatio = playerUnits.Count / enemyUnits.Count;
+        int numOfDeployedPlayerUnits = 0;
+        for(int i = 0; i < playerUnits.Length; i++)
+        {
+            if (playerUnits[i] != null)
+            {
+                numOfDeployedPlayerUnits += 1;
+            }
+        }
+
+        float unitRatio = ((float)numOfDeployedPlayerUnits) / ((float)enemyUnits.Count);
+        //Debug.Log("new unit ratio = " + unitRatio);
         float[] ratioList = new float[5] { 2f, 1.5f, 1f, 0.66f, 0.5f};
 
         //calculate running min with ratio list.
@@ -476,6 +523,7 @@ public class CombatGrid : MonoBehaviour
                 which = i;
             }
         }
+        //Debug.Log("closest ration = " + ratioList[which]);
 
         switch (which)
         {
@@ -519,16 +567,20 @@ public class CombatGrid : MonoBehaviour
     }
     public void click_start_round_button()
     {
-        disable_deployment();
+        if (gameState == State.DEPLOYING) return;
         nextRoundButton.interactable = false;
         gameState = State.SELECT_UNIT;
         turnPatternIndex = -1;
 
         //refresh ap of all units
-        foreach (Unit u in playerUnits)
+        for (int i = 0; i < playerUnits.Length; i++)
         {
-            unit_shortcut_buttons[u.get_unitBoxIndex()].GetComponent<Image>().color = new Color(1f, 1f, 1f);
-            u.refresh();
+            if (playerUnits[i] != null)
+            {
+                unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(1f, 1f, 1f);
+                playerUnits[i].refresh();
+            }
+            
         }
 
         foreach (Unit u in enemyUnits)
@@ -548,6 +600,7 @@ public class CombatGrid : MonoBehaviour
     {
         foreach (Unit u in playerUnits)
         {
+            if (u == null) continue;
             if (u.get_ap() > 0) return true;
         }
         return false;
@@ -601,13 +654,40 @@ public class CombatGrid : MonoBehaviour
         {
             uInformer.set_heldUnit(heldUnit);
         }
-
+        if (!myGrid[x_pos, y_pos].isValid) return;
         switch (gameState)
         {
+            case State.DEPLOYING:
+                //Debug.Log("YOU HAVE CLICKED A TILE TO DEPLOY.");
+                active_unit.set_deployed(true);
+                Vector3 instPos = get_pos_from_coords(x_pos, y_pos);
+                Unit inst_u = Instantiate(active_unit, instPos, transform.rotation);
+                active_unit = null;
+
+                myGrid[x_pos, y_pos].place_unit(inst_u);
+                inst_u.start_of_mission(); //do start of mission setup
+                inst_u.x = x_pos;
+                inst_u.y = y_pos;
+
+                //shove the unit in the first open spot in playerunits
+                for (int i = 0; i < playerUnits.Length; i++)
+                {
+                    if (playerUnits[i] == null)
+                    {
+                        playerUnits[i] = inst_u;
+                        unit_shortcut_buttons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "";
+                        unit_shortcut_buttons[i].GetComponent<Image>().sprite = inst_u.get_box_p();
+                        break;
+                    }
+                }               
+                gameState = State.BETWEEN_ROUNDS;
+                disable_deployment();
+                update_ZoC();
+                break;
+
             case State.SELECT_UNIT:
                 //Debug.Log("YOU HAVE CLICKED A UNIT TO ORDER.")
-                if (!myGrid[x_pos, y_pos].isValid) return;
-
+                
                 //hold onto unit
                 active_unit = heldUnit;
 
@@ -620,7 +700,6 @@ public class CombatGrid : MonoBehaviour
 
             case State.SELECT_MOVEMENT:
                 //Debug.Log("YOU HAVE CLICKED A TILE TO MOVE THE UNIT THERE.")
-                if (!myGrid[x_pos, y_pos].isValid) return;
 
                 //move unit to this tile
                 past_active_unit_x = active_unit.x;
@@ -642,12 +721,16 @@ public class CombatGrid : MonoBehaviour
                 active_ability = active_unit.get_traitList()[0];
                 highlight_attack(active_ability);
 
+                //update tile ownership (if applicable)
+                if (myGrid[active_unit.x, active_unit.y] is BaseTile)
+                {
+                    pastBaseState = myGrid[active_unit.x, active_unit.y].get_ownership();
+                    myGrid[active_unit.x, active_unit.y].set_ownerShip(BaseOwnership.PLAYER);                                 
+                }
                 update_ZoC();
-
                 break;
 
             case State.SELECT_TARGET:
-                if (!myGrid[x_pos, y_pos].isValid) return;
                 //Debug.Log("YOU HAVE CLICKED A TILE TO BE THE LOCATION OF A MOVE");
                 //what's the process:
                 // -generate the list of affected targets.
@@ -684,8 +767,13 @@ public class CombatGrid : MonoBehaviour
                         if (target.get_isAlly() && target.get_isBroken())
                         {
                             //grey out unit box
-                            unit_shortcut_buttons[target.get_unitBoxIndex()].GetComponent<Image>().color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
-
+                            for(int i = 0; i < playerUnits.Length; i++)
+                            {
+                                if (target == playerUnits[i])
+                                {
+                                    unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
+                                }
+                            }
                         }
 
                         //check dead:
@@ -696,10 +784,18 @@ public class CombatGrid : MonoBehaviour
                             if (target.get_isAlly())
                             {
                                 //remove from player list
-                                playerUnits.Remove(target);       
-                                
-                                //remove from unit box shortcut list too
+                                for (int i = 0; i < playerUnits.Length; i++)
+                                {
+                                    if (target == playerUnits[i])
+                                    {
+                                        playerUnits[i] = null;
 
+                                        //remove from unit box shortcut list too
+                                        unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(1f, 1f, 1f);
+                                        unit_shortcut_buttons[i].GetComponent<Image>().sprite = defaultUnitShortcutSprite;
+                                        unit_shortcut_buttons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Deploy\nUnit";
+                                    }
+                                }                                
                             }
                             else
                             {
@@ -728,7 +824,15 @@ public class CombatGrid : MonoBehaviour
                 {
                     //grey out unit box
                     active_unit.dec_ap();
-                    unit_shortcut_buttons[active_unit.get_unitBoxIndex()].GetComponent<Image>().color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
+                    for (int i = 0; i < playerUnits.Length; i++)
+                    {
+                        if (active_unit == playerUnits[i])
+                        {
+                            //grey out unit button.
+                            unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
+                        }
+                    }
+                    
                     active_unit = null;
                 }
                 
@@ -896,8 +1000,6 @@ public class CombatGrid : MonoBehaviour
         //have to do it tile by tile, expanding the network, to account for movement penalties.        
 
         //starting from the 4 adjacent tiles, expand outwards, adding every reachable tile to a set.
-
-        visited = new HashSet<Tile>();
         myGrid[u.x, u.y].isValid = true;
 
         dfs(visited, myGrid[u.x, u.y], u.get_movement(), true);
@@ -1015,6 +1117,22 @@ public class CombatGrid : MonoBehaviour
     }
 
     //Deployment and unit shortcuts
+    public void hover_reserveUnit_slot(int which)
+    {
+        //fills uInformer on hover.
+        if (reserveParty[which] != null)
+        {
+            uInformer.fill(reserveParty[which], pw, false);
+        }
+    }
+    public void hover_unit_shortcut(int which)
+    {
+        //fills uInformer on hover.
+        if (playerUnits[which] != null)
+        {
+            uInformer.fill(playerUnits[which], pw, false);
+        }       
+    }
     public void click_unit_shortcut(int which)
     {
         //(only allowed during unit selecting)
@@ -1022,34 +1140,143 @@ public class CombatGrid : MonoBehaviour
 
         //which: 0 to 7. Corresponds to unit's index in player units list.
 
-        //math unit box index to the corresponding player unit
-        Unit theOne = null;
-        foreach(Unit u in playerUnits)
+        if (playerUnits[which] != null)
         {
-            if (which == u.get_unitBoxIndex())
+            //then jump
+            Vector3 moveHere = get_pos_from_coords(playerUnits[which].x, playerUnits[which].y) + new Vector3(0f, 0f, -10f);
+            cam.jump_to(moveHere);
+        }
+        else
+        {
+            //if we're inbetween rounds, then clicking an empty slot opens the deployment menu.
+            if (gameState == State.BETWEEN_ROUNDS)
             {
-                //then jump camera to that unit
-                Vector3 moveHere = get_pos_from_coords(playerUnits[which].x, playerUnits[which].y) + new Vector3(0f, 0f, -10f);
-                cam.jump_to(moveHere);
+                //Debug.Log("Yes; opening deployment menu (the unit list)");
+                show_deployment_menu();
+            }
+        } 
+    }
+    public void click_deployment_unitSlot(int which)
+    {
+        //which: 0-17
+        //at this point, we have already done checks;
+        //if we're here, we know the unit is not already deployed and can be .
+        active_unit = reserveParty[which];
+        enable_deployment();      
+    }
+    void show_deployment_menu()
+    {
+        //show the deployment menu
+        gameState = State.DEPLOYING;
+        nextRoundButton.interactable = false;
+        if (is_deployment_possible())
+        {
+            //for each the units in the reserveParty           
+            // -if not already deployed
+            // -if our pw > unit's pw deploy cost
+            for (int i = 0; i < reserveParty.Length; i++)
+            {
+                GameObject obj = deploymentObj.gameObject.transform.GetChild(i).gameObject;
+                obj.transform.GetChild(0).GetComponent<Image>().sprite = reserveParty[i].get_box_p();
+                obj.transform.GetChild(1).GetComponent<Text>().text = reserveParty[i].get_unitName() + " | " + reserveParty[i].get_pwCost() + " PW";
+
+                if (!reserveParty[i].get_isDeployed() && reserveParty[i].get_pwCost() <= pw)
+                {
+                    //then allow button to be clickable                    
+                    obj.GetComponent<Button>().interactable = true;
+
+                }
+                else
+                {
+                    obj.GetComponent<Button>().interactable = false;
+                }
+            }
+            for (int i = reserveParty.Length; i < 18; i++)
+            {
+                //deploymentObj.gameObject.transform.GetChild(i).GetComponent<Button>().interactable = false;
+                deploymentObj.gameObject.transform.GetChild(i).gameObject.SetActive(false);
             }
         }
-
-        //if we're inbetween rounds, then clicking an empty slot opens the deployment menu.
-        if (gameState == State.BETWEEN_ROUNDS)
+        else
         {
-            Debug.Log("Yes; opening deployment menu (the unit list)");
-        }
-
-        //otherwise, open deploy menu.
-        //set gameState to DEPLOYING
+            for (int i = 0; i < 18; i++)
+            {
+                deploymentObj.gameObject.transform.GetChild(i).GetComponent<Button>().interactable = false;
+            }
+        }       
+        deploymentObj.SetActive(true);
     }
+    public void hide_deployment_menu()
+    {
+        //used to close without deploying a thing.
+        deploymentObj.SetActive(false);
+        gameState = State.BETWEEN_ROUNDS;
+        nextRoundButton.interactable = true;
+    }  
     void enable_deployment()
     {
-
+        //highlights / validates bases.
+        //only possible to call if deployment is possible.
+        foreach(BaseTile b in baseList)
+        {
+            if (b.get_ownership() == BaseOwnership.PLAYER)
+            {
+                b.isValid = true;
+                b.highlight_deploy();
+                visited.Add(b);
+            }
+        }
+        deploymentObj.SetActive(false);
     }
     void disable_deployment()
     {
+        foreach (Tile t in visited)
+        {
+            t.isValid = false;
+            t.remove_highlight();
+        }
+        nextRoundButton.interactable = true;
 
+        //we've just successfully deployed a unit;
+        //this changes the unit ratio, so we recalc it and update turn pattern display too.
+        turn_order();
+        set_turnPattern_display();
+    }
+    bool is_deployment_possible()
+    {
+        //returns true if the player has any bases they can deploy from.
+        //i.e. true if at least one base is player owned and not occupied.
+        foreach(BaseTile b in baseList)
+        {
+            if (b.get_ownership() == BaseOwnership.PLAYER && !b.occupied())
+            {
+                //Debug.Log("deployment is possible");
+                return true;
+            }
+        }
+        //Debug.Log("deployment is not possible");
+        return false;
+    }
+    void enable_all_unitShortcuts()
+    {
+        for (int i = 0; i < unit_shortcut_buttons.Length; i++)
+        {
+            unit_shortcut_buttons[i].interactable = true;            
+        }
+    }
+    void disable_empty_unitShortcuts()
+    {
+        for(int i = 0; i < unit_shortcut_buttons.Length; i++)
+        {
+            if (playerUnits[i] == null)
+            {
+                unit_shortcut_buttons[i].interactable = false;
+            }
+            else
+            {
+                unit_shortcut_buttons[i].interactable = true;
+            }
+        }
     }
 
     List<Unit> tileList_to_targetList(List<Tile> tileList)
@@ -1137,7 +1364,6 @@ public class CombatGrid : MonoBehaviour
 
         return targetList;
     }
-
 
 
 }
