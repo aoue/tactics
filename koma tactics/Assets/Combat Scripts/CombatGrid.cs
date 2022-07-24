@@ -602,18 +602,7 @@ public class CombatGrid : MonoBehaviour
     //Enemy Turn/AI
     void start_enemy_turn()
     {
-        //for the moment, do nothing.
-        //Debug.Log("enemy turn passing");
-
-        //set closest enemy ap to 0
-        foreach (Unit u in enemyUnits)
-        {
-            if (u.get_ap() > 0)
-            {
-                u.dec_ap();
-                break;
-            }
-        }
+        //Debug.Log("enemy turn starting");
 
         Unit enemyChosenUnit = select_enemy_unit();
         select_enemy_action(enemyChosenUnit);
@@ -630,6 +619,7 @@ public class CombatGrid : MonoBehaviour
                 int score = enemyUnits[i].calculate_priority();
                 if (runningMax == -1 || score > runningMax)
                 {
+                    Debug.Log("choosing index " + i + " with a score of " + score);
                     runningMax = score;
                     chosenIndex = i;
                 }
@@ -655,27 +645,60 @@ public class CombatGrid : MonoBehaviour
         //so we now have visited set up as a list of all possible destination tiles.
         //find the best (destination tile, trait attack, targetlist) triple.
         int runningMax = -1;
-        (Tile, int, List<Unit>) best = (null, -2, null);
-        
-        foreach(Tile t in visited)
+        //(Tile, int, List<Unit>, Tile) best = (null, -2, null, null);
+
+        List<(Tile, int, List<Unit>, Tile)> bestList = new List<(Tile, int, List<Unit>, Tile)>();
+        foreach (Tile t in visited)
         {
             //find position of closest player unit.
             int score = chosenUnit.score_move(closestPlayerTileToTile(t), t, e_tilesAddedToZoC(chosenUnit.x, chosenUnit.y, chosenUnit), myGrid, visited);
+            //Debug.Log("scoring dest: " + t.x + ", " + t.y + " | score = " + score);
 
-            Debug.Log("scoring dest: " + t.x + ", " + t.y + " | score = " + score);
-
-            if (runningMax == -1 || score > runningMax)
+            if (runningMax == -1)
             {
                 runningMax = score;
-                best = (t, chosenUnit.get_bestTraitIndex(), chosenUnit.get_bestTargetList());
-            }         
+                bestList.Add((t, chosenUnit.get_bestTraitIndex(), chosenUnit.get_bestTargetList(), chosenUnit.get_bestAttackOrigin()));
+                //best = (t, chosenUnit.get_bestTraitIndex(), chosenUnit.get_bestTargetList(), chosenUnit.get_bestAttackOrigin());
+            }
+            else if (score > runningMax)
+            {
+                runningMax = score;
+                bestList.Clear();
+                bestList.Add((t, chosenUnit.get_bestTraitIndex(), chosenUnit.get_bestTargetList(), chosenUnit.get_bestAttackOrigin()));
+            }
+            else if (score == runningMax)
+            {
+                bestList.Add((t, chosenUnit.get_bestTraitIndex(), chosenUnit.get_bestTargetList(), chosenUnit.get_bestAttackOrigin()));
+            }
         }
+        //randomly select from bestList
+        Debug.Log("best list count = " + bestList.Count);
+        (Tile, int, List<Unit>, Tile) best = bestList[UnityEngine.Random.Range(0, bestList.Count)];
+
+
         //at the end of this, we should have:
         // -destination tile chosen
         // -trait chosen
+        // -trait attack origin chosen
         // -targetlist in hand
-        Tile temp = best.Item1;
-        Debug.Log("chosen tile = " + temp.x + ", " + temp.y);
+        Tile temp1 = best.Item1;
+        int temp2 = best.Item2;
+        List<Unit> temp3 = best.Item3;
+        Tile temp4 = best.Item4;
+
+        //testing
+        Debug.Log("BEST:");
+        temp1.highlight_target_mv();
+        temp4.highlight_target(true);
+        Debug.Log("chosen dest tile = " + temp1.x + ", " + temp1.y);       
+        Debug.Log("chosen trait to use = " + temp2);
+        if (temp3 != null && temp4 != null)
+        {
+            Debug.Log("chosen targetlist count = " + temp3.Count);
+            Debug.Log("chosen attack origin tile = " + temp4.x + ", " + temp4.y);
+        }
+
+
 
     }
     int closestPlayerTileToTile(Tile t)
@@ -971,8 +994,11 @@ public class CombatGrid : MonoBehaviour
                 active_ability = null;
                 uInformer.set_heldUnit(null);
                 clear_highlights();
-                movementHighlightTile.hide_target_icon();
-                movementHighlightTile = null;
+                if (movementHighlightTile != null)
+                {
+                    movementHighlightTile.hide_target_icon();
+                    movementHighlightTile = null;
+                }                
                 gameState = State.ENEMY;
 
                 //check win/loss
@@ -1080,7 +1106,6 @@ public class CombatGrid : MonoBehaviour
                         visited.Add(myGrid[i, active_unit.y]);
                     }
                 }
-                //north and south tiles:
                 for (int j = active_unit.y - t.get_range(); j < active_unit.y + t.get_range() + 1; j++)
                 {
                     if (within_border(active_unit.x, j) && j != active_unit.y)
@@ -1088,7 +1113,6 @@ public class CombatGrid : MonoBehaviour
                         visited.Add(myGrid[active_unit.x, j]);                       
                     }
                 }
-                //visited.Remove(myGrid[active_unit.x, active_unit.y]);
                 break;
             case TargetingType.SQUARE:               
                 for (int i = active_unit.x - 1; i < active_unit.x + 1 + 1; i++)
@@ -1102,7 +1126,6 @@ public class CombatGrid : MonoBehaviour
                         }
                     }
                 }
-                //visited.Remove(myGrid[active_unit.x, active_unit.y]);
                 break;
             case TargetingType.RADIUS:
                 //borrow dfs code.               
@@ -1217,7 +1240,6 @@ public class CombatGrid : MonoBehaviour
             {
                 atk_dfs(v, next, rangeLeft - 1);
             }
-
         }
     }
     bool within_border(int x, int y)
@@ -1482,7 +1504,7 @@ public class CombatGrid : MonoBehaviour
     {
         //the player has decided on what tile they want to attack, its coordinates are (x_click, y_click)
         //Now, based on the trait's AoEType, we do that.
-        //return a list of units, which will all be hit.
+        //return a list of tiles, which will all be hit.
 
         //for further reading on each of the aoe types, see Trait.cs
 

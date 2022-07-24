@@ -332,6 +332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26603059622511d4a982908a80d91dd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueUnitID: 0
   hpText: {fileID: 2445417662035874066}
   unitSprite: {fileID: 8686200987546085631}
   box_portrait: {fileID: 21300000, guid: 0964fe523a50db04fbd4bb0a891aee63, type: 3}
@@ -352,11 +353,22 @@ MonoBehaviour:
   magic_atk: 5
   magic_def: 5
   traitList:
-  - {fileID: 8448402313637337567, guid: ad82509d45d8bbc4487a021f8f8b20c6, type: 3}
+  - {fileID: 8439347060211842814, guid: f3350804f48495b4189521aedfcf9c7e, type: 3}
   - {fileID: 3811091371949527533, guid: ce99c88417c98074db44b7d3c74c963a, type: 3}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  pri_base: 0
+  pri_range: 0
+  pri_panic: 0
+  panic_threshold: 0
+  unitAI: 2
+  keepDistance: 0
+  caresAboutZoC: 0
+  lessMoving: 0
+  caresAboutBases: 0
+  caresAboutCover: 1
+  caresAboutKills: 1
 --- !u!212 &8686200987546085631
 SpriteRenderer:
   m_ObjectHideFlags: 0

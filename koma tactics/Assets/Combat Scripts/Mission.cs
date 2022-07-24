@@ -69,7 +69,7 @@ public class Mission : MonoBehaviour
             { empty, lightlyWooded, empty, empty, empty},
             { empty, empty, empty, lightlyWooded, empty},
             { lightlyWooded, empty, empty, empty, empty},
-            { baseTileP, empty, lightlyWooded, lightlyWooded, empty},
+            { baseTileE, empty, lightlyWooded, lightlyWooded, empty},
             { lightlyWooded, empty, empty, empty, empty}
         };
         //the mission layout will look like above^.
@@ -81,7 +81,7 @@ public class Mission : MonoBehaviour
         //returns an array of units and coords representing unit starting spots.
         (Unit, int, int)[] dep_array = {
             (defUnits[0], 0, 0),
-            (defUnits[1], 3, 0)
+            (defUnits[1], 4, 4)
         };
 
         return dep_array;
@@ -90,9 +90,9 @@ public class Mission : MonoBehaviour
     {
         //returns an array of units and coords representing unit starting spots.
         (Enemy, int, int)[] dep_array = {
-            (defEnemies[0], 0, 1),
-            (defEnemies[0], 2, 2),
-            (defEnemies[0], 1, 3),
+            //(defEnemies[0], 0, 1)
+            (defEnemies[0], 3, 2)
+            //(defEnemies[0], 1, 3),
         };
 
         return dep_array;

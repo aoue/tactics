@@ -134,6 +134,7 @@ public class Unit : MonoBehaviour
     }
 
     //getters
+    public float get_hpPercentage() { return (float)hp / (float)hpMax; }
     public int get_uniqueUnitID() { return uniqueUnitID; }
     public Sprite get_box_p() { return box_portrait; }
     public Sprite get_active_p() { return active_portrait; }
@@ -163,4 +164,5 @@ public class Unit : MonoBehaviour
     public virtual int score_attack(Trait t, List<Tile> targetList, BattleBrain brain) { return -1; }
     public virtual List<Unit> get_bestTargetList() { return null; }
     public virtual int get_bestTraitIndex() { return -2; }
+    public virtual Tile get_bestAttackOrigin() { return null; }
 }

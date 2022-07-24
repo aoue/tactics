@@ -46,7 +46,7 @@ MonoBehaviour:
   traitName: test trait
   descr: literally nothing. just for tests
   unitType: 0
-  isPassive: 0
+  isPassive: 1
   targeting: 0
   aoe: 0
   range: 0

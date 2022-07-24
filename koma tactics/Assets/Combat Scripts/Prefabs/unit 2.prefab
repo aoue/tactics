@@ -351,15 +351,15 @@ MonoBehaviour:
   isAlly: 1
   aff: 1
   movement: 4
-  hpMax: 3
+  hpMax: 1
   hp: 0
   brkMax: 10
   brk: 0
   ap: 1
-  controlRange: 2
+  controlRange: 1
   pwCost: 5
   phys_atk: 6
-  phys_def: 8
+  phys_def: 1
   magic_atk: 7
   magic_def: 7
   traitList:

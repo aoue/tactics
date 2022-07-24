@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileName: Lightly Wooded
-  movementCost: 2
+  movementCost: 3
   coverReduction: 0.2
   descr: A few trees making moving here diificult.
   targetIcon: {fileID: 8205210296095093832}

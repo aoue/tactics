@@ -270,7 +270,7 @@ MonoBehaviour:
   brkMax: 10
   brk: 0
   ap: 1
-  controlRange: 2
+  controlRange: 1
   pwCost: 5
   phys_atk: 15
   phys_def: 4
