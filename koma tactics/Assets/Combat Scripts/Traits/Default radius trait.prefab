@@ -49,7 +49,7 @@ MonoBehaviour:
   isPassive: 0
   targeting: 2
   aoe: 0
-  range: 2
+  range: 1
   power: 5
   pwCost: 0
   usesPhysAttack: 1

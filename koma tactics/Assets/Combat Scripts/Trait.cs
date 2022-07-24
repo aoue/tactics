@@ -56,7 +56,7 @@ public class Trait : MonoBehaviour
     [SerializeField] private bool isHeal;
 
     //passive traits
-    public virtual int modify_dmg_dealt(int dmg)
+    public virtual int modify_dmg_dealt(int dmg, Unit self, Unit enemy)
     {
         //will probably need the grid and playerList.
 
@@ -67,19 +67,19 @@ public class Trait : MonoBehaviour
 
         return dmg;
     }
-    public virtual int modify_dmg_received(int dmg)
+    public virtual int modify_dmg_received(int dmg, Unit self, Unit enemy)
     {
         //will probably need the grid too.
 
         return dmg;
     }
-    public virtual int modify_heal_dealt(int heal)
+    public virtual int modify_heal_dealt(int heal, Unit self, Unit enemy)
     {
         //will probably need the grid too.
 
         return heal;
     }
-    public virtual int modify_heal_received(int heal)
+    public virtual int modify_heal_received(int heal, Unit self, Unit enemy)
     {
         //will probably need the grid too.
 
@@ -139,6 +139,7 @@ public class Trait : MonoBehaviour
             {
                 buildStr += " Magic";
             }
+            buildStr += " (" + targeting + ", " + aoe + ")";
 
             buildStr += "\n" + range + " Range | " + power + " Power | " + pwCost + " cost.";
         }

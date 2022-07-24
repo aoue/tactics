@@ -37,7 +37,7 @@ public class BattleBrain
         {
             if (u1.get_traitList()[i] != null && u1.get_traitList()[i].get_isPassive())
             {
-                dmg = u1.get_traitList()[i].modify_dmg_dealt(dmg);
+                dmg = u1.get_traitList()[i].modify_dmg_dealt(dmg, u1, u2);
             }
         }
 
@@ -46,7 +46,7 @@ public class BattleBrain
         {
             if (u2.get_traitList()[i] != null && u2.get_traitList()[i].get_isPassive())
             {
-                dmg = u2.get_traitList()[i].modify_dmg_received(dmg);
+                dmg = u2.get_traitList()[i].modify_dmg_received(dmg, u1, u2);
             }
         }
 
@@ -70,7 +70,7 @@ public class BattleBrain
         {
             if (u1.get_traitList()[i] != null && u1.get_traitList()[i].get_isPassive())
             {
-                heal = u1.get_traitList()[i].modify_heal_dealt(heal);
+                heal = u1.get_traitList()[i].modify_heal_dealt(heal, u1, u2);
             }
         }
 
@@ -79,7 +79,7 @@ public class BattleBrain
         {
             if (u2.get_traitList()[i] != null && u2.get_traitList()[i].get_isPassive())
             {
-                heal = u2.get_traitList()[i].modify_heal_received(heal);
+                heal = u2.get_traitList()[i].modify_heal_received(heal, u1, u2);
             }
         }
 

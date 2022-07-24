@@ -103,7 +103,8 @@ public class Tile : MonoBehaviour
     {
         //the tile has been told by the combatGrid to highlight for movement.
         //set sheen to blue.
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(204f/255f, 255f/255f, 255f/255f);
+        //gameObject.GetComponent<SpriteRenderer>().color = new Color(204f/255f, 255f/255f, 255f/255f);
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 1f);
     }
     public void highlight_deploy()
     {

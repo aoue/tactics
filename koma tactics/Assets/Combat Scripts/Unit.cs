@@ -10,11 +10,13 @@ public class Unit : MonoBehaviour
     public int x { get; set; }
     public int y { get; set; }
 
+    [SerializeField] private int uniqueUnitID; //every player unit has a unique unit id.
+
     //ui
     [SerializeField] private TextMeshPro hpText;
     [SerializeField] private SpriteRenderer unitSprite;
 
-    //stats
+    //stats  
     [SerializeField] private Sprite box_portrait; //the small one.
     [SerializeField] private Sprite active_portrait;  //the large one.
     [SerializeField] private string unitName;
@@ -59,6 +61,15 @@ public class Unit : MonoBehaviour
     }
 
     //adjust unit status
+    public void recall(int h)
+    {
+        //adjust unit's stats when recalled.
+        // set hp to what it was at.
+        // reset brk though.
+        hp = h;
+        brk = brkMax;
+        deployed = false;
+    }
     public void set_deployed(bool d) { deployed = d; }
     public void start_of_mission()
     {
@@ -123,6 +134,7 @@ public class Unit : MonoBehaviour
     }
 
     //getters
+    public int get_uniqueUnitID() { return uniqueUnitID; }
     public Sprite get_box_p() { return box_portrait; }
     public Sprite get_active_p() { return active_portrait; }
     public string get_unitName() { return unitName; }
@@ -145,4 +157,10 @@ public class Unit : MonoBehaviour
     public bool get_isBroken() { return isBroken; }
     public Trait[] get_traitList() { return traitList; }
 
+    //virtuals (for enemy AI)
+    public virtual int calculate_priority() { return -1; }
+    public virtual int score_move(int closestPlayerTile, Tile dest, int tilesAddedToZoC, Tile[,] myGrid, HashSet<Tile> visited) { return -1; }
+    public virtual int score_attack(Trait t, List<Tile> targetList, BattleBrain brain) { return -1; }
+    public virtual List<Unit> get_bestTargetList() { return null; }
+    public virtual int get_bestTraitIndex() { return -2; }
 }

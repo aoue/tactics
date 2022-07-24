@@ -32,6 +32,7 @@ public class UnitInformer : MonoBehaviour
     [SerializeField] private Text traitName;
     [SerializeField] private Text traitdescr; //three lines.
     [SerializeField] private Button[] traitButtons; //four buttons.
+    [SerializeField] private Button recallButton; //four buttons.
 
     private Unit heldUnit; //the locked unit.
     public void set_heldUnit(Unit u)
@@ -43,6 +44,18 @@ public class UnitInformer : MonoBehaviour
     private string[] unitTypeConverter = new string[2] { "Flying", "Amphib." };
     private string[] affConverter = new string[3] { "Light", "Medium", "Heavy" };
 
+    public void set_recall(bool s)
+    {
+        if (s)
+        {
+            recallButton.interactable = true;
+            recallButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            recallButton.gameObject.SetActive(false);
+        }
+    }
     public void fill(Unit u, int pw, bool allowButtonsInteractable)
     {
         //set all fields with the unit's corresponding data

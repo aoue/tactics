@@ -80,7 +80,8 @@ public class Mission : MonoBehaviour
     {
         //returns an array of units and coords representing unit starting spots.
         (Unit, int, int)[] dep_array = {
-            (defUnits[0], 0, 0)
+            (defUnits[0], 0, 0),
+            (defUnits[1], 3, 0)
         };
 
         return dep_array;

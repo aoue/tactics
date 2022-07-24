@@ -48,8 +48,8 @@ MonoBehaviour:
   unitType: 0
   isPassive: 0
   targeting: 0
-  aoe: 1
-  range: 3
+  aoe: 0
+  range: 1
   power: 5
   pwCost: 0
   usesPhysAttack: 1

@@ -342,6 +342,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba42b37bc7aa8744c844abe1c58e792a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueUnitID: 2
   hpText: {fileID: 8976984003142403404}
   unitSprite: {fileID: 7194641574226003338}
   box_portrait: {fileID: 21300000, guid: 427028b66be8cf849ac0d6073a8587f1, type: 3}
