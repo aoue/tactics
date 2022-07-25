@@ -13,8 +13,8 @@ public class Unit : MonoBehaviour
     [SerializeField] private int uniqueUnitID; //every player unit has a unique unit id.
 
     //ui
-    [SerializeField] private TextMeshPro hpText;
     [SerializeField] private SpriteRenderer unitSprite;
+    [SerializeField] private Transform hpBar;
 
     //stats  
     [SerializeField] private Sprite box_portrait; //the small one.
@@ -46,6 +46,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private Trait[] traitList; //ability/trait list. Passives and non-passives, together.
     private List<UnitType> unitTypes; //given by traits. Things like flying, aquatic, etc... Only influences bonus dmg taken, e.g. anti-air does bonus vs. flying units.
 
+    //adjust unit status
     public void dec_ap()
     {
         //Debug.Log("unit ap = 0");
@@ -59,8 +60,6 @@ public class Unit : MonoBehaviour
         ap = 0;
         unitSprite.color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
     }
-
-    //adjust unit status
     public void recall(int h)
     {
         //adjust unit's stats when recalled.
@@ -79,13 +78,13 @@ public class Unit : MonoBehaviour
         hp = hpMax;
         brk = brkMax;
         ap = 1;
-        update_hpText();
+        update_hpBar();
 
         //setup types array
         unitTypes = new List<UnitType>();
         foreach(Trait t in traitList)
         {
-            if (t != null && t.get_unitType() != null)
+            if (t != null && t.get_unitType() != UnitType.NOTHING)
             {
                 unitTypes.Add(t.get_unitType());
             }
@@ -117,20 +116,18 @@ public class Unit : MonoBehaviour
         {
             isDead = true;
         }
-        else
-        {
-            update_hpText();
-        }
-        
+        update_hpBar();
     }
     public void take_heal(int heal)
     {
         hp = Mathf.Min(hpMax, hp + heal);
-        update_hpText();
+        update_hpBar();
     }
-    void update_hpText()
+    void update_hpBar()
     {
-        hpText.text = hp + "HP";
+        //updates the hpbar:
+        //set the scale of the sprite to hp / hpmax
+        hpBar.localScale = new Vector3((float)hp / (float)hpMax, 1f);
     }
 
     //getters

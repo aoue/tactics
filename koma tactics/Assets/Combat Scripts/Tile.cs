@@ -25,6 +25,7 @@ public class Tile : MonoBehaviour
     Unit heldUnit;
 
     public bool isValid { get; set; }
+    public List<Tile> path { get; set; } //used for tracing paths during movement generation.
 
     //State
     public virtual BaseOwnership get_ownership() { return BaseOwnership.NEUTRAL; }
@@ -126,18 +127,22 @@ public class Tile : MonoBehaviour
     {
         //updates tiles ZoC images based on playerControlled
         //and enemyControlled
+
         if (player_controlled && enemy_controlled)
         {
-            zocRenderer.color = new Color(111f / 255f, 0f, 161f / 255f);
+            //purple
+            zocRenderer.color = new Color(71f / 255f, 0f, 128f / 255f);
             zocRenderer.enabled = true;
         }
         else if (player_controlled)
         {
+            //blue
             zocRenderer.color = new Color(32f / 255f, 201f / 255f, 1f);
             zocRenderer.enabled = true;
         }
         else if (enemy_controlled)
         {
+            //red
             zocRenderer.color = Color.red;
             zocRenderer.enabled = true;
         }

@@ -12,14 +12,11 @@ public class CombatGrid : MonoBehaviour
     //responsible for instatiating and managing the combat grid
     //and for general combat control.
 
-    //turn order:
-    //player:
-    // - select unit
-    // - select tile to move unit
-    // - do attack/ability
-    // - turn ends
-    //enemy:
-    // - ...
+    private const float movement_animation_speed = 20f; //the number of units a unit moves per second. Remember: one of our tiles is 2 units.
+    private const float combat_hpBar_duration = 0.5f; //how long we will watch the unit's hpbars decrease for.
+    private const float combat_hpBar_linger = 0.05f; //how long we wait for the period between hpbars finishing decreasing and then dead/broken units being removed/updated
+    private const float combat_highlights_linger = 0f; //how long we wait for the period between dead/broken units being removed/updated and target highlights being unhighlighted
+    private bool animating; //true while animating. Disables player input.
 
     [SerializeField] private Mission baseMission;
     [SerializeField] private CameraController cam;
@@ -66,7 +63,6 @@ public class CombatGrid : MonoBehaviour
 
     private List<Tile> baseList; //used to check all base tiles. (for power and deployment highlighting)
     
-
     void Start()
     {
         playerUnits = new Unit[8];
@@ -91,6 +87,8 @@ public class CombatGrid : MonoBehaviour
     }
     void Update()
     {
+        if (animating) return;
+
         //go back system on right click during player turn.
         if (Input.GetMouseButtonDown(1))
         {
@@ -131,9 +129,12 @@ public class CombatGrid : MonoBehaviour
 
                     clear_highlights();
                     clear_target_highlights();
-                    movementHighlightTile.hide_target_icon();
-                    movementHighlightTile = null;
-
+                    if (movementHighlightTile != null)
+                    {
+                        movementHighlightTile.hide_target_icon();
+                        movementHighlightTile = null;
+                    }
+                    
                     //reset ZoC, too, of course
                     update_ZoC();
 
@@ -143,8 +144,6 @@ public class CombatGrid : MonoBehaviour
                     gameState = State.SELECT_MOVEMENT;
                     break;
             }
-            
-
         }
         
         //spacebar to recenter camera on selected unit, or start round
@@ -598,6 +597,23 @@ public class CombatGrid : MonoBehaviour
         }
         return false;
     }
+    void check_end_of_mission()
+    {
+        //called after a unit's turn. checks win/loss
+        //we check player victory first; yes, it's biased.
+        if (baseMission.is_mission_won(playerUnits, enemyUnits, myGrid))
+        {
+            Debug.Log("Mission is won.");
+        }
+        else if (baseMission.is_mission_lost(playerUnits, enemyUnits, myGrid))
+        {
+            Debug.Log("Mission is lost.");
+        }
+        else
+        {
+            next_turn();
+        }
+    }
 
     //Enemy Turn/AI
     void start_enemy_turn()
@@ -752,6 +768,187 @@ public class CombatGrid : MonoBehaviour
         return score;
     }
 
+    //Movement Animation
+    IEnumerator move_obj_on_path(GameObject obj, List<Tile> path)
+    {
+        //move the object in from each path tile to the next
+        //actually, we will be doing a movement animation here.       
+        
+        for (int i = 1; i < path.Count; i++)
+        {
+            float elapsedTime = 0f;
+            while (elapsedTime < 2*(1 / movement_animation_speed))
+            {
+                Vector3 dest = get_pos_from_coords(path[i].x, path[i].y);
+
+                active_unit.transform.position = Vector3.MoveTowards(active_unit.transform.position, dest, Time.deltaTime * movement_animation_speed);
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+        }
+        
+        finish_movement();
+        yield return null;
+    }
+    void finish_movement()
+    {
+        //moves the unit_object from start_pos to end_pos over movement_duration seconds.
+        //strictly follows the path laid out by end_pos.path
+
+        //prepare for select target
+        gameState = State.SELECT_TARGET;
+        clear_highlights(); //remove movement tile highlights
+                            //add target selection highlights
+        active_ability = active_unit.get_traitList()[0];
+        highlight_attack(active_ability);
+
+        //update tile ownership (if applicable)
+        if (myGrid[active_unit.x, active_unit.y] is BaseTile)
+        {
+            pastBaseState = myGrid[active_unit.x, active_unit.y].get_ownership();
+            myGrid[active_unit.x, active_unit.y].set_ownerShip(BaseOwnership.PLAYER);
+        }
+        update_ZoC();
+        animating = false;
+    }
+    
+    //Attack Animation
+    IEnumerator perform_attack_animation(List<Unit> affectedUnits)
+    {
+        //here's what it is to do:
+        // -show health bars decreasing on all the affected units
+        // -when animation done: any units that have died, remove their sprites.
+        // -when that's done (and attack duration time has passed), hide affectedTiles
+
+        //do all damage calculations. 
+        // -each affected unit has had its hp updated, so now we adjust their hpbars in the animation segment
+        //the move used could be an attack or it could be a heal.
+        bool anyKills = false;
+        if (active_ability.get_isHeal())
+        {
+            foreach (Unit target in affectedUnits)
+            {
+                int heal = brain.calc_heal(active_unit, target, active_ability);
+                target.take_heal(heal);
+            }
+        }
+        else
+        {
+            foreach (Unit target in affectedUnits)
+            {
+                int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y]);
+                target.take_dmg(dmg);
+            }
+        }
+        
+        //do hpbar animations
+        float elapsedTime = 0f;
+        while (elapsedTime < combat_hpBar_duration)
+        {
+            //for all affected units:
+            //move hp bars from past to current hp percentage
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(combat_hpBar_linger);
+
+        //adjust states based on break and death
+        foreach(Unit target in affectedUnits)
+        {
+            //if dead, remove from playerList/enemyList depending on isAlly.
+            if (target.get_isDead())
+            {
+                anyKills = true;
+                if (target.get_isAlly())
+                {
+                    //remove from player list
+                    for (int i = 0; i < playerUnits.Length; i++)
+                    {
+                        if (target == playerUnits[i])
+                        {
+                            playerUnits[i] = null;
+
+                            //remove from unit box shortcut list too
+                            unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(1f, 1f, 1f);
+                            unit_shortcut_buttons[i].GetComponent<Image>().sprite = defaultUnitShortcutSprite;
+                            unit_shortcut_buttons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Deploy\nUnit";
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    //remove from enemy list
+                    enemyUnits.Remove(target);
+                }
+                //if target is the one being shown in the unit informer; then clear unit informer.
+                if (uInformer.get_heldUnit() == target) uInformer.hide();
+
+                myGrid[target.x, target.y].remove_unit();
+                Destroy(target.gameObject);
+            }
+            //if a player unit has broken, then update its shortcut image
+            else if (target.get_isAlly() && target.get_isBroken())
+            {
+                //grey out unit box
+                for (int i = 0; i < playerUnits.Length; i++)
+                {
+                    if (target == playerUnits[i])
+                    {
+                        unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
+                    }
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(combat_highlights_linger);
+
+        finish_attack(anyKills);
+        yield return null;       
+    }
+    void finish_attack(bool anyKills)
+    {
+        //remove target icons
+        clear_target_highlights();
+
+        pw -= active_ability.get_pwCost();
+        update_pw();
+
+        if (anyKills) update_ZoC();
+
+        //prepare for enemy phase
+        if (active_unit != null)
+        {
+            //grey out unit box
+            active_unit.dec_ap();
+            for (int i = 0; i < playerUnits.Length; i++)
+            {
+                if (active_unit == playerUnits[i])
+                {
+                    //grey out unit button.
+                    unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
+                }
+            }
+
+            active_unit = null;
+        }
+
+        active_ability = null;
+        uInformer.set_heldUnit(null);
+        clear_highlights();
+        if (movementHighlightTile != null)
+        {
+            movementHighlightTile.hide_target_icon();
+            movementHighlightTile = null;
+        }
+        gameState = State.ENEMY;
+        animating = false;
+        check_end_of_mission();
+    }
+
     //Tile interactivity
     public void traitButton_clicked(int which)
     {
@@ -784,6 +981,7 @@ public class CombatGrid : MonoBehaviour
     }
     public void tile_clicked(int x_pos, int y_pos, Unit heldUnit)
     {
+        if (animating) return;
         //validity depends on the gameState. 
         //Everytime the gameState changes, we have to go and set validity/highlights of tiles again.
 
@@ -854,6 +1052,15 @@ public class CombatGrid : MonoBehaviour
                 //Debug.Log("YOU HAVE CLICKED A TILE TO MOVE THE UNIT THERE.")
                 uInformer.set_recall(false);
 
+                //testing path:
+                /*
+                Debug.Log("path taken to " + myGrid[x_pos, y_pos].x + ", " + myGrid[x_pos, y_pos].y + ":");
+                for(int i = 0; i < myGrid[x_pos, y_pos].path.Count; i++)
+                {
+                    Debug.Log("tile " + myGrid[x_pos, y_pos].path[i].x + ", " + myGrid[x_pos, y_pos].path[i].y);
+                }
+                */
+
                 //move unit to this tile
                 past_active_unit_x = active_unit.x;
                 past_active_unit_y = active_unit.y;
@@ -864,24 +1071,9 @@ public class CombatGrid : MonoBehaviour
                 active_unit.x = x_pos;
                 active_unit.y = y_pos;
 
-                //modify unit's position/new vector for unit
-                Vector3 dest = get_pos_from_coords(x_pos, y_pos);
-                active_unit.transform.position = dest;
-
-                //prepare for select target              
-                gameState = State.SELECT_TARGET;
-                clear_highlights(); //remove movement tile highlights
-                //add target selection highlights
-                active_ability = active_unit.get_traitList()[0];
-                highlight_attack(active_ability);
-
-                //update tile ownership (if applicable)
-                if (myGrid[active_unit.x, active_unit.y] is BaseTile)
-                {
-                    pastBaseState = myGrid[active_unit.x, active_unit.y].get_ownership();
-                    myGrid[active_unit.x, active_unit.y].set_ownerShip(BaseOwnership.PLAYER);                                 
-                }
-                update_ZoC();
+                //actually, perform movement animation here.
+                animating = true;
+                StartCoroutine(move_obj_on_path(active_unit.gameObject, myGrid[x_pos, y_pos].path));
                 break;
 
             case State.SELECT_TARGET:
@@ -893,134 +1085,21 @@ public class CombatGrid : MonoBehaviour
                 //  -check if dead
                 // -finally, update ZoC and drain power.
 
-                List<Unit> affectedUnits = tileList_to_targetList(generate_tileList(active_ability, x_pos, y_pos));
+                //at this time:
+                //visited: all tiles you can choose to be the origin of the attack
+                //targetHighlightGroup: all tiles that will be hit if you choose to attack for a given origin
 
-                //the move used could be an attack or it could be a heal.
-                bool anyKills = false;
-                if (active_ability.get_isHeal())
-                {
-                    foreach (Unit target in affectedUnits)
-                    {
-                        int heal = brain.calc_heal(active_unit, target, active_ability);
-                        target.take_heal(heal);
-                    }
-                }
-                else
-                {
-                    foreach (Unit target in affectedUnits)
-                    {
-                        int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y]);
-
-                        //a unit cannot kill itself. It always leaves itself with at least 1 hp.
-                        //(stops stalemates, etc.)
-                        //target.take_dmg(dmg, active_unit == target);      
-                        //No, a unit can kill itself. No stalemate, because we check for player win first.
-                        //Also, come on, blowing yourself up is hilarious. You need to be able to do that.
-                        target.take_dmg(dmg);                       
-
-                        if (target.get_isAlly() && target.get_isBroken())
-                        {
-                            //grey out unit box
-                            for(int i = 0; i < playerUnits.Length; i++)
-                            {
-                                if (target == playerUnits[i])
-                                {
-                                    unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
-                                }
-                            }
-                        }
-
-                        //check dead:
-                        //if dead, remove from playerList/enemyList depending on isAlly.
-                        if (target.get_isDead())
-                        {
-                            anyKills = true;
-                            if (target.get_isAlly())
-                            {
-                                //remove from player list
-                                for (int i = 0; i < playerUnits.Length; i++)
-                                {
-                                    if (target == playerUnits[i])
-                                    {
-                                        playerUnits[i] = null;
-
-                                        //remove from unit box shortcut list too
-                                        unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(1f, 1f, 1f);
-                                        unit_shortcut_buttons[i].GetComponent<Image>().sprite = defaultUnitShortcutSprite;
-                                        unit_shortcut_buttons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Deploy\nUnit";
-                                        break;
-                                    }
-                                }                                
-                            }
-                            else
-                            {
-                                //remove from enemy list
-                                enemyUnits.Remove(target);
-                            }
-                            //if target is the one being shown in the unit informer; then clear unit informer.
-                            if (uInformer.get_heldUnit() == target) uInformer.hide();
-
-                            myGrid[target.x, target.y].remove_unit();
-                            Destroy(target.gameObject);                           
-                        }
-                    }
-                }
-
-                //remove target icons
-                clear_target_highlights();
-
-                pw -= active_ability.get_pwCost();
-                update_pw();
-
-                if (anyKills) update_ZoC();
-
-                //prepare for enemy phase
-                if (active_unit != null)
-                {
-                    //grey out unit box
-                    active_unit.dec_ap();
-                    for (int i = 0; i < playerUnits.Length; i++)
-                    {
-                        if (active_unit == playerUnits[i])
-                        {
-                            //grey out unit button.
-                            unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
-                        }
-                    }
-                    
-                    active_unit = null;
-                }
+                List<Unit> affectedUnits = tileList_to_targetList(generate_tileList(active_ability, x_pos, y_pos)); //used to damage/heal all affected units
                 
-                active_ability = null;
-                uInformer.set_heldUnit(null);
-                clear_highlights();
-                if (movementHighlightTile != null)
-                {
-                    movementHighlightTile.hide_target_icon();
-                    movementHighlightTile = null;
-                }                
-                gameState = State.ENEMY;
-
-                //check win/loss
-                //we check player victory first; yes, it's biased.
-                if (baseMission.is_mission_won(playerUnits, enemyUnits, myGrid))
-                {
-                    Debug.Log("Mission is won.");
-                }
-                else if (baseMission.is_mission_lost(playerUnits, enemyUnits, myGrid))
-                {
-                    Debug.Log("Mission is lost.");
-                }
-                else
-                {
-                    next_turn();
-                }
-                
+                animating = true;
+                StartCoroutine(perform_attack_animation(affectedUnits));
                 break;
         }      
     }
     public void tile_hovered(int x_pos, int y_pos, Unit heldUnit)
     {
+        if (animating) return;
+
         //if we are in select target, then mousing over a tile should
         //display what the AoE area would end up looking like. 
         if (gameState == State.SELECT_TARGET)
@@ -1156,8 +1235,8 @@ public class CombatGrid : MonoBehaviour
 
         //starting from the 4 adjacent tiles, expand outwards, adding every reachable tile to a set.
         myGrid[u.x, u.y].isValid = true;
-
-        dfs(visited, myGrid[u.x, u.y], u.get_movement(), isPlayer, u);
+        List<Tile> tempPath = new List<Tile>();
+        dfs(visited, myGrid[u.x, u.y], u.get_movement(), isPlayer, u, tempPath);
 
         //now, visited is comprised of all the reachable tiles.
         //for each of them, highlight the tile by changing the colour to blue.
@@ -1171,8 +1250,19 @@ public class CombatGrid : MonoBehaviour
         }
 
     }
-    void dfs(HashSet<Tile> v, Tile start, int moveLeft, bool isPlayer, Unit u)
+    void dfs(HashSet<Tile> v, Tile start, int moveLeft, bool isPlayer, Unit u, List<Tile> pathTaken)
     {
+        //start.path needs to be the path at this moment in time.
+        pathTaken.Add(start);
+        if (start.path == null)
+            start.path = new List<Tile>();
+        start.path.Clear();
+        foreach (Tile t in pathTaken)
+        {
+            //if (!start.path.Contains(t))
+            start.path.Add(t);
+        }
+
         v.Add(start); //add to visited list
 
         if (moveLeft <= 0) return;
@@ -1182,10 +1272,16 @@ public class CombatGrid : MonoBehaviour
 
         List<Tile> adjacentTiles = new List<Tile>();
         //add tiles based on coordinates, as long as they are not out of bounds.
+        /*
         if (within_border(start.x + 1, start.y)) adjacentTiles.Add(myGrid[start.x + 1, start.y]);
         if (within_border(start.x - 1, start.y)) adjacentTiles.Add(myGrid[start.x - 1, start.y]);
         if (within_border(start.x, start.y + 1)) adjacentTiles.Add(myGrid[start.x, start.y + 1]);
         if (within_border(start.x, start.y - 1)) adjacentTiles.Add(myGrid[start.x, start.y - 1]);
+        */
+        if (within_border(start.x + 1, start.y) && !v.Contains(myGrid[start.x + 1, start.y])) adjacentTiles.Add(myGrid[start.x + 1, start.y]);
+        if (within_border(start.x - 1, start.y) && !v.Contains(myGrid[start.x - 1, start.y])) adjacentTiles.Add(myGrid[start.x - 1, start.y]);
+        if (within_border(start.x, start.y + 1) && !v.Contains(myGrid[start.x, start.y + 1])) adjacentTiles.Add(myGrid[start.x, start.y + 1]);
+        if (within_border(start.x, start.y - 1) && !v.Contains(myGrid[start.x, start.y - 1])) adjacentTiles.Add(myGrid[start.x, start.y - 1]);
 
         foreach (Tile next in adjacentTiles)
         {
@@ -1206,19 +1302,24 @@ public class CombatGrid : MonoBehaviour
             //if mvCost <= 0, then it is impassable. Different values mean different types.  E.g. -1: water, -2: cliffs.
             if (mvCost > 0)
             {
-            //if tile is in the opponent's ZoC, then it costs all remaining movement.
+                //if tile is in the opponent's ZoC, then it costs all remaining movement.
                 if (isPlayer && next.enemy_controlled)
                 {
-                    dfs(v, next, moveLeft - u.get_movement(), isPlayer, u);
+                    dfs(v, next, moveLeft - u.get_movement(), isPlayer, u, pathTaken);
                 }
                 else if (!isPlayer && next.player_controlled)
                 {
-                    dfs(v, next, moveLeft - u.get_movement(), isPlayer, u);
+                    dfs(v, next, moveLeft - u.get_movement(), isPlayer, u, pathTaken);
                 }
                 else
                 {
-                    dfs(v, next, moveLeft - mvCost, isPlayer, u);
+                    dfs(v, next, moveLeft - mvCost, isPlayer, u, pathTaken);
+                    
                 }
+
+                //hmm... maybe instead of just removing the latest element, we need to remove as many elements as it went deep.
+                //No: each one gets removed in turn.
+                pathTaken.RemoveAt(pathTaken.Count - 1);
             }
 
         }
@@ -1570,5 +1671,76 @@ public class CombatGrid : MonoBehaviour
         return targetList;
     }
 
-
 }
+/*
+        //the move used could be an attack or it could be a heal.
+        bool anyKills = false;
+        if (active_ability.get_isHeal())
+        {
+            foreach (Unit target in affectedUnits)
+            {
+                int heal = brain.calc_heal(active_unit, target, active_ability);
+                target.take_heal(heal);
+            }
+        }
+        else
+        {
+            foreach (Unit target in affectedUnits)
+            {
+                int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y]);
+
+                //a unit cannot kill itself. It always leaves itself with at least 1 hp.
+                //(stops stalemates, etc.)
+                //target.take_dmg(dmg, active_unit == target);      
+                //No, a unit can kill itself. No stalemate, because we check for player win first.
+                //Also, come on, blowing yourself up is hilarious. You need to be able to do that.
+                target.take_dmg(dmg);                       
+
+                if (target.get_isAlly() && target.get_isBroken())
+                {
+                    //grey out unit box
+                    for(int i = 0; i < playerUnits.Length; i++)
+                    {
+                        if (target == playerUnits[i])
+                        {
+                            unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
+                        }
+                    }
+                }
+
+                //check dead:
+                //if dead, remove from playerList/enemyList depending on isAlly.
+                if (target.get_isDead())
+                {
+                    anyKills = true;
+                    if (target.get_isAlly())
+                    {
+                        //remove from player list
+                        for (int i = 0; i < playerUnits.Length; i++)
+                        {
+                            if (target == playerUnits[i])
+                            {
+                                playerUnits[i] = null;
+
+                                //remove from unit box shortcut list too
+                                unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(1f, 1f, 1f);
+                                unit_shortcut_buttons[i].GetComponent<Image>().sprite = defaultUnitShortcutSprite;
+                                unit_shortcut_buttons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Deploy\nUnit";
+                                break;
+                            }
+                        }                                
+                    }
+                    else
+                    {
+                        //remove from enemy list
+                        enemyUnits.Remove(target);
+                    }
+                    //if target is the one being shown in the unit informer; then clear unit informer.
+                    if (uInformer.get_heldUnit() == target) uInformer.hide();
+
+                    myGrid[target.x, target.y].remove_unit();
+                    Destroy(target.gameObject);
+                }
+            }
+        }
+        */
