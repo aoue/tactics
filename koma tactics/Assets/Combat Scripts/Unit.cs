@@ -51,6 +51,9 @@ public class Unit : MonoBehaviour
     {
         //Debug.Log("unit ap = 0");
         ap = 0;
+
+        //grey out actual sprite
+        unitSprite.color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
     }
     void brk_self()
     {
@@ -78,7 +81,7 @@ public class Unit : MonoBehaviour
         hp = hpMax;
         brk = brkMax;
         ap = 1;
-        update_hpBar();
+        set_hpBar();
 
         //setup types array
         unitTypes = new List<UnitType>();
@@ -116,20 +119,30 @@ public class Unit : MonoBehaviour
         {
             isDead = true;
         }
-        update_hpBar();
     }
     public void take_heal(int heal)
     {
         hp = Mathf.Min(hpMax, hp + heal);
-        update_hpBar();
     }
-    void update_hpBar()
+    void set_hpBar()
     {
         //updates the hpbar:
         //set the scale of the sprite to hp / hpmax
         hpBar.localScale = new Vector3((float)hp / (float)hpMax, 1f);
     }
-
+    public void slide_hpBar(float hpBarScale)
+    {
+        //slides the hpBar scale towards hpBarScale by 1 unit.
+        if (hpBar.localScale.x > hpBarScale)
+        {
+            hpBar.localScale += new Vector3(-0.01f, 0f);
+        }
+        else if (hpBar.localScale.x < hpBarScale)
+        {
+            hpBar.localScale += new Vector3(0.01f, 0f);
+        }
+    }
+    
     //getters
     public float get_hpPercentage() { return (float)hp / (float)hpMax; }
     public int get_uniqueUnitID() { return uniqueUnitID; }
@@ -159,7 +172,7 @@ public class Unit : MonoBehaviour
     public virtual int calculate_priority() { return -1; }
     public virtual int score_move(int closestPlayerTile, Tile dest, int tilesAddedToZoC, Tile[,] myGrid, HashSet<Tile> visited) { return -1; }
     public virtual int score_attack(Trait t, List<Tile> targetList, BattleBrain brain) { return -1; }
-    public virtual List<Unit> get_bestTargetList() { return null; }
+    public virtual List<Tile> get_bestTileList() { return null; }
     public virtual int get_bestTraitIndex() { return -2; }
     public virtual Tile get_bestAttackOrigin() { return null; }
 }

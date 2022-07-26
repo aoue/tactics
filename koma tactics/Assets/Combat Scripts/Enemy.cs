@@ -25,6 +25,8 @@ public class Enemy : Unit
         int panicAdd = 0;
         if ((float)get_hp() / (float)get_hpMax() < panic_threshold) panicAdd = pri_panic;
 
+        //add relevance score:
+
         return pri_base + UnityEngine.Random.Range(-pri_range, pri_range) + panicAdd;
     }
 
@@ -51,8 +53,7 @@ public class Enemy : Unit
     //(necessarily done together)
     public override int score_move(int closestPlayerTile, Tile dest, int tilesAddedToZoC, Tile[,] myGrid, HashSet<Tile> visited)
     {
-
-        bestTargetList = new List<Unit>();
+        bestTileList = new List<Tile>();
         bestTraitIndex = -2;
 
         //score a grid destination.
@@ -106,7 +107,7 @@ public class Enemy : Unit
         BattleBrain brain = new BattleBrain();
 
         //for each trait
-        List<(int, List<Unit>, Tile)> runningMaxList = new List<(int, List<Unit>, Tile)>();
+        List<(int, List<Tile>, Tile)> runningMaxList = new List<(int, List<Tile>, Tile)>();
         for (int i = 0; i < get_traitList().Length; i++)
         {
             //if the trait exists and can be used to attack
@@ -126,17 +127,17 @@ public class Enemy : Unit
                     if (runningMax == -1)
                     {
                         runningMax = atkScore;                       
-                        runningMaxList.Add((i, tileList_to_unitList(targetList), potential_origin));
+                        runningMaxList.Add((i, targetList, potential_origin));
                     }
                     else if (atkScore > runningMax)
                     {
                         runningMax = atkScore;
                         runningMaxList.Clear();
-                        runningMaxList.Add((i, tileList_to_unitList(targetList), potential_origin));
+                        runningMaxList.Add((i, targetList, potential_origin));
                     }
                     else if (atkScore == runningMax)
                     {
-                        runningMaxList.Add((i, tileList_to_unitList(targetList), potential_origin));
+                        runningMaxList.Add((i, targetList, potential_origin));
                     } 
                 }
             }
@@ -145,15 +146,15 @@ public class Enemy : Unit
         if (runningMax <= 0)
         {
             bestTraitIndex = -2;
-            bestTargetList = null;
+            bestTileList = null;
             bestAttackOrigin = null;
         }
         else
         {
             //randomly pick one of the runningMaxList
-            (int, List<Unit>, Tile) ans =  runningMaxList[UnityEngine.Random.Range(0, runningMaxList.Count)];
+            (int, List<Tile>, Tile) ans =  runningMaxList[UnityEngine.Random.Range(0, runningMaxList.Count)];
             bestTraitIndex = ans.Item1;
-            bestTargetList = ans.Item2;
+            bestTileList = ans.Item2;
             bestAttackOrigin = ans.Item3;
         }
 
@@ -185,7 +186,7 @@ public class Enemy : Unit
                             score += 100;
                             if (caresAboutKills)
                             {
-                                score = (int)(score * (1f - targetTile.get_heldUnit().get_hpPercentage()));
+                                score = (int)(score * (2f - targetTile.get_heldUnit().get_hpPercentage()));
                             }
                         }
                         else score -= 50;
@@ -204,7 +205,7 @@ public class Enemy : Unit
                             score += 100;
                             if (caresAboutKills)
                             {
-                                score = (int)(score * (1f - targetTile.get_heldUnit().get_hpPercentage()));
+                                score = (int)(score * (2f - targetTile.get_heldUnit().get_hpPercentage()));
                             }
                         }
                         else score -= 100;
@@ -364,20 +365,6 @@ public class Enemy : Unit
 
         return targetList;
     }
-    List<Unit> tileList_to_unitList(List<Tile> tileList)
-    {
-        //remove all tiles with null unit.
-        List<Unit> targetList = new List<Unit>();
-
-        foreach (Tile t in tileList)
-        {
-            if (t.occupied())
-            {
-                targetList.Add(t.get_heldUnit());   
-            }
-        }
-        return targetList;
-    }
     void atk_dfs(HashSet<Tile> v, Tile start, int rangeLeft, Tile[,] myGrid, int map_x_border, int map_y_border)
     {
         v.Add(start);
@@ -405,11 +392,11 @@ public class Enemy : Unit
 
     private int bestTraitIndex;
     private Tile bestAttackOrigin;
-    private List<Unit> bestTargetList;
+    private List<Tile> bestTileList;
 
     public override int get_bestTraitIndex() { return bestTraitIndex; }
     public override Tile get_bestAttackOrigin() { return bestAttackOrigin; }
-    public override List<Unit> get_bestTargetList() { return bestTargetList; }
+    public override List<Tile> get_bestTileList() { return bestTileList; }
     
 
 }

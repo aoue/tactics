@@ -51,7 +51,7 @@ public class BattleBrain
         }
 
         //finally, apply affinity triangle multiplier
-        dmg = (int)(affinityMultArray[u1.get_aff(), u2.get_aff()] * dmg);
+        dmg = Math.Max(1, (int)(affinityMultArray[u1.get_aff(), u2.get_aff()] * dmg));
 
         return dmg;
     }

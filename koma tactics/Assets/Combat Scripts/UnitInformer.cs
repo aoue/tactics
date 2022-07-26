@@ -32,7 +32,8 @@ public class UnitInformer : MonoBehaviour
     [SerializeField] private Text traitName;
     [SerializeField] private Text traitdescr; //three lines.
     [SerializeField] private Button[] traitButtons; //four buttons.
-    [SerializeField] private Button recallButton; //four buttons.
+    [SerializeField] private Button recallButton; 
+    [SerializeField] private Button passButton; 
 
     private Unit heldUnit; //the locked unit.
     public void set_heldUnit(Unit u)
@@ -54,6 +55,18 @@ public class UnitInformer : MonoBehaviour
         else
         {
             recallButton.gameObject.SetActive(false);
+        }
+    }
+    public void set_pass(bool s)
+    {
+        if (s)
+        {
+            passButton.interactable = true;
+            passButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            passButton.gameObject.SetActive(false);
         }
     }
     public void fill(Unit u, int pw, bool allowButtonsInteractable)
