@@ -20,6 +20,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private Sprite box_portrait; //the small one.
     [SerializeField] private Sprite active_portrait;  //the large one.
     [SerializeField] private string unitName;
+    [SerializeField] private int level;
     [SerializeField] private bool isAlly; //true if player unit. False is not.
     [SerializeField] private int aff; //0: light, 1: medium, 2: heavy
     [SerializeField] private int movement;
@@ -41,6 +42,7 @@ public class Unit : MonoBehaviour
     private bool isBroken;
     private bool deployed; //stops player from redeploying units after they die.
 
+    [SerializeField] private Order unitOrder;
 
     //traitList[0] is locked, and is the unit's default attack ability. VITALLY IMPORTANT.
     [SerializeField] private Trait[] traitList; //ability/trait list. Passives and non-passives, together.
@@ -159,6 +161,7 @@ public class Unit : MonoBehaviour
     public int get_ap() { return ap; }
     public int get_controlRange() { return controlRange; }
     public int get_pwCost() { return pwCost; }
+    public int get_level() { return level; }
     public int get_physa() { return phys_atk; }
     public int get_physd() { return phys_def; }
     public int get_maga() { return magic_atk; }
@@ -167,9 +170,10 @@ public class Unit : MonoBehaviour
     public bool get_isDead() { return isDead; }
     public bool get_isBroken() { return isBroken; }
     public Trait[] get_traitList() { return traitList; }
+    public Order get_unitOrder() { return unitOrder; }
 
     //virtuals (for enemy AI)
-    public virtual int calculate_priority() { return -1; }
+    public virtual int calculate_priority(Tile relevantTile) { return -1; }
     public virtual int score_move(int closestPlayerTile, Tile dest, int tilesAddedToZoC, Tile[,] myGrid, HashSet<Tile> visited) { return -1; }
     public virtual int score_attack(Trait t, List<Tile> targetList, BattleBrain brain) { return -1; }
     public virtual List<Tile> get_bestTileList() { return null; }

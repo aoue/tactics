@@ -15,19 +15,25 @@ public class Enemy : Unit
     [SerializeField] private int pri_panic;
     [SerializeField] private float panic_threshold; //float representing a fraction of health.
     
-    //priority process:
-    // -add base
-    // -add random value from pri range
-    // -if hp < panic threshold, add panic pri
-    // -relevance score: add points based on unit's distance to where the last active player unit ended its turn.
-    public override int calculate_priority()
+    
+    public override int calculate_priority(Tile relevantTile)
     {
+        //priority process:
+        // -add base
+        // -add random value from pri range
+        // -if hp < panic threshold, add panic pri
+        // -relevance score: add points based on unit's distance to where the last active player unit ended its turn.
+
         int panicAdd = 0;
         if ((float)get_hp() / (float)get_hpMax() < panic_threshold) panicAdd = pri_panic;
 
-        //add relevance score:
+        int relevanceAdd = 0;
+        if (relevantTile != null)
+        {
+            relevanceAdd = 10 / (Math.Abs(x - relevantTile.x) + Math.Abs(y - relevantTile.y));
+        }
 
-        return pri_base + UnityEngine.Random.Range(-pri_range, pri_range) + panicAdd;
+        return pri_base + UnityEngine.Random.Range(-pri_range, pri_range) + panicAdd + relevanceAdd;
     }
 
 
@@ -43,11 +49,9 @@ public class Enemy : Unit
     [SerializeField] private bool caresAboutCover; //true if the unit thinks it's important to take cover. Adds 10* base's cover rating.
     [SerializeField] private bool caresAboutKills; //true if the unit value hitting player units with low hp percentage. (or, for elite, will kill.)
 
-    //eventually:
     //more target scoring:
     // +if target is low/high brk
     // +target has low/high defensive stat for this trait
-
 
     //movement + target selection
     //(necessarily done together)
@@ -220,7 +224,7 @@ public class Enemy : Unit
                     //score the attack based on projected damage.
                     if (targetTile.occupied())
                     {
-                        int projected_dmg = brain.calc_damage(this, targetTile.get_heldUnit(), t, targetTile);
+                        int projected_dmg = brain.calc_damage(this, targetTile.get_heldUnit(), t, targetTile, false, null);
 
                         if (projected_dmg >= targetTile.get_heldUnit().get_hp())
                         {

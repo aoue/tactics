@@ -71,7 +71,6 @@ public class Tile : MonoBehaviour
         {
             transform.parent.GetComponent<CombatGrid>().tile_clicked(x, y, heldUnit);
         }
-
     }
 
     //Visuals

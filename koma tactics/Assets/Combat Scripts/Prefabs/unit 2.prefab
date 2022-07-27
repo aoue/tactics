@@ -316,6 +316,7 @@ MonoBehaviour:
   box_portrait: {fileID: 21300000, guid: 427028b66be8cf849ac0d6073a8587f1, type: 3}
   active_portrait: {fileID: 21300000, guid: 758d3088516ec7f4f924f4b9b0ea6f17, type: 3}
   unitName: unit 2
+  level: 1
   isAlly: 1
   aff: 1
   movement: 3
@@ -330,6 +331,8 @@ MonoBehaviour:
   phys_def: 1
   magic_atk: 7
   magic_def: 7
+  unitOrder: {fileID: 6773564134839013533, guid: 811d92a95922178449a6c964f02d0d96,
+    type: 3}
   traitList:
   - {fileID: 8448402313637337567, guid: ad82509d45d8bbc4487a021f8f8b20c6, type: 3}
   - {fileID: 0}

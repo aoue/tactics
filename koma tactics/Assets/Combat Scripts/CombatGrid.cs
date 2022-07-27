@@ -11,6 +11,7 @@ public class CombatGrid : MonoBehaviour
 {
     //responsible for instatiating and managing the combat grid and for general combat control.
 
+
     private const float enemy_pause_before_attack = 0.35f; //the seconds the enemy unit will pause with possible origin tiles before attacking.
     private const float enemy_pause_before_movement = 0.35f; //the seconds the enemy unit will pause with highlighted movement range before moving.
     private const float movement_animation_speed = 20f; //the number of units a unit moves per second. Remember: one of our tiles is 2 units.
@@ -29,6 +30,9 @@ public class CombatGrid : MonoBehaviour
     [SerializeField] private Button nextRoundButton;
     [SerializeField] private Image[] turnPatternImages;
     [SerializeField] private Image turnPatternMarker;
+    [SerializeField] private Image orderImage;
+    [SerializeField] private Text orderTitleText;
+    [SerializeField] private Text orderdescrText;
     [SerializeField] private Image briefingDisplay;
     [SerializeField] private Text briefingWinText;
     [SerializeField] private Text briefingLossText;
@@ -38,12 +42,18 @@ public class CombatGrid : MonoBehaviour
     private Tile[,] myGrid;
     private State gameState;
 
+    [SerializeField] private Order defaultOrder; //the default order. No effects. So we don't have to put if not null everywhere.
+
     //game state
     private BaseOwnership pastBaseState; //used to revert base's state on movement cancel.
     private int past_active_unit_x; //for returning the unit to its org positin on right click
     private int past_active_unit_y;//for returning the unit to its org positin on right click
+    private Order active_order; //the order assigned this round. (assigned after the first player unit finished moving.)
     private Unit active_unit; //the unit being ordered
     private Trait active_ability; //the move that we are selecting targets for.
+    private Tile last_player_end_turn_tile; //the tile that the last active player unit ended its turn on. Influences enemy priority calculations.
+    private bool set_order; //true on player's first move. Tells the game to set active_order to the unit's order.
+
 
     private (Tile, int, List<Tile>, Tile) enemy_active_info; //information about the move the enemy is performing.
     //Tile: dest tile | int: chosen trait index | List<Tile> affected tiles | Tile: origin tile
@@ -74,6 +84,7 @@ public class CombatGrid : MonoBehaviour
         baseList = new List<Tile>();
         visited = new HashSet<Tile>();
         targetHighlightGroup = new List<Tile>();
+        active_order = defaultOrder;
 
         display_grid(baseMission);
         display_units(baseMission);
@@ -406,6 +417,12 @@ public class CombatGrid : MonoBehaviour
     {
         briefingDisplay.gameObject.SetActive(false);
     }
+    void update_order()
+    {
+        //updates the order bg visuals with the information in active_order.
+        orderTitleText.text = "ORDER\n" + active_order.get_orderName();
+        orderdescrText.text = active_order.get_orderDescr();
+    }
 
     //Control
     public void start_player_turn()
@@ -431,16 +448,18 @@ public class CombatGrid : MonoBehaviour
         
         if (is_end_of_round() || gameState == State.BETWEEN_ROUNDS)
         {
-            gameState = State.BETWEEN_ROUNDS;
+            gameState = State.BETWEEN_ROUNDS;            
             //we're at the start of a round.
             // -add to pw
             foreach(BaseTile b in baseList)
             {
                 if (b.get_ownership() == BaseOwnership.PLAYER)
                 {
-                    pw = Mathf.Min(pw + b.get_pwGeneration(), 30);
+                    pw = Math.Min(30, pw + active_order.order_power_base(b.get_pwGeneration()));
                 }
             }
+            pw = Math.Min(30, active_order.order_power_flat(pw)); 
+
             update_pw();
             enable_all_unitShortcuts();
             // -calc turn pattern
@@ -490,8 +509,6 @@ public class CombatGrid : MonoBehaviour
                              
                 else next_turn();
             }
-
-            //update turn pattern display(highlight the next orb.)
         }
     }
     void turn_order()
@@ -584,6 +601,11 @@ public class CombatGrid : MonoBehaviour
             u.refresh();
         }
         turnPatternMarker.enabled = true;
+        
+        active_order = defaultOrder;
+        set_order = true;
+        update_order();
+
         next_turn();
     }
     bool is_end_of_round()
@@ -651,17 +673,17 @@ public class CombatGrid : MonoBehaviour
         {
             if (enemyUnits[i].get_ap() > 0)
             {
-                int score = enemyUnits[i].calculate_priority();
+                int score = enemyUnits[i].calculate_priority(last_player_end_turn_tile);
                 if (runningMax == -1 || score > runningMax)
                 {
-                    Debug.Log("choosing index " + i + " with a score of " + score);
+                    //Debug.Log("choosing index " + i + " with a score of " + score);
                     runningMax = score;
                     chosenIndex = i;
                 }
             }
         }
 
-        Debug.Log("chosenIndex is " + chosenIndex + " with a pri score of " + runningMax);
+        //Debug.Log("chosenIndex is " + chosenIndex + " with a pri score of " + runningMax);
         active_unit = enemyUnits[chosenIndex];
         return enemyUnits[chosenIndex];
     }
@@ -689,7 +711,7 @@ public class CombatGrid : MonoBehaviour
             if (!t.isValid) continue;
             //find position of closest player unit.
             int score = chosenUnit.score_move(closestPlayerTileToTile(t), t, e_tilesAddedToZoC(chosenUnit.x, chosenUnit.y, chosenUnit), myGrid, visited);
-            Debug.Log("scoring dest: " + t.x + ", " + t.y + " | score = " + score);
+            //Debug.Log("scoring dest: " + t.x + ", " + t.y + " | score = " + score);
 
             if (runningMax == -1)
             {
@@ -708,7 +730,6 @@ public class CombatGrid : MonoBehaviour
             }
         }
         //randomly select from bestList
-        Debug.Log("best list count = " + bestList.Count);
         enemy_active_info = bestList[UnityEngine.Random.Range(0, bestList.Count)];
         /*
         Tile temp1 = best.Item1;
@@ -756,16 +777,12 @@ public class CombatGrid : MonoBehaviour
         }
         update_ZoC();
 
-        //highlight all possible move target origin locations
-        
-
         //perform attack
-
         //check if we're going to be performing an attack:
         if ( enemy_active_info.Item2 >= 0 )
         {
             active_ability = active_unit.get_traitList()[enemy_active_info.Item2];
-            highlight_attack(active_ability);
+            highlight_attack(active_ability); //adds all the potential origins to visited
             List<Unit> affectedUnits = tileList_to_targetList(enemy_active_info.Item3);
             StartCoroutine(perform_enemy_attack_1(affectedUnits));
         }
@@ -786,6 +803,8 @@ public class CombatGrid : MonoBehaviour
     void end_enemy_turn(bool anyKills, bool isPassed)
     {
         //the attack has just been finished.
+        clear_target_highlights();
+        clear_highlights();
         myGrid[active_unit.x, active_unit.y].highlight_target_mv();
         enemy_active_info = (null, -2, null, null);
         //dec ap, and set to grey.
@@ -793,12 +812,16 @@ public class CombatGrid : MonoBehaviour
 
         //clear remnants of highlighting
         myGrid[active_unit.x, active_unit.y].hide_target_icon();
+        if (anyKills)
+        {
+            update_ZoC();
+        }
 
         active_unit = null;
         active_ability = null;
         animating = false;
-        Debug.Log("enemy turn over.");
-        next_turn();
+        //Debug.Log("enemy turn over.");
+        check_end_of_mission();
     }
 
     //Enemy AI helper functions
@@ -925,7 +948,7 @@ public class CombatGrid : MonoBehaviour
         {
             foreach (Unit target in affectedUnits)
             {
-                int heal = brain.calc_heal(active_unit, target, active_ability);
+                int heal = brain.calc_heal(active_unit, target, active_ability, active_unit.get_isAlly(), active_order);
                 target.take_heal(heal);
             }
         }
@@ -933,7 +956,7 @@ public class CombatGrid : MonoBehaviour
         {
             foreach (Unit target in affectedUnits)
             {
-                int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y]);
+                int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order);
                 target.take_dmg(dmg);
             }
         }
@@ -1021,20 +1044,39 @@ public class CombatGrid : MonoBehaviour
     }
     void finish_attack(bool anyKills, bool isPassed)
     {
+        //update the active order:
+        if (active_unit != null && set_order == true)
+        {
+            active_order = active_unit.get_unitOrder();
+            update_order();
+            set_order = false;
+        }
+               
         //remove target icons
         clear_target_highlights();
         uInformer.set_pass(false);
+
+        //handle power (and order interaction)
+        int pw_cost;
         if (!isPassed)
         {
-            pw -= active_ability.get_pwCost();
-            update_pw();
+            //order influences power cost.
+            pw_cost = active_order.order_power_cost(active_ability.get_pwCost());
         }
+        else
+        {
+            pw_cost = active_order.order_power_cost(0);           
+        }
+        pw -= pw_cost;
+        update_pw();
 
         if (anyKills) update_ZoC();
 
         //prepare for enemy phase
         if (active_unit != null)
         {
+            last_player_end_turn_tile = myGrid[active_unit.x, active_unit.y];
+
             //grey out unit box
             active_unit.dec_ap();
             for (int i = 0; i < playerUnits.Length; i++)
@@ -1208,8 +1250,6 @@ public class CombatGrid : MonoBehaviour
                 List<Unit> affectedUnits = tileList_to_targetList(generate_tileList(active_ability, x_pos, y_pos)); //used to damage/heal all affected units
                 clear_highlights();
 
-                Debug.Log("affected units count = " + affectedUnits.Count);
-
                 animating = true;
                 if ( affectedUnits.Count > 0)
                 {
@@ -1362,7 +1402,17 @@ public class CombatGrid : MonoBehaviour
         //starting from the 4 adjacent tiles, expand outwards, adding every reachable tile to a set.
         myGrid[u.x, u.y].isValid = true;
         List<Tile> tempPath = new List<Tile>();
-        dfs(visited, myGrid[u.x, u.y], u.get_movement(), isPlayer, u, tempPath);
+
+        if (isPlayer)
+        {
+            dfs(visited, myGrid[u.x, u.y], active_order.order_movement(u.get_movement()), isPlayer, u, tempPath);
+        }
+        else
+        {
+            dfs(visited, myGrid[u.x, u.y], u.get_movement(), isPlayer, u, tempPath);
+        }
+
+        
 
         //now, visited is comprised of all the reachable tiles.
         //for each of them, highlight the tile by changing the colour to blue.

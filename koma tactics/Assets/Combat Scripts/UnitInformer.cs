@@ -99,6 +99,13 @@ public class UnitInformer : MonoBehaviour
                 + "\nBRK: " + u.get_brk() + " / " + u.get_brkMax()
                 + "\nMovement: " + u.get_movement();
 
+            if (u.get_unitOrder() != null)
+            {
+                stats_1.text += "\n\n" + u.get_unitOrder().get_orderName()
+                + "\n" + u.get_unitOrder().get_orderDescr();
+            }
+                
+
             stats_2.text = "Phys Atk: " + u.get_physa()
                 + "\nPhys Def: " + u.get_physd()
                 + "\nMag Atk: " + u.get_maga()

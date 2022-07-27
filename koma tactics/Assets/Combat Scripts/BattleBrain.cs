@@ -15,20 +15,60 @@ public class BattleBrain
         {0.75f, 1.5f, 1.0f }
     };
 
-    public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile)
+    public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile, bool playerAttacking, Order order)
     {
         //use attacker's phys a or mag a?
         int atk;
-        if (t.get_usesPhysAttack()) atk = u1.get_physa();
-        else atk = u1.get_maga();
+        if (playerAttacking)
+        {
+            if (order != null)
+            {
+                if (t.get_usesPhysAttack()) atk = order.order_physa(u1.get_physa());
+                else atk = order.order_maga(u1.get_maga());
+            }
+            else
+            {
+                if (t.get_usesPhysAttack()) atk = u1.get_physa();
+                else atk = u1.get_maga();
+            }            
+        }
+        else
+        {
+            if (t.get_usesPhysAttack()) atk = u1.get_physa();
+            else atk = u1.get_maga();
+        }
 
         int def;
-        if (t.get_usesPhysDefense()) def = u2.get_physd();
-        else def = u2.get_magd();
+        float coverMod;
+        if (playerAttacking)
+        {
+            coverMod = order.order_coverMod_offense(1f - occupied_tile.get_cover());
 
-        float coverMod = 1f - occupied_tile.get_cover();
+            if (t.get_usesPhysDefense()) def = u2.get_physd();
+            else def = u2.get_magd();
+        }
+        else
+        {
+            coverMod = order.order_coverMod_defense(1f - occupied_tile.get_cover());
 
-        int dmg = Mathf.Max(1, (int)(((atk + t.get_power()) - def) * coverMod));
+            if (order != null)
+            {
+                if (t.get_usesPhysDefense()) def = order.order_physd(u2.get_physd());
+                else def = order.order_magd(u2.get_magd());
+            }
+            else
+            {
+                if (t.get_usesPhysDefense()) def = u2.get_physd();
+                else def = u2.get_magd();
+            }
+        }
+        
+        //integer damage formula:
+        //int dmg = Mathf.Max(1, (int)(((atk + t.get_power()) - def) * coverMod));
+
+        //multiplicative damage formula:
+        int dmg = Mathf.Max(1, (int)(((atk * (t.get_power() + (u1.get_level() * 2)) / def) * coverMod)));
+        dmg = order.order_damage(dmg);
 
         //once calc is done
         //(also, yes, order of traits here will definitely matter, because of order of operations.)
@@ -55,13 +95,31 @@ public class BattleBrain
 
         return dmg;
     }
-    public int calc_heal(Unit u1, Unit u2, Trait t)
+    public int calc_heal(Unit u1, Unit u2, Trait t, bool playerAttacking, Order order)
     {
         int atk;
-        if (t.get_usesPhysAttack()) atk = u1.get_physa();
-        else atk = u1.get_physa();
+
+        if (playerAttacking)
+        {
+            if (order != null)
+            {
+                if (t.get_usesPhysAttack()) atk = order.order_physa(u1.get_physa());
+                else atk = order.order_maga(u1.get_maga());
+            }
+            else
+            {
+                if (t.get_usesPhysAttack()) atk = u1.get_physa();
+                else atk = u1.get_maga();
+            }
+        }
+        else
+        {
+            if (t.get_usesPhysAttack()) atk = u1.get_physa();
+            else atk = u1.get_maga();
+        }
 
         int heal = Mathf.Max(1, (atk + t.get_power()) / 2);
+        if (order != null) heal = order.order_heal(heal);
 
         //once calc is done
         //(also, yes, order of traits here will definitely matter, because of order of operations.)
