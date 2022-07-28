@@ -14,12 +14,16 @@ public class CameraController : MonoBehaviour
     int minSize; //+/- in either direction
 
     //camera boundaries
+    bool canMove;
     int topBorder;
     int bottomBorder;
     int rightBorder;
     int leftBorder;
 
     float cameraSpeed = 5.0f;
+
+    public void lock_camera() { canMove = false; }
+    public void unlock_camera() { canMove = true; }
 
     public void setup(int xborder, int yborder)
     {
@@ -45,6 +49,8 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         //cycle camera side by pressing 'q'
+
+        if (!canMove) return;
 
         cam.orthographicSize = Mathf.Min(maxSize, Mathf.Max(minSize, cam.orthographicSize - Input.GetAxis("Mouse ScrollWheel") * cameraSpeed));
 

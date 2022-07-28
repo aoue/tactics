@@ -20,7 +20,10 @@ public class CombatGrid : MonoBehaviour
     private const float combat_highlights_linger = 0f; //how long we wait for the period between dead/broken units being removed/updated and target highlights being unhighlighted
     private bool animating; //true while animating. Disables player input.
 
+    [SerializeField] private Canvas uiCanvas;
+    [SerializeField] private CombatAudio audio;
     [SerializeField] private Mission baseMission;
+    [SerializeField] private CombatDialoguer cDia;
     [SerializeField] private CameraController cam;
     [SerializeField] private Button[] unit_shortcut_buttons;
     [SerializeField] private UnitInformer uInformer;
@@ -67,6 +70,10 @@ public class CombatGrid : MonoBehaviour
     private int pw; //party power (i.e. the party's global mana pool.)
     private BattleBrain brain;
 
+    //round event control
+    private int roundNumber; //for timing round start events and reinforcements, that kind of thing.
+    private bool allowRoundEvent; //for timing round start events and reinforcements, that kind of thing.
+
     [SerializeField] private Unit[] reserveParty;
     private Unit[] playerUnits;
     private List<Unit> enemyUnits;
@@ -85,6 +92,8 @@ public class CombatGrid : MonoBehaviour
         visited = new HashSet<Tile>();
         targetHighlightGroup = new List<Tile>();
         active_order = defaultOrder;
+        allowRoundEvent = true;
+        roundNumber = 0;
 
         display_grid(baseMission);
         display_units(baseMission);
@@ -423,8 +432,32 @@ public class CombatGrid : MonoBehaviour
         orderTitleText.text = "ORDER\n" + active_order.get_orderName();
         orderdescrText.text = active_order.get_orderDescr();
     }
+    public void hide_informers()
+    {
+        uInformer.hide();
+        tInformer.hide();
+    }
 
     //Control
+    public void post_mission_begin_dialogue()
+    {
+        //called right after the begin mission dialogue event has ended.
+        //the player still needs the chance to deploy their units.
+        uiCanvas.enabled = true;
+        enable_all_unitShortcuts();
+        turn_order();       
+        turnPatternMarker.enabled = false;
+        StartCoroutine(post_begin_mission());
+    }
+    IEnumerator post_begin_mission()
+    {
+        //need a short delay before enabling next round stuff, because
+        //otherwise the proceed spacebar will double count, and the game will skip deployment.
+        yield return new WaitForSeconds(0.1f);
+        nextRoundButton.interactable = true;
+        animating = false;
+    }
+
     public void start_player_turn()
     {
         //go through all the party units.
@@ -441,17 +474,46 @@ public class CombatGrid : MonoBehaviour
             }           
         }
     }  
-    void next_turn()
-    {
+    public void next_turn()
+    {       
+        //handle mission over and start (+ their event playing)
+        if (baseMission.is_mission_won(playerUnits, enemyUnits, myGrid) && allowRoundEvent)
+        {
+            Debug.Log("Mission is won.");
+            animating = true;            
+            allowRoundEvent = false;
+            uiCanvas.enabled = false;
+            cDia.play_event(baseMission.get_script(), -2);
+            return;
+        }
+        else if (baseMission.is_mission_lost(playerUnits, enemyUnits, myGrid) && allowRoundEvent)
+        {
+            Debug.Log("Mission is lost.");
+            animating = true;           
+            allowRoundEvent = false;
+            uiCanvas.enabled = false;
+            cDia.play_event(baseMission.get_script(), -3);
+            return;
+        }
+        if (roundNumber == 0 && allowRoundEvent)
+        {
+            //play start of mission event:
+            animating = true;
+            allowRoundEvent = false;
+            cDia.play_event(baseMission.get_script(), 0);
+            return;
+        }
+
         //check if end of round
-        //Debug.Log("is_end_round =" + is_end_of_round());
-        
         if (is_end_of_round() || gameState == State.BETWEEN_ROUNDS)
         {
-            gameState = State.BETWEEN_ROUNDS;            
+            animating = false;
+            gameState = State.BETWEEN_ROUNDS;
+
             //we're at the start of a round.
             // -add to pw
-            foreach(BaseTile b in baseList)
+
+            foreach (BaseTile b in baseList)
             {
                 if (b.get_ownership() == BaseOwnership.PLAYER)
                 {
@@ -580,6 +642,25 @@ public class CombatGrid : MonoBehaviour
     }    
     public void click_start_round_button()
     {
+        //spawn reinforcements, if any:
+        //(should take place before the event, so we can comment on that.)
+
+        //check if there is a start of round event to play:
+        //Debug.Log("clicked start of round button: allowRoundEvent=" + allowRoundEvent + " | roundNumber=" + roundNumber);
+        if (baseMission.has_event(roundNumber) && allowRoundEvent)
+        {
+            uiCanvas.enabled = false;
+            nextRoundButton.interactable = false;
+            animating = true;
+            allowRoundEvent = false;
+            cDia.play_event(baseMission.get_script(), roundNumber);
+            return;
+        }
+        else
+        {
+            uiCanvas.enabled = true;
+        }
+
         if (gameState == State.DEPLOYING) return;
         nextRoundButton.interactable = false;
         gameState = State.SELECT_UNIT;
@@ -605,7 +686,8 @@ public class CombatGrid : MonoBehaviour
         active_order = defaultOrder;
         set_order = true;
         update_order();
-
+        roundNumber += 1;
+        allowRoundEvent = true;
         next_turn();
     }
     bool is_end_of_round()
@@ -631,29 +713,20 @@ public class CombatGrid : MonoBehaviour
         }
         return false;
     }
-    void check_end_of_mission()
-    {
-        //called after a unit's turn. checks win/loss
-        //we check player victory first; yes, it's biased.
-        if (baseMission.is_mission_won(playerUnits, enemyUnits, myGrid))
-        {
-            Debug.Log("Mission is won.");
-        }
-        else if (baseMission.is_mission_lost(playerUnits, enemyUnits, myGrid))
-        {
-            Debug.Log("Mission is lost.");
-        }
-        else
-        {
-            next_turn();
-        }
-    }
     public void click_pass_button()
     {
         //click this to choose to not make an attack.
         //tidies up and then passes to next turn.
         //can be called with spacebar.
         finish_attack(false, true);
+
+    }
+    public void end_mission_win()
+    {
+
+    }
+    public void end_mission_loss()
+    {
 
     }
 
@@ -821,7 +894,7 @@ public class CombatGrid : MonoBehaviour
         active_ability = null;
         animating = false;
         //Debug.Log("enemy turn over.");
-        check_end_of_mission();
+        next_turn();
     }
 
     //Enemy AI helper functions
@@ -1102,7 +1175,7 @@ public class CombatGrid : MonoBehaviour
         }
         gameState = State.ENEMY;
         animating = false;
-        check_end_of_mission();
+        next_turn();
     }
 
     //Tile interactivity
@@ -1768,6 +1841,22 @@ public class CombatGrid : MonoBehaviour
         gameState = State.ENEMY;
 
         next_turn();
+    }
+
+    //Audio
+    public void play_music_track(int which)
+    {
+        //which corresponds to an index in mission's musicList
+        audio.play_music(baseMission.get_track(which));
+    }
+    public void play_sound(int which)
+    {
+        //audio.play_music(baseMission.get_sound(which));
+    }
+    public void play_typing()
+    {
+        //plays the typing sound
+        audio.play_typingSound();
     }
 
     List<Unit> tileList_to_targetList(List<Tile> tileList)

@@ -23,4 +23,8 @@ public class TileInformer : MonoBehaviour
 
         if (!gameObject.active) gameObject.SetActive(true);
     }
+    public void hide()
+    {
+        gameObject.SetActive(false);
+    }
 }

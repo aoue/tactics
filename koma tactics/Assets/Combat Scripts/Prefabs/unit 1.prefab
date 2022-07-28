@@ -241,7 +241,7 @@ MonoBehaviour:
   ap: 1
   controlRange: 1
   pwCost: 2
-  phys_atk: 20
+  phys_atk: 200
   phys_def: 20
   magic_atk: 20
   magic_def: 20

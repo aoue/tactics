@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ink.Runtime;
+using System.Linq;
 
 public class Mission : MonoBehaviour
 {
@@ -37,6 +39,19 @@ public class Mission : MonoBehaviour
     [SerializeField] private int starting_power;
     [SerializeField] private string win_obj_descr;
     [SerializeField] private string loss_obj_descr;
+   
+    [SerializeField] private TextAsset script;
+    [SerializeField] private int[] eventRounds; //add round number if event in for that round.
+    [SerializeField] private AudioClip[] musicList;
+    [SerializeField] private AudioClip[] soundList;
+
+    //event indices
+    public virtual bool has_event(int roundNumber)
+    {
+        //returns an int[] where every turn where there should be an event is an element.
+        if (eventRounds.Contains(roundNumber)) return true;
+        return false;
+    }
 
     //mission win/loss conditions
     public virtual bool is_mission_won(Unit[] pl, List<Unit> el, Tile[,] grid)
@@ -80,8 +95,8 @@ public class Mission : MonoBehaviour
     {
         //returns an array of units and coords representing unit starting spots.
         (Unit, int, int)[] dep_array = {
-            (defUnits[0], 0, 0),
-            (defUnits[1], 3, 3)
+            (defUnits[0], 0, 0)//,
+            //(defUnits[1], 3, 3)
         };
 
         return dep_array;
@@ -90,9 +105,9 @@ public class Mission : MonoBehaviour
     {
         //returns an array of units and coords representing unit starting spots.
         (Enemy, int, int)[] dep_array = {
-            (defEnemies[0], 4, 4),
-            (defEnemies[0], 3, 2),
-            (defEnemies[0], 1, 3)
+            (defEnemies[0], 4, 4)//,
+            //(defEnemies[0], 3, 2),
+            //(defEnemies[0], 1, 3)
         };
 
         return dep_array;
@@ -104,5 +119,7 @@ public class Mission : MonoBehaviour
     public int get_starting_power() { return starting_power; }
     public string get_lossDescr() { return loss_obj_descr; }
     public string get_winDescr() { return win_obj_descr; }
-
+    public TextAsset get_script() { return script; }
+    public AudioClip get_track(int which) { return musicList[which]; }
+    public AudioClip get_sound(int which) { return soundList[which]; }
 }
