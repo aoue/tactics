@@ -7,29 +7,17 @@ using Ink.Runtime;
 
 public class EventManager : MonoBehaviour
 {
-    //public static int useIC; //controlled by config.txt in game files. controls some elements of events. 0: off, 1: on.
-    //public static string pName; //player char name. set in introduction
-
-    public static EventManager _instance;
-    //like a library.
-    //the overworld will call to it, and it will return events that can be loaded today.
-
-    private int useIC;
-    private string pName;
+    [SerializeField] private Overworld overworld; //link back to the boss.
 
     [SerializeField] private GameObject shakeObject;
-
     [SerializeField] private Font ancientsFont;
     [SerializeField] private Font defaultFont;
-
-    //knows whether an event has been called before.
-    [SerializeField] private SoundManager SM;
     [SerializeField] private FadeManager fader;
-    [SerializeField] private Notifier notifier;
-    [SerializeField] private TooltipManager ttm;
+
+    [SerializeField] private BackgroundManager allEventBackgrounds; //different background manager from the overworld background manager, but same class.
     [SerializeField] private PortraitLibrary pLibrary;
     
-    //dialogue stuff members:
+    //dialogue canvas members:
     [SerializeField] private GameObject dialogueCanvas;
     [SerializeField] private CanvasGroup choiceParent;
     [SerializeField] private Image bg;
@@ -39,7 +27,6 @@ public class EventManager : MonoBehaviour
     [SerializeField] private Text centeredText;
     [SerializeField] private Button buttonPrefab = null;
     [SerializeField] private Image speakerBoxPortrait;
-
     [SerializeField] private Button[] textControlButtons; //in order: auto, skip, history
 
     //dialogue box hider
@@ -51,7 +38,6 @@ public class EventManager : MonoBehaviour
     private float imgFadeSpeed = 1.5f; //higher is faster. controls the speed at which char imgs are replaced/shown/hidden during events.
 
     //typing speed controllers
-    bool battle_block = false;
     private float textWait = 0.035f; //how many seconds to wait after a non-period character in typesentence
     private float autoWait = 1.75f; //when auto is on, time waited when a sentence is fully written out before playing the next one
     private bool skipOn = false; //when true, don't wait at all between textWaits, just display one after another.
@@ -59,8 +45,8 @@ public class EventManager : MonoBehaviour
     private bool historyOn = false; //when true, viewing history and cannot continue the story.
     private bool settingsOn = false; //when true, viewing settings and cannot continue the story.
     private bool usingDefaultFont = true;
-    private bool isTalking; //determines the mode of speech which is used when nametext is not empty. can either be true:talk [""] or false:think [()] 
-    private bool isCentered; //determines whether to use sentenceText or use centeredText in typeSentence().
+    private bool isTalking = true; //determines the mode of speech which is used when nametext is not empty. can either be true:talk [""] or false:think [()] 
+    private bool isCentered = false; //determines whether to use sentenceText or use centeredText in typeSentence().
 
     [SerializeField] private GameObject settingsView; //lets player adjust vn settings, like text speed.
 
@@ -72,35 +58,13 @@ public class EventManager : MonoBehaviour
     
     [SerializeField] private GameObject canProceedArrow; //visible when canProceed, invisible when cannot.
     private bool canProceed;
-    private Event heldEv;
+    private EventHolder heldEv;
     private Story script;
     [SerializeField] private GameObject[] portraitSlots; //3 total. dimensions are 540 x 1080 | 1 : 2 ratio
     private int[] portraitSlotIDs = new int[3]; //3 total, parallel to portraitSlots. used to save the current id of image in the slot, or -1 if none.
 
-    private int saved_battle_id;
-    private bool saved_allow_prep;
-
-    void Awake()
-    {
-        if (_instance != null)
-        {
-            Destroy(_instance.gameObject);
-        }
-        _instance = this;
-    }
     void Update()
     {
-        if (battle_block)
-        {
-            if (canProceed && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)))
-            {
-                //Debug.Log("EventManager.Update(); battle_block=true; pdm.load_up() called");
-                //pdm.load_up(saved_battle_id, saved_allow_prep);
-                canProceed = false;
-            }
-            return;
-        }
-
         //toggle text control states:
         //a: auto
         //left ctrl: skip
@@ -132,8 +96,6 @@ public class EventManager : MonoBehaviour
         {
             if (skipOn == false && autoOn == false && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)))
             {
-                //start textDisplaying sound
-                SM.play_typingSound();
                 DisplayNextSentence();
             }
             else if (skipOn == true)
@@ -142,24 +104,17 @@ public class EventManager : MonoBehaviour
             }
             else if (autoOn == true)
             {
-                SM.play_typingSound();
                 DisplayNextSentence();
             }                    
         }     
     }
 
     //MANAGE EVENT PREVIEW
-    public static void event_hovered(Event ev, float xCoord, float yCoord)
+    public static void event_hovered(float xCoord, float yCoord)
     {
-        _instance.preview_event(ev, xCoord, yCoord);
     }
     public static void event_unhovered()
     {
-        _instance.ttm.dismiss();
-    }
-    void preview_event(Event ev, float x, float y)
-    {
-        ttm.show_event_preview(ev, pLibrary, x, y);
     }
 
     //MANAGE EVENT SKIP/AUTO BUTTONS
@@ -285,22 +240,20 @@ public class EventManager : MonoBehaviour
     }
 
     //MANAGE EVENT RUNNING
-    public static void immediate_triggered(Event ev)
-    {
-        _instance.begin_immediate(ev);
-    }
-    public static void event_triggered(Event ev, bool doPause)
-    {
-        //called from eventHolder when an event is mouse clicked.       
-        _instance.begin_event(ev, doPause);
-    }
-
-    IEnumerator healthy_pause(float duration)
+    IEnumerator pause_before_starting_event(float duration = 1f)
     {
         //pause for a minute before starting the event. (so we can)
         yield return new WaitForSeconds(duration);
-        setup_event();
+        setup_event(heldEv.get_story());
     }
+    IEnumerator pause_before_ending_event(float duration = 1f)
+    {
+        //pause for a minute before starting the event. (so we can)
+        yield return new WaitForSeconds(duration);
+        //hide the dialogue canvas, i.e. return to overworld
+        dialogueCanvas.SetActive(false);
+        overworld.load_part();
+    }    
     IEnumerator TypeSentence(string sentence)
     {
         Text typeHere = null;
@@ -363,28 +316,20 @@ public class EventManager : MonoBehaviour
         canProceed = true;
     }
 
-    public void begin_immediate(Event ev)
+    public void begin_immediate(TextAsset storyText)
     {
-        heldEv = ev;
-        setup_event();
+        heldEv = null;
+        setup_event(storyText);
     }
-    public void begin_event(Event ev, bool doPause)
+    public void begin_event(EventHolder ev)
     {
         fader.fade_to_black();
         heldEv = ev;
-        if (doPause)
-        {
-            StartCoroutine(healthy_pause(2.0f));
-        }
-        else
-        {
-            setup_event();
-        }
+        StartCoroutine(pause_before_starting_event());
     }   
-    void setup_event()
+    void setup_event(TextAsset storyText)
     {
         //setup initial view
-        if (ttm != null) ttm.dismiss();
         nameText.text = "";
         sentenceText.text = "";
 
@@ -410,7 +355,7 @@ public class EventManager : MonoBehaviour
         dialogueCanvas.SetActive(true);
 
         //setup story
-        script = new Story(heldEv.get_story().text);
+        script = new Story(storyText.text);
 
         //fill in roles text.
         fill_roles();
@@ -466,41 +411,27 @@ public class EventManager : MonoBehaviour
         else
         {
             //end of story.
-            end_event(heldEv);            
+            end_event();   
         }
-    }
-    Button CreateChoiceView(string text)
+    }   
+    void end_event()
     {
-        Button choice = Instantiate(buttonPrefab) as Button;
-        choice.transform.SetParent(choiceParent.transform, false);
-
-        // Gets the text from the button prefab
-        Text choiceText = choice.GetComponentInChildren<Text>();
-        choiceText.text = text;
-
-        return choice;
-    }
-    void OnClickChoiceButton(Choice choice)
-    {
-        SM.play_buttonSound();
-        script.ChooseChoiceIndex(choice.index);
-        DisplayNextSentence();
-    }    
-    void end_event(Event ev)
-    {
-        //make all the text control buttons uninteractable.
-        for(int i = 0; i < textControlButtons.Length; i++)
+        //do post event stuff
+        if (heldEv != null)
         {
-            textControlButtons[i].interactable = false;
+            heldEv.post_event();
+            overworld.set_progression(heldEv.modify_day_progression(overworld.get_progression()));
         }
+            
 
-        //finish off the event.
-        ev.post_event();
-        ev.check_notifier(notifier);
-        canProceed = false;
+        //start a fade
         fader.fade_from_black_cheat();
+        dialogueCanvas.SetActive(false);
+        overworld.load_part();
     }
 
+
+    //Helpers
     void recalibrate_portrait_positions()
     {
         //called when a portrait is hidden or called. we recalibrate the remaining portraits
@@ -542,15 +473,27 @@ public class EventManager : MonoBehaviour
         //return all effects to default.
         sentenceText.font = defaultFont; //use normal font
         set_name(""); //hide name box
-        set_boxPortrait(-1);
+        set_boxPortrait(-1); //hide box portrait
         set_speech(true); //use quotes for speaker
         set_centered(false); //do not show text in centered.
 
-        //dummy values -- will actually read from text file in save folder on main menu launch. hold the values in a static class i guess.
-        useIC = 1; 
-        script.variablesState["ic"] = useIC;
-        pName = "Pax";
-        script.variablesState["pname"] = pName;
+
+    }
+    Button CreateChoiceView(string text)
+    {
+        Button choice = Instantiate(buttonPrefab) as Button;
+        choice.transform.SetParent(choiceParent.transform, false);
+
+        // Gets the text from the button prefab
+        Text choiceText = choice.GetComponentInChildren<Text>();
+        choiceText.text = text;
+
+        return choice;
+    }
+    void OnClickChoiceButton(Choice choice)
+    {
+        script.ChooseChoiceIndex(choice.index);
+        DisplayNextSentence();
     }
 
     //LINKING EXTERNAL FUNCTIONS
@@ -559,41 +502,8 @@ public class EventManager : MonoBehaviour
         //all the storys share the same external functions. we are externalizing complexity from 
         //ink and putting it here instead.
 
-        //battle-related
-        script.BindExternalFunction("rest_party", () =>
-        {
-            this.rest_party();
-        });
-        script.BindExternalFunction("add_unit", (int id) =>
-        {
-            this.add_unit(id);
-        });
-        script.BindExternalFunction("remove_unit", (int id) =>
-        {
-            this.remove_unit(id);
-        });
-        script.BindExternalFunction("battle", (int id) =>
-        {
-            this.to_battle(id, true);
-        });
-        script.BindExternalFunction("battle_no_prep", (int id) =>
-        {
-            this.to_battle(id, false);
-        });
-
         //music
-        script.BindExternalFunction("stop_music", () =>
-        {
-            this.stop_music();
-        });
-        script.BindExternalFunction("play_music", (int whichTrack) =>
-        {
-            this.play_music(whichTrack);
-        });
-        script.BindExternalFunction("play_sound", (int whichTrack) =>
-        {
-            this.play_sound(whichTrack);
-        });
+
 
         //visuals
         script.BindExternalFunction("bg", (int id) => 
@@ -635,44 +545,6 @@ public class EventManager : MonoBehaviour
 
         //game (e.g. rel increased, set flag, etc.)
 
-    }
-
-    //battle
-    public void return_control()
-    {
-        //Note: not a linked function. called from cMan->pdm->here.
-
-        //turn off battle_block and automatically proceed next sentence.
-        battle_block = false;
-        canProceed = true;
-        SM.play_typingSound();
-        DisplayNextSentence();
-    }
-    void rest_party()
-    {
-        //restores party to full hp and mp.
-        //pdm.heal_party();
-    }
-    void remove_unit(int id)
-    {
-        //pdm.remove_from_party(id);
-    }
-    void add_unit(int id)
-    {
-        //the pdm handles this.
-        //pdm.add_to_party(id);
-    }
-    void to_battle(int id, bool allow_prep)
-    {
-        //loads a battle and then brings us back again.
-        //by loading a battle, we mean loading the prep dungeon manager,
-        //which will then load the battle after the player has laid out their deployment.
-        battle_block = true;
-
-        //when the next sentence is done being displayed, the next proceed button press will launch the battle instead of the next line of dialog.
-        //pdm.load_up(id, allow_prep);
-        saved_battle_id = id;
-        saved_allow_prep = allow_prep;
     }
 
     //text effects
@@ -839,20 +711,6 @@ public class EventManager : MonoBehaviour
     }
 
     //sound effects
-    void stop_music()
-    {
-        //stops a song from SM.
-        SM.stop_playing();
-    }
-    void play_music(int whichTrack)
-    {
-        SM.play_loop(whichTrack);
-    }
-    void play_sound(int whichTrack)
-    {
-        //plays a song/sound from SM.
-        SM.play_once(whichTrack);
-    }
-    
+
     
 }

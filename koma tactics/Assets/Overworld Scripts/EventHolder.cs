@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Ink.Runtime;
 
 public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -11,75 +12,95 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     //changes image depending on colour.
     //is the one to try to validate the event.
 
-    [SerializeField] private Event ev;
-    [SerializeField] private GameObject heartIcon;
-    public int get_id() { return ev.get_id(); }
-    private bool added;
+    [SerializeField] private TextAsset ev;
+    protected bool loadMission = false; //if true, then load a mission instead of playing an actual event.
+    [SerializeField] private string eventTitle;
+    [SerializeField] private string eventDescr;
 
+    //events can be flagged in three ways:
+    [SerializeField] private GameObject dangerIcon; //an exclamation mark; danger icon. This means the event will lock all other open events.
+    [SerializeField] private GameObject heartIcon; //a heart; means the event has to do with love or something, man, idk.
+    [SerializeField] private GameObject frienshipIcon; //a bro icon; means the event has to do with building friendship.
+
+    //progression
+    [SerializeField] private int minProgressionToEnable;
+    [SerializeField] private bool addToProg; //if true, then when event is over, add progMod to partProgression
+    [SerializeField] private bool setProg; //if true, then when event is over, set partProgression to progMod
+    [SerializeField] private int progMod;
+
+    //VIRTUALS - checking and modifying states
+    public virtual void post_event()
+    {
+        //do anything.
+    }
+    public virtual bool validate_event()
+    {
+        //overwrite to check any requirements you want.
+        //things like:
+        // -char rels, etc
+        //Note: progression validation is handled outside of this.
+
+        //true means the event will be enabled and viewable.
+        //false means it won't be.
+        return true;
+    }
+
+    public int modify_day_progression(int dayProgress)
+    {
+        if (addToProg) return dayProgress + progMod;
+        if (setProg) return progMod;
+        return dayProgress;
+    }
+    public bool validate_progression(int overworldProgression)
+    {
+        return overworldProgression >= minProgressionToEnable;
+    }
     public void begin_event()
     {
-        //on button click. you know, the button attached to this object.
-        EventManager.event_triggered(ev, true);
+        //when the button is clicked. 
 
-        //mark that this event is done for Part's tracking. :)
-        //adds ev.get_id() to done events list.
-        Part.doneEvents.Add(ev.get_id());
-
-
-        //remove event from worldmanager active event list.
-        Overworld.remove_active_event(ev.get_id());
-        Destroy(this.gameObject);
-    }
-
-    public void disable_button()
-    {
+        //disable input
         gameObject.GetComponent<Button>().interactable = false;
+
+        //Start the event.
+        gameObject.transform.parent.GetComponent<Part>().pass_event_to_overworld(this);
+
+        //hide yourself
+        gameObject.SetActive(false);
     }
 
-    public bool validate_event()
-    {
-        return ev.isEventValid();
-    }
-
+    //RUNNING OR HIDING EVENT
     public void setup_event()
     {
-        //set your colour
-        Image icon = gameObject.GetComponent<Image>();
-        gameObject.GetComponent<Button>().interactable = true;
-        switch (ev.get_event_type())
-        {
-            case eventType.RED:
-                icon.color = Color.red;
-                break;
-            case eventType.BLUE:
-                icon.color = Color.blue;
-                break;
-            case eventType.GREEN:
-                icon.color = Color.green;
-                break;
-        }
+        //called if the event passes validate.
 
-        //if event has haich, then enable that aspect of the event image
-        if (ev.get_hasHaich() == true)
-        {
-            heartIcon.SetActive(true);
-        }
+        //check the danger/heart/friendship setting and enable whichever it calls for,
+        //or none.
 
         gameObject.SetActive(true);
     }
+    public void disable_event()
+    {
+        //called if the event fails to validate.
+        gameObject.SetActive(false);
+    }
+    
 
-    //detect when mouse enters and exits the event icon
+    //HOVERING
     public void OnPointerEnter(PointerEventData eventData)
     {
-        //called on pointer enter. tells eventmanager and asks
-        //it to show the event preview (which it does, obviously).
-        EventManager.event_hovered(ev, gameObject.transform.localPosition.x, gameObject.transform.localPosition.y);
+        //called on pointer enter.
     }
     public void OnPointerExit(PointerEventData eventData)
     {
-        //called on pointer exit. tells eventmanager to stop showing the preview.
-        EventManager.event_unhovered();
+        //called on pointer exit.
     }
 
 
+    //GETTERS
+    public TextAsset get_story() { return ev; }
+    public string get_eventTitle() { return eventTitle; }
+    public string get_eventDescr() { return eventDescr; }
+    public bool get_loadMission() { return loadMission; }
+    
 }

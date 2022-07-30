@@ -40,6 +40,19 @@ MonoBehaviour:
     includePaths: []
     includes: []
   - compileAutomatically: 0
+    inkAsset: {fileID: 102900000, guid: 9ce29d0c77bbe7d42831c3b40969e9d4, type: 3}
+    jsonAssetDirectory: {fileID: 0}
+    jsonAsset: {fileID: 4900000, guid: a20550800f473a34db911e1716ac7b58, type: 3}
+    unhandledCompileErrors: []
+    errors: []
+    warnings: []
+    todos: []
+    parents: []
+    masterInkAssets: []
+    masterInkAsset: {fileID: 0}
+    includePaths: []
+    includes: []
+  - compileAutomatically: 0
     inkAsset: {fileID: 102900000, guid: 98cf5ea9de6caf34dbef61619c04ddf6, type: 3}
     jsonAssetDirectory: {fileID: 0}
     jsonAsset: {fileID: 4900000, guid: 80362a136f237ce44809bb97c82280a0, type: 3}

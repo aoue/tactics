@@ -43,7 +43,6 @@ public class CombatDialoguer : MonoBehaviour
         if (canProceed && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButton(0)))
         {
             canProceed = false;
-
             displayNextSentence();
         }
     }
@@ -132,7 +131,7 @@ public class CombatDialoguer : MonoBehaviour
                 break;
             default:
                 cammy.unlock_camera();
-                cGrid.next_turn();
+                cGrid.post_mission_begin_dialogue();
                 break;
         }
     }

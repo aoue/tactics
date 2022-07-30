@@ -99,7 +99,6 @@ public class CombatGrid : MonoBehaviour
         display_units(baseMission);
         cam.setup(map_x_border, map_y_border);
         
-
         //starting power depends on the mission
         pw = baseMission.get_starting_power();
         update_pw();
