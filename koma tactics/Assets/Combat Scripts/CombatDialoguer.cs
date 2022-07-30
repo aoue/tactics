@@ -26,7 +26,8 @@ public class CombatDialoguer : MonoBehaviour
 
     [SerializeField] private Canvas dialoguerCanvas; //master. We need it to return control to it later.
     [SerializeField] private CombatGrid cGrid; //master. We need it to return control to it later.
-    [SerializeField] private CameraController cammy; //master. We need it to return control to it later.
+    [SerializeField] private CameraController cammy; //ref to to the combat scene's camera. For jumping.
+    [SerializeField] private PortraitLibrary pLibrary; //
 
     [SerializeField] private Text nameText;
     [SerializeField] private Text sentenceText;
@@ -115,12 +116,14 @@ public class CombatDialoguer : MonoBehaviour
         
         switch (label)
         {
+            /*
             case 0:
                 //beginning of mission: send the player back, and ensure the round still hasn't started yet.
                 //they need the chance to deploy their units.
                 cammy.unlock_camera();
                 cGrid.post_mission_begin_dialogue();
                 break;
+            */
             case -2:
                 //win.
                 cGrid.end_mission_win();
@@ -147,13 +150,17 @@ public class CombatDialoguer : MonoBehaviour
         {
             this.set_name(name);
         });
-        script.BindExternalFunction("show", (int which) =>
+        script.BindExternalFunction("p", (int which) =>
         {
             this.set_portrait(which);
         });
         script.BindExternalFunction("jump", (int x, int y) =>
         {
             this.jump_camera(x, y);
+        });
+        script.BindExternalFunction("slide", (int x, int y) =>
+        {
+            this.slide_camera(x, y);
         });
     }
     void play_music(int which)
@@ -170,12 +177,29 @@ public class CombatDialoguer : MonoBehaviour
     {
         //sets the single portrait slot to the corresponding image.
         //-1 to hide.
+
+        if (which == -1)
+        {
+            portrait.enabled = false;
+        }
+        else
+        {
+            portrait.sprite = pLibrary.retrieve_boxp(which);
+            portrait.enabled = true;
+        }
+
     }
     void jump_camera(int x, int y)
     {
         //jumps camera to the corresponding coordinates
+        Vector3 dest = cGrid.get_pos_from_coords(x, y) + new Vector3(0f, 0f, -10f);
+        cammy.jump_to(dest);
     }
-    //slide camera (?)
+    void slide_camera(int x, int y)
+    {
+        Vector3 dest = cGrid.get_pos_from_coords(x, y) + new Vector3(0f, 0f, -10f);
+        cammy.slide_to(dest, x, y);
+    }
     
 
     

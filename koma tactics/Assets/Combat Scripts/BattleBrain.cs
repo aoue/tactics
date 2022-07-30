@@ -8,11 +8,12 @@ public class BattleBrain
     //calculator for combat.
 
     //light, medium, heavy
+    //the trait's affinity vs. the defender's affinity
     float[,] affinityMultArray = new float[3, 3]
     {
-        {1.0f, 0.75f, 1.5f },
-        {1.5f, 1.0f, 0.75f },
-        {0.75f, 1.5f, 1.0f }
+        {1.0f, 0.5f, 2f },
+        {2f, 1.0f, 0.5f },
+        {0.5f, 2f, 1.0f }
     };
 
     public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile, bool playerAttacking, Order order)
@@ -67,7 +68,7 @@ public class BattleBrain
         //int dmg = Mathf.Max(1, (int)(((atk + t.get_power()) - def) * coverMod));
 
         //multiplicative damage formula:
-        int dmg = Mathf.Max(1, (int)(((atk * (t.get_power() + (u1.get_level() * 2)) / def) * coverMod)));
+        int dmg = Mathf.Max(1, (int)(((atk * (t.get_power() + (u1.get_level() * 2)) / def) * coverMod * UnityEngine.Random.Range(0.85f, 1f))));
         dmg = order.order_damage(dmg);
 
         //once calc is done
@@ -91,7 +92,7 @@ public class BattleBrain
         }
 
         //finally, apply affinity triangle multiplier
-        dmg = Math.Max(1, (int)(affinityMultArray[u1.get_aff(), u2.get_aff()] * dmg));
+        dmg = Math.Max(1, (int)(affinityMultArray[t.get_aff(), u2.get_aff()] * dmg));
 
         return dmg;
     }
@@ -118,7 +119,7 @@ public class BattleBrain
             else atk = u1.get_maga();
         }
 
-        int heal = Mathf.Max(1, (atk + t.get_power()) / 2);
+        int heal = Mathf.Max(1, (int)((atk + t.get_power() + (u1.get_level() * 2)) / 2 * UnityEngine.Random.Range(0.85f, 1f)));
         if (order != null) heal = order.order_heal(heal);
 
         //once calc is done

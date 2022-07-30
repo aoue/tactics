@@ -36,6 +36,7 @@ public class Mission : MonoBehaviour
     //mission settings
     // -win cond
     // -loss cond
+    [SerializeField] private int nextPartIndex; //the index of the part the overworld will resume at.
     [SerializeField] private int starting_power;
     [SerializeField] private string win_obj_descr;
     [SerializeField] private string loss_obj_descr;
@@ -95,8 +96,8 @@ public class Mission : MonoBehaviour
     {
         //returns an array of units and coords representing unit starting spots.
         (Unit, int, int)[] dep_array = {
-            (defUnits[0], 0, 0)//,
-            //(defUnits[1], 3, 3)
+            (defUnits[1], 0, 0),
+            (defUnits[0], 3, 3)
         };
 
         return dep_array;
@@ -112,8 +113,44 @@ public class Mission : MonoBehaviour
 
         return dep_array;
     }
+    public virtual (Enemy, int, int)[] get_enemy_reinforcements(int roundNumber)
+    {
+        switch (roundNumber)
+        {
+            case 0:
+                break;
+            case 1:
+                //(Enemy, int, int)[] dep_array = {
+                //    (defEnemies[0], 4, 0),
+                //};
+                //return dep_array;
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                break;
+            case 8:
+                break;
+            case 9:
+                break;
+            case 10:
+                break;
+            default:
+                break;
+        }
+        return null;
+    }
 
     //getters
+    public int get_nextPartIndex() { return nextPartIndex; }
     public virtual int get_layout_x_dim() { return 5; }
     public virtual int get_layout_y_dim() { return 5; }
     public int get_starting_power() { return starting_power; }

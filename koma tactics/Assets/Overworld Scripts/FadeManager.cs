@@ -39,12 +39,12 @@ public class FadeManager : MonoBehaviour
     public void fade_to_black(float time = -1f)
     {      
         gameObject.SetActive(true);
-        StartCoroutine(fade(true, convert_time_arg(time)));
+        StartCoroutine(fade(true, convert_time_arg(1f / time)));
     }
     public void fade_from_black(float time = -1f)
     {
         gameObject.SetActive(true);
-        StartCoroutine(fade(false, convert_time_arg(time)));
+        StartCoroutine(fade(false, convert_time_arg(1f / time)));
     }
 
     public void fade_from_black_cheat(float time = -1f)
@@ -55,7 +55,31 @@ public class FadeManager : MonoBehaviour
         blackOutSquare.GetComponent<Image>().color = objectColor;
 
         gameObject.SetActive(true);
-        StartCoroutine(fade(false, convert_time_arg(time)));
+        StartCoroutine(fade(false, convert_time_arg(1f / time)));
+    }
+    public void fade_to_black_stay(float time = -1)
+    {
+        //starting from light, fades to black and stays.
+        Color objectColor = blackOutSquare.GetComponent<Image>().color;
+        objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, 0f);
+        blackOutSquare.GetComponent<Image>().color = objectColor;
+
+        gameObject.SetActive(true);
+        StartCoroutine(fade_to_black_and_stop(convert_time_arg(1f / time)));
+    }
+
+    IEnumerator fade_to_black_and_stop(float fadeSpeed = -1f)
+    {
+        Color objectColor = blackOutSquare.GetComponent<Image>().color;
+        float fadeAmount;
+        while (blackOutSquare.GetComponent<Image>().color.a < 1)
+        {
+            fadeAmount = objectColor.a + (convert_time_arg(fadeSpeed) * Time.deltaTime);
+
+            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
+            blackOutSquare.GetComponent<Image>().color = objectColor;
+            yield return null;
+        }        
     }
 
     IEnumerator fade(bool fadeToBlack, float fadeSpeed = -1f)
@@ -86,7 +110,6 @@ public class FadeManager : MonoBehaviour
             }
             gameObject.SetActive(false);
         }
-        
     }
 
 }

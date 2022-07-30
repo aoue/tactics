@@ -7,6 +7,8 @@ public class PortraitLibrary : MonoBehaviour
 {
     //the portrait library.
     //holds all the portraits in the game, all accessible with an int.
+    //is a prefab, accessible in both overworld and combat scenes (though the latter only uses it for box portraits)
+
     // CHAR INDEX LEGEND:
     // 0: yve
     // 1: friday
@@ -41,6 +43,7 @@ public class PortraitLibrary : MonoBehaviour
     {
         //used for event previews. nothing major.
         //only a handful of box sprites, anyway.
+        //they don't have expressions - just a single shot of the speaker—to help the player match name with face.
         //returns according to char index legend.
         return boxSprites[index];
     }

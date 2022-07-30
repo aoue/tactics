@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Linq; //for List.Min()
+using UnityEngine.SceneManagement;
 
 
 enum State { SELECT_UNIT, SELECT_MOVEMENT, SELECT_TARGET, DEPLOYING, ENEMY, BETWEEN_ROUNDS };
@@ -11,7 +12,7 @@ public class CombatGrid : MonoBehaviour
 {
     //responsible for instatiating and managing the combat grid and for general combat control.
 
-
+    private const float pause_before_event_start = 1f; //the pause/fade duration before starting an event.
     private const float enemy_pause_before_attack = 0.35f; //the seconds the enemy unit will pause with possible origin tiles before attacking.
     private const float enemy_pause_before_movement = 0.35f; //the seconds the enemy unit will pause with highlighted movement range before moving.
     private const float movement_animation_speed = 20f; //the number of units a unit moves per second. Remember: one of our tiles is 2 units.
@@ -20,9 +21,12 @@ public class CombatGrid : MonoBehaviour
     private const float combat_highlights_linger = 0f; //how long we wait for the period between dead/broken units being removed/updated and target highlights being unhighlighted
     private bool animating; //true while animating. Disables player input.
 
+    [SerializeField] private MissionManager missionList; //all missions.
+    private Mission loadedMission;
+
+    [SerializeField] private FadeManager fader;
     [SerializeField] private Canvas uiCanvas;
-    [SerializeField] private CombatAudio audio;
-    [SerializeField] private Mission baseMission;
+    [SerializeField] private CombatAudio audio;   
     [SerializeField] private CombatDialoguer cDia;
     [SerializeField] private CameraController cam;
     [SerializeField] private Button[] unit_shortcut_buttons;
@@ -95,17 +99,21 @@ public class CombatGrid : MonoBehaviour
         allowRoundEvent = true;
         roundNumber = 0;
 
-        display_grid(baseMission);
-        display_units(baseMission);
+        loadedMission = missionList.get_mission(Carrier.Instance.get_nextMissionIndex());
+        Carrier.Instance.set_nextPartIndex(loadedMission.get_nextPartIndex());
+
+        display_grid(loadedMission);
+        display_units(loadedMission);
         cam.setup(map_x_border, map_y_border);
         
         //starting power depends on the mission
-        pw = baseMission.get_starting_power();
+        pw = loadedMission.get_starting_power();
         update_pw();
 
         gameState = State.BETWEEN_ROUNDS;
         update_ZoC();
 
+        fader.fade_from_black_cheat(2f);
         next_turn();
     }
     void Update()
@@ -218,7 +226,7 @@ public class CombatGrid : MonoBehaviour
     }
 
     //Display
-    private Vector3 get_pos_from_coords(int x, int y) { return new Vector3(2 * y, 2 * (map_x_border - 1 - x), 0f); }
+    public Vector3 get_pos_from_coords(int x, int y) { return new Vector3(2 * y, 2 * (map_x_border - 1 - x), 0f); }
     public void display_grid(Mission m)
     {
         //sets up the level based on m.
@@ -416,8 +424,8 @@ public class CombatGrid : MonoBehaviour
         //gets information from mission to display:
         // -win objective
         // -lose objective
-        briefingWinText.text = baseMission.get_winDescr();
-        briefingLossText.text = baseMission.get_lossDescr();
+        briefingWinText.text = loadedMission.get_winDescr();
+        briefingLossText.text = loadedMission.get_lossDescr();
         briefingDisplay.gameObject.SetActive(true);
         
     }
@@ -435,6 +443,35 @@ public class CombatGrid : MonoBehaviour
     {
         uInformer.hide();
         tInformer.hide();
+    }
+    void spawn_reinforcements((Enemy, int, int)[] reinforcements)
+    {
+        //deploy enemies too
+        for (int i = 0; i < reinforcements.Length; i++)
+        {
+            int x_pos = reinforcements[i].Item2;
+            int y_pos = reinforcements[i].Item3;
+
+            //only spawn the unit if the tile it would be spawned on is NOT occupied.
+            if (!myGrid[x_pos, y_pos].occupied())
+            {
+                Vector3 instPos = get_pos_from_coords(x_pos, y_pos);
+                //cause unit to be shown.
+                Enemy inst_u = Instantiate(reinforcements[i].Item1, instPos, transform.rotation);
+
+                //tile.place_unit()
+                myGrid[x_pos, y_pos].place_unit(inst_u);
+
+                inst_u.start_of_mission(); //do start of mission setup
+
+                //make sure to set their AP to 0. No same turn reinforcements.
+                inst_u.x = x_pos;
+                inst_u.y = y_pos;
+                inst_u.dec_ap();
+                enemyUnits.Add(inst_u);
+            }                        
+        }
+        update_ZoC();
     }
 
     //Control
@@ -456,6 +493,26 @@ public class CombatGrid : MonoBehaviour
         nextRoundButton.interactable = true;
         animating = false;
     }
+    IEnumerator start_event_after_pause(int which)
+    {
+        cam.lock_camera();
+        animating = true;
+        allowRoundEvent = false;
+        uiCanvas.enabled = false;
+        fader.fade_to_black(pause_before_event_start);
+        yield return new WaitForSeconds(pause_before_event_start);
+
+        //spawn reinforcements, if any:
+        (Enemy, int, int)[] reinforcements = loadedMission.get_enemy_reinforcements(which);
+        if (reinforcements != null)
+        {
+            //spawn them.
+            spawn_reinforcements(reinforcements);
+        }
+
+        //start event, (well, there has to be one.)
+        cDia.play_event(loadedMission.get_script(), which);
+    }
 
     public void start_player_turn()
     {
@@ -476,22 +533,14 @@ public class CombatGrid : MonoBehaviour
     public void next_turn()
     {       
         //handle mission over and start (+ their event playing)
-        if (baseMission.is_mission_won(playerUnits, enemyUnits, myGrid) && allowRoundEvent)
-        {
-            Debug.Log("Mission is won.");
-            animating = true;            
-            allowRoundEvent = false;
-            uiCanvas.enabled = false;
-            cDia.play_event(baseMission.get_script(), -2);
+        if (loadedMission.is_mission_won(playerUnits, enemyUnits, myGrid) && allowRoundEvent)
+        {   
+            StartCoroutine(start_event_after_pause(-2));
             return;
         }
-        else if (baseMission.is_mission_lost(playerUnits, enemyUnits, myGrid) && allowRoundEvent)
+        else if (loadedMission.is_mission_lost(playerUnits, enemyUnits, myGrid) && allowRoundEvent)
         {
-            Debug.Log("Mission is lost.");
-            animating = true;           
-            allowRoundEvent = false;
-            uiCanvas.enabled = false;
-            cDia.play_event(baseMission.get_script(), -3);
+            StartCoroutine(start_event_after_pause(-3));
             return;
         }
         if (roundNumber == 0 && allowRoundEvent)
@@ -499,7 +548,7 @@ public class CombatGrid : MonoBehaviour
             //play start of mission event:
             animating = true;
             allowRoundEvent = false;
-            cDia.play_event(baseMission.get_script(), 0);
+            cDia.play_event(loadedMission.get_script(), 0);
             return;
         }
 
@@ -641,18 +690,12 @@ public class CombatGrid : MonoBehaviour
     }    
     public void click_start_round_button()
     {
-        //spawn reinforcements, if any:
-        //(should take place before the event, so we can comment on that.)
-
         //check if there is a start of round event to play:
         //Debug.Log("clicked start of round button: allowRoundEvent=" + allowRoundEvent + " | roundNumber=" + roundNumber);
-        if (baseMission.has_event(roundNumber) && allowRoundEvent)
+        if (loadedMission.has_event(roundNumber) && allowRoundEvent)
         {
-            uiCanvas.enabled = false;
             nextRoundButton.interactable = false;
-            animating = true;
-            allowRoundEvent = false;
-            cDia.play_event(baseMission.get_script(), roundNumber);
+            StartCoroutine(start_event_after_pause(roundNumber));
             return;
         }
         else
@@ -722,11 +765,28 @@ public class CombatGrid : MonoBehaviour
     }
     public void end_mission_win()
     {
+        Debug.Log("Mission is won.");
+
+        //pass 1 to load overworld
+        StartCoroutine(pause_before_loading_overworld(1));
 
     }
     public void end_mission_loss()
     {
+        //show loss menu:
+        // -retry mission (can reload scene to do this, probably)
+        // -main menu
+        //pass 0 to load main menu.
+        //pass 2 to reload combat scene again.
+        Debug.Log("Mission is lost.");
 
+    }
+    IEnumerator pause_before_loading_overworld(int sceneToLoad)
+    {
+        fader.fade_to_black_stay();
+        yield return new WaitForSeconds(2f);
+        Debug.Log("loading scene " + sceneToLoad + ". hermes' nextpartindex = " + Carrier.Instance.get_nextPartIndex());
+        SceneManager.LoadScene(sceneToLoad);
     }
 
     //Enemy Turn/AI
@@ -1755,10 +1815,10 @@ public class CombatGrid : MonoBehaviour
     bool is_deployment_possible()
     {
         //returns true if the player has any bases they can deploy from.
-        //i.e. true if at least one base is player owned and not occupied.
+        //i.e. true if at least one base is player owned and not occupied and not all 8 units are deployed
         foreach(BaseTile b in baseList)
         {
-            if (b.get_ownership() == BaseOwnership.PLAYER && !b.occupied())
+            if (b.get_ownership() == BaseOwnership.PLAYER && !b.occupied() && playerUnits.Contains(null))
             {
                 Debug.Log("deployment is possible");
                 return true;
@@ -1846,11 +1906,11 @@ public class CombatGrid : MonoBehaviour
     public void play_music_track(int which)
     {
         //which corresponds to an index in mission's musicList
-        audio.play_music(baseMission.get_track(which));
+        audio.play_music(loadedMission.get_track(which));
     }
     public void play_sound(int which)
     {
-        //audio.play_music(baseMission.get_sound(which));
+        //audio.play_music(loadedMission.get_sound(which));
     }
     public void play_typing()
     {

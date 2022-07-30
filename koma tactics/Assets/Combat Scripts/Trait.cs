@@ -48,6 +48,7 @@ public class Trait : MonoBehaviour
     //active stuff
     [SerializeField] private TargetingType targeting; //determines how tiles are validated for targeting.
     [SerializeField] private AoEType aoe; //determines how many tiles are actually hit by an attack.
+    [SerializeField] private int affinity; //used when attacking.
     [SerializeField] private int range; //determines how far the attack can reach
     [SerializeField] private int power; //determines, along with the attacker's and defender's stats, the damage dealt.
     [SerializeField] private int pwCost; //determines, along with the attacker's and defender's stats, the damage dealt.
@@ -155,6 +156,7 @@ public class Trait : MonoBehaviour
     public bool get_isPassive() { return isPassive; }
     public TargetingType get_targetingType() { return targeting; }
     public AoEType get_AoEType() { return aoe; }
+    public int get_aff() { return affinity; }
     public int get_range() { return range; }
     public int get_power() { return power; }
     public int get_pwCost() { return pwCost; }

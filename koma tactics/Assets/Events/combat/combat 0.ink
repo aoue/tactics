@@ -9,10 +9,11 @@
 //  -start of any round after
 
 //Externals here, can:
-EXTERNAL play_music(which)
-EXTERNAL n(name)
-EXTERNAL show(which)
-EXTERNAL jump(x, y)
+EXTERNAL play_music(which) //play song using int->sound manager
+EXTERNAL n(name) //set name to string
+EXTERNAL p(which) //set box portrait using int->portrait library
+EXTERNAL jump(x, y) //jump to x, y coord on game map
+EXTERNAL slide(x, y) //slide to x, y coord on game map
 
 
 //Navigation to the right label
@@ -31,19 +32,22 @@ VAR label = 0
 
 
 === mission_begin ===
+~jump(4, 4)
 ~n("Voice")
+~p(-1)
 //also, setup music here too.
 ~play_music(0)
 (music playing right?) This is dummy text for the start of the mission.
-Okay, we're changing tracks.
+~slide(0,0)
+sliding... Okay, we're changing tracks.
 ~play_music(1)
 Time to fight!
 -> END
 
 === round_one ===
 ~n("Man's voice")
-
-hghggggggggggggnn!
+~jump(4, 0)
+Reinforcements!
 Oh my shoulder!
 -> END
 

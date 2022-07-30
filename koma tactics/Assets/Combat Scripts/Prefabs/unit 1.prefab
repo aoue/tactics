@@ -235,9 +235,9 @@ MonoBehaviour:
   aff: 1
   movement: 4
   hpMax: 45
-  hp: 0
+  hp: 45
   brkMax: 20
-  brk: 0
+  brk: 20
   ap: 1
   controlRange: 1
   pwCost: 2
