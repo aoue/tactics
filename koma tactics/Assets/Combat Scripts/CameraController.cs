@@ -18,14 +18,14 @@ public class CameraController : MonoBehaviour
     int minSize; //+/- in either direction
     
     [SerializeField] private Camera cam;
-    
+
 
     //camera boundaries (todo)
-    bool canMove;
-    int topBorder;
-    int bottomBorder;
-    int rightBorder;
-    int leftBorder;
+    private bool canMove;
+    private float topBorder;
+    private float bottomBorder;
+    private float rightBorder;
+    private float leftBorder;
 
 
     void Update()
@@ -63,7 +63,15 @@ public class CameraController : MonoBehaviour
             verticalInput = 1f;
         }
 
-        Vector3 targetPosition = new Vector3(transform.position.x + horizontalInput, transform.position.y + verticalInput, transform.position.z);
+        float xDest = transform.position.x + horizontalInput;
+        xDest = Math.Min(rightBorder, xDest);
+        xDest = Math.Max(leftBorder, xDest);
+
+        float yDest = transform.position.y + verticalInput;
+        yDest = Math.Min(topBorder, yDest);
+        yDest = Math.Max(bottomBorder, yDest);
+
+        Vector3 targetPosition = new Vector3(xDest, yDest, transform.position.z);
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, cameraSpeed * Time.deltaTime);
     }
 
@@ -75,12 +83,22 @@ public class CameraController : MonoBehaviour
         //called at the start of a mission by combatGrid, who sets the values of 
         //the borders based on the map size.
 
-        //set borders
-        maxSize = 20;
+        //set camera borders (with math)
+
+        float xcenter = 2 * ((xborder - 1) / 2);
+        float ycenter = 2 * ((yborder - 1) / 2);
+
+        topBorder = ((2 * yborder)); 
+        bottomBorder = ((0));
+        rightBorder = ((2 * xborder));
+        leftBorder = ((0));
+
+        //set camera size
+        maxSize = 12;
         minSize = 6;
 
-        //set starting position
-        Vector3 startpos = new Vector3(2 * ((xborder - 1) / 2), 2 * ((yborder - 1) / 2), - 10f);
+        //set starting position (in the middle)
+        Vector3 startpos = new Vector3(xcenter, ycenter, - 10f);
         transform.position = startpos;
 
     }

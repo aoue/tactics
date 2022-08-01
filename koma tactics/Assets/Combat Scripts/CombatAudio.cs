@@ -22,7 +22,7 @@ public class CombatAudio : MonoBehaviour
         //Debug.Log("CombatAudio.play_music() called");
         StartCoroutine(fade_to_newTrack(ac));
     }
-    public void play_moveSound(AudioClip ac)
+    public void play_sound(AudioClip ac)
     {
         if (ac == null) return;
         soundPlayer.PlayOneShot(ac);
@@ -31,6 +31,10 @@ public class CombatAudio : MonoBehaviour
     {
         typer.Play();
     }
+    public void stop_music()
+    {
+        musicPlayer.Stop();
+    }
 
     //HELPERS
     IEnumerator fade_to_newTrack(AudioClip toPlay, float fadeOutTime = 1.5f)
@@ -38,19 +42,28 @@ public class CombatAudio : MonoBehaviour
         //fades out from currently playing track and switches to new track.
         //only for music player - that's the only thing that needs to fade.
 
+        float startVolume = musicPlayer.volume;
         if (musicPlayer.isPlaying)
         {
-            float startVolume = musicPlayer.volume;
+            //fade old music out, then fade new music in.
+            
             while (musicPlayer.volume > 0)
             {
                 musicPlayer.volume -= startVolume * Time.deltaTime / fadeOutTime;
                 yield return null;
             }
             musicPlayer.Stop();
-            musicPlayer.volume = startVolume;
         }
+
         musicPlayer.clip = toPlay;
         musicPlayer.Play();
+
+        while (musicPlayer.volume < startVolume)
+        {
+            musicPlayer.volume += startVolume * Time.deltaTime / fadeOutTime;
+            yield return null;
+        }
+        musicPlayer.volume = startVolume;
     }
 
 

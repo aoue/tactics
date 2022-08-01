@@ -21,6 +21,8 @@ public class Carrier : MonoBehaviour
     private int nextMissionIndex; //set by overworld when loading a combat mission.
     private bool startingNewGame; //set to true by main menu on the new game button. Otherwise, always false.
 
+    [SerializeField] private Unit[] allPlayerUnits; //the carrier knows all the units.
+
     void Awake()
     {
         if (_instance != null && _instance != this)
@@ -34,29 +36,41 @@ public class Carrier : MonoBehaviour
         }
     }
 
+    //GAMESTATE
     public void new_game()
     {
         //called by main menu
-        startingNewGame = true;
+        nextMissionIndex = 0;
     }
-
     public void reset()
     {
         //set to the state that it has at the start of the game.
         //this works, because main menu sets startingNewGame to true. No where else can it be set to true.
-        startingNewGame = false;
         nextPartIndex = 0;
         nextMissionIndex = 0;
         reserveParty = new List<Unit>();
     }
 
+    //PARTY MODIFICATION
+    public void add_to_party(int id)
+    {
+        if (!reserveParty.Contains( allPlayerUnits[id] ))
+        {
+            reserveParty.Add(allPlayerUnits[id]);
+
+        }
+    }
+    public void remove_from_party(int id)
+    {
+        reserveParty.Remove(allPlayerUnits[id]);
+    }
+
     //GETTERS
-    public bool get_startingNewGame() { return startingNewGame; }
     public int get_nextPartIndex() { return nextPartIndex; }
     public int get_nextMissionIndex() { return nextMissionIndex; }
-    public List<Unit> get_reserveParty() { return reserveParty; }
+    public List<Unit> get_reserveParty() { return reserveParty; }  
 
-    //SETTERS
+    //GETTERS
     public void set_nextPartIndex(int i) { nextPartIndex = i; }
     public void set_nextMissionIndex(int i) { nextMissionIndex = i; }
 

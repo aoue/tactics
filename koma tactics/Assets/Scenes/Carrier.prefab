@@ -43,3 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1bc792f957661d42b7405b777f8d3db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allPlayerUnits:
+  - {fileID: 4189096264204994432, guid: 8b8385353a270a747a879b1e71830d87, type: 3}
+  - {fileID: 7194641574226003340, guid: 4c02790deb343c2418b25e92a9597939, type: 3}
+  - {fileID: 6760715730274706041, guid: bc6d79f6cc1c6f942b895795157541f4, type: 3}

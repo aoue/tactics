@@ -7,36 +7,47 @@ public class PortraitLibrary : MonoBehaviour
 {
     //the portrait library.
     //holds all the portraits in the game, all accessible with an int.
-    //is a prefab, accessible in both overworld and combat scenes (though the latter only uses it for box portraits)
 
-    // CHAR INDEX LEGEND:
-    // 0: yve
+    //the backgrounds used during overworld events.
+    //all in the game are here.
+    //Index:
+    // 0:
+    [SerializeField] private Sprite[] bgs;
+
+    //for event previews. no expression variations, all characters are in there, 1 sprite each.
+    //The sprite is neck up, talking-portrait. Also used in combat events for the portrait slot.
+    //(set with the p() function in Ink.)
+    //Index:
+    // 0: mc
     // 1: friday
-    // 2: mueler
-    // 3: maddy
-    //etc
+    // 2: yve
+    // 3: nai
+    // etc
+    [SerializeField] private Sprite[] boxSprites;
 
-    // EXPRESSION INDEX LEGEND:
+
+    //full portraits. Here, the index are subdivided into two keys:
+    // / 100 = which character
+    //Index:
+    // 0: mc
+    // 1: friday
+    // 2: yve
+    // 3: nai
+    // etc
+
+    // % 100 = which expression
+    //Index:
     // 0: neutral
     // 1: 
-    // 2: 
-    //etc
-    [SerializeField] private Sprite[] eventBgs;
-    [SerializeField] private Sprite[] boxSprites; //for event previews. no expression variations, all characters are in there, 1 each.
-
-    [SerializeField] private Sprite[] yveSpeaker;
-    [SerializeField] private Sprite[] fridaySpeaker;
-    [SerializeField] private Sprite[] muelerSpeaker;
-    [SerializeField] private Sprite[] maddySpeaker;
-
-    [SerializeField] private Sprite[] yveFull;
+    // etc
+    [SerializeField] private Sprite[] mcFull;
     [SerializeField] private Sprite[] fridayFull;
-    [SerializeField] private Sprite[] muelerFull;
-    [SerializeField] private Sprite[] maddyFull;
+    [SerializeField] private Sprite[] yveFull;
+    [SerializeField] private Sprite[] naiFull;
 
     public Sprite retrieve_eventBg(int id)
     {
-        return eventBgs[id];
+        return bgs[id];
     }
 
     public Sprite retrieve_boxp(int index)
@@ -47,35 +58,6 @@ public class PortraitLibrary : MonoBehaviour
         //returns according to char index legend.
         return boxSprites[index];
     }
-
-    public Sprite retrieve_speakerp(int index)
-    {
-        //the way this one works is a bit more complicated.
-        //all characters have multiple full portraits, which may change during the dialogue.
-
-        //the index passed in is subdivided into 2:
-        int char_index = index / 100; //e.g. 502 -> 5
-        int expression_index = index % 100; //e.g. 502 -> 2
-
-        //now, char_index is used to select the array we want.
-        //then, expression_index is used to select an element (which is a sprite) from the array.
-        switch (char_index)
-        {
-            case 0: //yve
-                return yveSpeaker[expression_index];
-            case 1: //friday
-                return fridaySpeaker[expression_index];
-            case 2: //mueler
-                return muelerSpeaker[expression_index];
-            case 3: //maddy
-                return maddySpeaker[expression_index];
-
-                //etc.
-        }
-
-        return null;
-    }
-
 
     public Sprite retrieve_fullp(int index)
     {
@@ -91,17 +73,18 @@ public class PortraitLibrary : MonoBehaviour
         switch (char_index)
         {
             case 0: //yve
-                return yveFull[expression_index];
+                return mcFull[expression_index];
             case 1: //friday
                 return fridayFull[expression_index];
             case 2: //mueler
-                return muelerFull[expression_index];
+                return yveFull[expression_index];
             case 3: //maddy
-                return maddyFull[expression_index];
+                return naiFull[expression_index];
 
-            //etc.
+                //etc.
         }
 
         return null;
     }
+
 }

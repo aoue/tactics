@@ -139,13 +139,15 @@ MonoBehaviour:
   ev: {fileID: 0}
   eventTitle: 
   eventDescr: 
-  dangerIcon: {fileID: 0}
-  heartIcon: {fileID: 0}
-  frienshipIcon: {fileID: 0}
+  type: 3
+  dangerIcon: {fileID: 7928242876889275070}
+  heartIcon: {fileID: 5082264437674466478}
+  frienshipIcon: {fileID: 2515186540752590820}
   minProgressionToEnable: 0
   addToProg: 0
   setProg: 0
   progMod: 0
+  combatMissionIndex: 0
 --- !u!114 &2948428554845540474
 MonoBehaviour:
   m_ObjectHideFlags: 0

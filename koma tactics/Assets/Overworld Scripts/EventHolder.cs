@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Ink.Runtime;
 
+public enum eventType { NONE, HEART, BRO, MISSION};
 public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     //holds an event, shows up on the overworld.
@@ -13,11 +14,11 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     //is the one to try to validate the event.
 
     [SerializeField] private TextAsset ev;
-    protected bool loadMission = false; //if true, then load a mission instead of playing an actual event.
     [SerializeField] private string eventTitle;
     [SerializeField] private string eventDescr;
 
     //events can be flagged in three ways:
+    [SerializeField] private eventType type;
     [SerializeField] private GameObject dangerIcon; //an exclamation mark; danger icon. This means the event will lock all other open events.
     [SerializeField] private GameObject heartIcon; //a heart; means the event has to do with love or something, man, idk.
     [SerializeField] private GameObject frienshipIcon; //a bro icon; means the event has to do with building friendship.
@@ -31,14 +32,17 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     //VIRTUALS - checking and modifying states
     public virtual void post_event()
     {
-        //do anything.
+        //Note: modifying day progression is handled outside of this.
+
+        //do whatever you want.
     }
     public virtual bool validate_event()
     {
+        //Note: progression validation is handled outside of this.
+
         //overwrite to check any requirements you want.
         //things like:
-        // -char rels, etc
-        //Note: progression validation is handled outside of this.
+        // -char rels, choices made, etc.
 
         //true means the event will be enabled and viewable.
         //false means it won't be.
@@ -55,7 +59,7 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         return overworldProgression >= minProgressionToEnable;
     }
-    public void begin_event()
+    public virtual void begin_event()
     {
         //when the button is clicked. 
 
@@ -72,11 +76,24 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     //RUNNING OR HIDING EVENT
     public void setup_event()
     {
-        //called if the event passes validate.
+        //called if the event passes validation.
 
         //check the danger/heart/friendship setting and enable whichever it calls for,
         //or none.
-
+        switch (type)
+        {
+            case eventType.BRO:
+                frienshipIcon.gameObject.SetActive(true);
+                break;
+            case eventType.HEART:
+                heartIcon.gameObject.SetActive(true);
+                break;
+            case eventType.MISSION:
+                dangerIcon.gameObject.SetActive(true);
+                break;
+            default:
+                break;
+        }
         gameObject.SetActive(true);
     }
     public void disable_event()
@@ -85,7 +102,6 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         gameObject.SetActive(false);
     }
     
-
     //HOVERING
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -96,11 +112,10 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         //called on pointer exit.
     }
 
-
     //GETTERS
     public TextAsset get_story() { return ev; }
     public string get_eventTitle() { return eventTitle; }
     public string get_eventDescr() { return eventDescr; }
-    public bool get_loadMission() { return loadMission; }
+
     
 }

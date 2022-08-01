@@ -78,7 +78,7 @@ public class CombatGrid : MonoBehaviour
     private int roundNumber; //for timing round start events and reinforcements, that kind of thing.
     private bool allowRoundEvent; //for timing round start events and reinforcements, that kind of thing.
 
-    [SerializeField] private Unit[] reserveParty;
+    [SerializeField] private List<Unit> reserveParty;
     private Unit[] playerUnits;
     private List<Unit> enemyUnits;
 
@@ -101,6 +101,7 @@ public class CombatGrid : MonoBehaviour
 
         loadedMission = missionList.get_mission(Carrier.Instance.get_nextMissionIndex());
         Carrier.Instance.set_nextPartIndex(loadedMission.get_nextPartIndex());
+        reserveParty = Carrier.Instance.get_reserveParty();
 
         display_grid(loadedMission);
         display_units(loadedMission);
@@ -224,6 +225,15 @@ public class CombatGrid : MonoBehaviour
         }
         
     }
+    Unit get_unit_from_id(int id)
+    {
+        //return the unit with the corresponding id from the reserve party.
+        for (int i = 0; i < reserveParty.Count; i++)
+        {
+            if (reserveParty[i].get_uniqueUnitID() == id) return reserveParty[i];
+        }
+        return null;
+    }
 
     //Display
     public Vector3 get_pos_from_coords(int x, int y) { return new Vector3(2 * y, 2 * (map_x_border - 1 - x), 0f); }
@@ -263,11 +273,18 @@ public class CombatGrid : MonoBehaviour
         foreach(Unit u in reserveParty)
         {
             u.set_deployed(false);
+            u.start_of_mission();
         }
 
         //show a unit on a tile.
         for (int i = 0; i < m.get_deployment_spots().Length; i++)
         {
+            int unit_id = m.get_deployment_spots()[i].Item1;
+
+            //first, check that unit id is in the party.
+            //if it isn't, then the player misses out.
+            if ( get_unit_from_id(unit_id) == null ) continue;
+
             int x_pos = m.get_deployment_spots()[i].Item2;
             int y_pos = m.get_deployment_spots()[i].Item3;
 
@@ -275,23 +292,31 @@ public class CombatGrid : MonoBehaviour
             Vector3 instPos = get_pos_from_coords(x_pos, y_pos);
 
             //cause unit to be shown.
-            m.get_deployment_spots()[i].Item1.set_deployed(true);
-            Unit inst_u = Instantiate(m.get_deployment_spots()[i].Item1, instPos, transform.rotation);
+            get_unit_from_id(unit_id).set_deployed(true);
+            Unit inst_u = Instantiate( get_unit_from_id(unit_id) , instPos, transform.rotation);
 
             //tile.place_unit()
             myGrid[x_pos, y_pos].place_unit(inst_u);
 
-            inst_u.start_of_mission(); //do start of mission setup
-
             inst_u.x = x_pos;
             inst_u.y = y_pos;
-            playerUnits[i] = (inst_u);
+
+            //place the unit into the first empty slot of playerUnits
+            for(int j = 0; j < playerUnits.Length; j++)
+            {
+                if (playerUnits[j] == null)
+                {
+                    playerUnits[j] = (inst_u);
+                    unit_shortcut_buttons[j].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "";
+                    unit_shortcut_buttons[j].GetComponent<Image>().sprite = inst_u.get_box_p();
+                    break;
+                }
+            }           
 
             //setup the shortcut button:
             // -hide text
             // -put unit's box image into the slot.
-            unit_shortcut_buttons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "";
-            unit_shortcut_buttons[i].GetComponent<Image>().sprite = inst_u.get_box_p();
+            
         }
 
         //deploy enemies too
@@ -545,10 +570,12 @@ public class CombatGrid : MonoBehaviour
         }
         if (roundNumber == 0 && allowRoundEvent)
         {
-            //play start of mission event:
+            //play start of mission event:         
+            cam.lock_camera();
             animating = true;
             allowRoundEvent = false;
-            cDia.play_event(loadedMission.get_script(), 0);
+            uiCanvas.enabled = false;
+            cDia.play_event(loadedMission.get_script(), 0);           
             return;
         }
 
@@ -1683,6 +1710,7 @@ public class CombatGrid : MonoBehaviour
     public void hover_reserveUnit_slot(int which)
     {
         //fills uInformer on hover.
+        if (which >= reserveParty.Count) return;
         if (reserveParty[which] != null)
         {
             uInformer.fill(reserveParty[which], pw, false);
@@ -1737,7 +1765,7 @@ public class CombatGrid : MonoBehaviour
             //for each the units in the reserveParty           
             // -if not already deployed
             // -if our pw > unit's pw deploy cost
-            for (int i = 0; i < reserveParty.Length; i++)
+            for (int i = 0; i < reserveParty.Count; i++)
             {
                 GameObject obj = deploymentObj.gameObject.transform.GetChild(i).gameObject;
                 obj.transform.GetChild(0).GetComponent<Image>().sprite = reserveParty[i].get_box_p();
@@ -1754,14 +1782,14 @@ public class CombatGrid : MonoBehaviour
                     obj.GetComponent<Button>().interactable = false;
                 }
             }
-            for (int i = reserveParty.Length; i < 18; i++)
+            for (int i = reserveParty.Count; i < 18; i++)
             {
                 deploymentObj.gameObject.transform.GetChild(i).gameObject.SetActive(false);
             }
         }
         else
         {
-            for (int i = 0; i < reserveParty.Length; i++)
+            for (int i = 0; i < reserveParty.Count; i++)
             {
                 GameObject obj = deploymentObj.gameObject.transform.GetChild(i).gameObject;
                 obj.transform.GetChild(0).GetComponent<Image>().sprite = reserveParty[i].get_box_p();
@@ -1769,7 +1797,7 @@ public class CombatGrid : MonoBehaviour
                 obj.GetComponent<Button>().interactable = false;
                 
             }
-            for (int i = reserveParty.Length; i < 18; i++)
+            for (int i = reserveParty.Count; i < 18; i++)
             {
                 deploymentObj.gameObject.transform.GetChild(i).gameObject.SetActive(false);
             }
@@ -1871,7 +1899,7 @@ public class CombatGrid : MonoBehaviour
             }
         }
         //set the prefab's state
-        for (int i = 0; i < reserveParty.Length; i++)
+        for (int i = 0; i < reserveParty.Count; i++)
         {
             if (active_unit.get_uniqueUnitID() == reserveParty[i].get_uniqueUnitID())
             {

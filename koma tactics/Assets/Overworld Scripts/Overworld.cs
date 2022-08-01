@@ -6,16 +6,21 @@ using UnityEngine.SceneManagement;
 
 public class Overworld : MonoBehaviour
 {
-    //game state
+    //this is the main overworld controller object.
+
+    //audio
+    [SerializeField] private OverworldAudio audio;
+
 
     //visuals
+    [SerializeField] private Text partText; //In the top left corner, used to display the date. 
     [SerializeField] private FadeManager fader;
     [SerializeField] private BackgroundManager overworldBackgrounds;
     [SerializeField] private Image backgroundFrame;
-    [SerializeField] private EventManager evMan;
-
-    
+    [SerializeField] private EventManager evMan;   
     [SerializeField] private Part[] parts; //all their children are event holders.
+
+    //part display
 
     //day logic
     private int currentPartIndex;
@@ -23,59 +28,38 @@ public class Overworld : MonoBehaviour
     private bool allowInput;
     private bool ranImmediate;
 
-    //transporting data between scenes - we store the data in a prefab.
-
-
     void Start()
     {
         //when we load, we check the part we are set at, and load that part in the game.
-        if (Carrier.Instance.get_startingNewGame())
+        if (Carrier.Instance.get_nextPartIndex() == 0)
         {
             //NEW GAME:
             //reset carrier prefab, units, choices, etc
-            Debug.Log("carrier is resetting");
+            //Debug.Log("carrier is resetting");
             Carrier.Instance.reset();
         }
-        currentPartIndex = Carrier.Instance.get_nextPartIndex();
-        Debug.Log("current part index set to " + currentPartIndex + " by carrier.");
-
-        //set current part to active. Hide all other parts.
-        for(int i = 0; i < parts.Length; i++)
-        {
-            if (i == currentPartIndex)
-            {
-                parts[i].gameObject.SetActive(true);
-                //Debug.Log("enabling part " + i);
-            }
-            else
-            {
-                parts[i].gameObject.SetActive(false);
-                //Debug.Log("disabling part " + i);
-            }
-        }
-        
-
-        dayProgression = 0;
-        //set the background of the part
-        backgroundFrame.sprite = overworldBackgrounds.get_backgroundSprite(parts[currentPartIndex].get_backgroundIndex());
-        allowInput = false;
-        ranImmediate = false;
-
-        load_part();
+        //Debug.Log("carrier part index is " + Carrier.Instance.get_nextPartIndex());              
+        change_part(Carrier.Instance.get_nextPartIndex());
     }
 
     public void change_part(int newPartIndex)
     {
-        //called by the eventholder derived class; newpart eventholder.
+        currentPartIndex = newPartIndex;
+
+        //set new music too
+        audio.ow_play_music(parts[currentPartIndex].get_musicIndex());
+
+        partText.text = parts[currentPartIndex].get_dateString();
+
         for (int i = 0; i < parts.Length; i++)
         {
-            if (currentPartIndex == i) parts[currentPartIndex].gameObject.SetActive(true);
-            else parts[currentPartIndex].gameObject.SetActive(false);
+            if (currentPartIndex == i) parts[i].gameObject.SetActive(true);
+            else parts[i].gameObject.SetActive(false);
         }
+        dayProgression = 0;
         backgroundFrame.sprite = overworldBackgrounds.get_backgroundSprite(parts[currentPartIndex].get_backgroundIndex());
         allowInput = false;
         ranImmediate = false;
-        currentPartIndex = newPartIndex;
         load_part();
     }
     public void load_part()
@@ -90,9 +74,10 @@ public class Overworld : MonoBehaviour
         //else:
         // -hide it
         foreach (EventHolder eh in parts[currentPartIndex].get_events())
-        {
+        {          
             if (eh.validate_progression(dayProgression) && eh.validate_event())
             {
+                //Debug.Log("event validated sir!");
                 eh.setup_event();
             }
             else
@@ -113,29 +98,38 @@ public class Overworld : MonoBehaviour
         }
     }
 
+    //EVENT TRIGGERS, PASSED ON BY PART
     public void load_event(EventHolder ev)
     {
         allowInput = false;
-
-        if (ev.get_loadMission())
-        {
-            //load a combat mission
-            //Debug.Log("loading combat: " + parts[currentPartIndex].get_combatMissionIndex());          
-            Carrier.Instance.set_nextMissionIndex(parts[currentPartIndex].get_combatMissionIndex());
-            StartCoroutine(pause_before_loading_combat_mission());
-        }
-        else
-        {
-            //load a normal event
-            Debug.Log("loading event: " + ev.get_eventTitle());
-            allowInput = false;
-
-            evMan.begin_event(ev);
-        }
-
+        //load a normal event
+        //Debug.Log("loading event: " + ev.get_eventTitle());
+        allowInput = false;
+        evMan.begin_event(ev);
         
     }
+    public void load_combat(int id)
+    {
+        //load a combat mission
+        //Debug.Log("loading combat: " + parts[currentPartIndex].get_combatMissionIndex());   
+        allowInput = false;
+        Carrier.Instance.set_nextMissionIndex(id);
+        StartCoroutine(pause_before_loading_combat_mission());
+    }
+    public void switch_part(int id)
+    {
+        StartCoroutine(pause_before_loading_part_directly(id));
+    }
 
+
+    //HELPERS
+    IEnumerator pause_before_loading_part_directly(int id)
+    {
+        //fader.fade_to_black_stay();
+        fader.fade_to_black(3f);
+        yield return new WaitForSeconds(3f);
+        change_part(id);
+    }
     IEnumerator pause_before_loading_combat_mission()
     {
         fader.fade_to_black_stay();

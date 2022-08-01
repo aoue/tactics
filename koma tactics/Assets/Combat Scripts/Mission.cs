@@ -28,7 +28,9 @@ public class Mission : MonoBehaviour
     [SerializeField] Tile baseTileE;
 
     //player auto-deployed units
-    [SerializeField] Unit[] defUnits;
+    //the IDs of the default deployed units. Get them from the reserve party. 
+    //If the id is not in the reserve party, then the player just misses out on that.
+    [SerializeField] int[] defUnits; 
 
     //enemy auto-deployed units
     [SerializeField] Enemy[] defEnemies;
@@ -77,7 +79,7 @@ public class Mission : MonoBehaviour
         return true;
     }
 
-    //mission setup
+    //map setup
     public virtual Tile[,] get_layout()
     {
         //returns an array representing the map
@@ -88,14 +90,33 @@ public class Mission : MonoBehaviour
             { baseTileE, empty, lightlyWooded, lightlyWooded, empty},
             { lightlyWooded, empty, empty, empty, empty}
         };
-        //the mission layout will look like above^.
+        Tile[,] layout_large = new Tile[12, 12] {
+            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
+            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
+            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
+            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
+            { empty, lightlyWooded, empty, empty, empty, lightlyWooded, empty, empty, empty, empty, empty, empty},
+            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, lightlyWooded, empty, empty, empty},
+            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
+            { empty, lightlyWooded, empty, empty, empty, lightlyWooded, empty, empty, empty, empty, empty, empty},
+            { empty, lightlyWooded, empty, empty, empty, empty, empty, lightlyWooded, empty, empty, empty, empty},
+            { empty, lightlyWooded, empty, lightlyWooded, lightlyWooded, empty, empty, empty, empty, empty, empty, empty},
+            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
+            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty}
+        };
+        //the mission layout will maintain this orientation in game.
 
+        return layout_large;
         return layout;
     }
-    public virtual (Unit, int, int)[] get_deployment_spots()
+    public virtual int get_layout_x_dim() { return 12; }
+    public virtual int get_layout_y_dim() { return 12; }
+
+    //unit setup and reinforcements
+    public virtual (int, int, int)[] get_deployment_spots()
     {
-        //returns an array of units and coords representing unit starting spots.
-        (Unit, int, int)[] dep_array = {
+        //returns an array of unit IDs and coords representing unit starting spots.
+        (int, int, int)[] dep_array = {
             (defUnits[1], 0, 0),
             (defUnits[0], 3, 3)
         };
@@ -151,8 +172,6 @@ public class Mission : MonoBehaviour
 
     //getters
     public int get_nextPartIndex() { return nextPartIndex; }
-    public virtual int get_layout_x_dim() { return 5; }
-    public virtual int get_layout_y_dim() { return 5; }
     public int get_starting_power() { return starting_power; }
     public string get_lossDescr() { return loss_obj_descr; }
     public string get_winDescr() { return win_obj_descr; }

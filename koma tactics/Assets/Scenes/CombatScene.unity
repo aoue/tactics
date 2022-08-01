@@ -5042,10 +5042,7 @@ MonoBehaviour:
     type: 3}
   baseTileE: {fileID: 4043493223397602129, guid: a0f59ab96c5157644bbfd33a3175bcfc,
     type: 3}
-  defUnits:
-  - {fileID: 4189096264204994432, guid: 8b8385353a270a747a879b1e71830d87, type: 3}
-  - {fileID: 7194641574226003340, guid: 4c02790deb343c2418b25e92a9597939, type: 3}
-  - {fileID: 6760715730274706041, guid: bc6d79f6cc1c6f942b895795157541f4, type: 3}
+  defUnits: 000000000100000002000000
   defEnemies:
   - {fileID: 8686200987546085629, guid: cfcca2ee23f0df44e9d0d3a6994541d5, type: 3}
   nextPartIndex: 1
@@ -8976,7 +8973,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60cf51711ec3d274499c9df74d769143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hermes: {fileID: 1495608922}
   missionList: {fileID: 649292045}
   fader: {fileID: 369372273}
   uiCanvas: {fileID: 1620355978}
@@ -10030,18 +10026,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d5c2302662cf7814f8ddfdb32a983f81, type: 3}
---- !u!114 &1495608922 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7097035671906285970, guid: d5c2302662cf7814f8ddfdb32a983f81,
-    type: 3}
-  m_PrefabInstance: {fileID: 1495608921}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1bc792f957661d42b7405b777f8d3db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1535999132
 GameObject:
   m_ObjectHideFlags: 0
@@ -11040,7 +11024,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1620355975}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 0}

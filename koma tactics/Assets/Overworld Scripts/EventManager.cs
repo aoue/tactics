@@ -8,6 +8,7 @@ using Ink.Runtime;
 public class EventManager : MonoBehaviour
 {
     [SerializeField] private Overworld overworld; //link back to the boss.
+    [SerializeField] private OverworldAudio audio;
 
     [SerializeField] private GameObject shakeObject;
     [SerializeField] private Font ancientsFont;
@@ -395,6 +396,7 @@ public class EventManager : MonoBehaviour
             }
             else
             {
+                audio.play_typingSound();
                 DisplayNextSentence();
             }
         }
@@ -502,8 +504,29 @@ public class EventManager : MonoBehaviour
         //all the storys share the same external functions. we are externalizing complexity from 
         //ink and putting it here instead.
 
-        //music
+        //party
+        script.BindExternalFunction("add_unit", (int id) =>
+        {
+            this.add_party(id);
+        });
+        script.BindExternalFunction("remove_unit", (int id) =>
+        {
+            this.remove_party(id);
+        });
 
+        //music
+        script.BindExternalFunction("stop_music", () =>
+        {
+            this.stop_music();
+        });
+        script.BindExternalFunction("play_music", (int id) =>
+        {
+            this.start_music(id);
+        });
+        script.BindExternalFunction("play_sound", (int id) =>
+        {
+            this.play_sound(id);
+        });
 
         //visuals
         script.BindExternalFunction("bg", (int id) => 
@@ -557,7 +580,7 @@ public class EventManager : MonoBehaviour
         else
         {
             speakerBoxPortrait.gameObject.SetActive(true);
-            speakerBoxPortrait.sprite = pLibrary.retrieve_speakerp(speakerBoxId);
+            speakerBoxPortrait.sprite = pLibrary.retrieve_boxp(speakerBoxId);
         }
     }
     void set_name(string s)
@@ -710,7 +733,28 @@ public class EventManager : MonoBehaviour
         portraitSlots[whichSlot].gameObject.SetActive(false);
     }
 
-    //sound effects
-
+    //audio effects
+    void stop_music()
+    {
+        audio.stop_music();
+    }
+    void start_music(int id)
+    {
+        audio.ow_play_music(id);
+    }
+    void play_sound(int id)
+    {
+        audio.ow_play_sound(id);
+    }
     
+    //party
+    void add_party(int id)
+    {
+        Carrier.Instance.add_to_party(id);
+    }
+    void remove_party(int id)
+    {
+        Carrier.Instance.remove_from_party(id);
+    }
+
 }
