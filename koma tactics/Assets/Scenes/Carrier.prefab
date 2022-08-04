@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allPlayerUnits:
-  - {fileID: 4189096264204994432, guid: 8b8385353a270a747a879b1e71830d87, type: 3}
-  - {fileID: 7194641574226003340, guid: 4c02790deb343c2418b25e92a9597939, type: 3}
-  - {fileID: 6760715730274706041, guid: bc6d79f6cc1c6f942b895795157541f4, type: 3}
+  - {fileID: 3091262671685752835, guid: 74b805501d58d1a48841c84f74746b3f, type: 3}
+  - {fileID: 8630799189674794802, guid: c242a259ae9c5414f9b433c8a7169611, type: 3}
+  - {fileID: 6669561844638855848, guid: 80de8ee9a67fcec4e8f857e0f4fe3e6b, type: 3}
+  - {fileID: 302569972232621701, guid: c17207c336cf3cf4abafb911e91a835b, type: 3}

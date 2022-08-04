@@ -30,8 +30,6 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        //cycle camera side by pressing 'q'
-
         if (!canMove) return;
 
         cam.orthographicSize = Mathf.Min(maxSize, Mathf.Max(minSize, cam.orthographicSize - Input.GetAxis("Mouse ScrollWheel") * cameraSpeed));
@@ -104,14 +102,12 @@ public class CameraController : MonoBehaviour
     }
     public void jump_to(Vector3 toHere)
     {
-        if (canMove) return;
         //only called when the camera is locked.
         //called to move the camera to a specific position.
         transform.position = toHere;
     }
     public void slide_to(Vector3 toHere, int x, int y)
     {
-        if (canMove) return;
         //only called when the camera is locked.
         //called to slide the camera to a specific position over time.
         float slideDuration = (float)Math.Sqrt(Math.Pow(Math.Abs(transform.position.x - x), 2) + Math.Pow(Math.Abs(transform.position.y - y), 2));
@@ -119,6 +115,7 @@ public class CameraController : MonoBehaviour
     }
     IEnumerator slide_camera(Vector3 toHere, float slideDuration)
     {
+        canMove = false;
         float timeElapsed = 0f;
         while (timeElapsed < slideDuration && !canMove)
         {
@@ -128,6 +125,7 @@ public class CameraController : MonoBehaviour
             yield return null;
         }
         if (!canMove) transform.position = toHere;
+        canMove = true;
     }
 
     

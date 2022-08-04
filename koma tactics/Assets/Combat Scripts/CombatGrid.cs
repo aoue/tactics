@@ -40,6 +40,7 @@ public class CombatGrid : MonoBehaviour
     [SerializeField] private Image orderImage;
     [SerializeField] private Text orderTitleText;
     [SerializeField] private Text orderdescrText;
+    [SerializeField] private Image helpDisplay;
     [SerializeField] private Image briefingDisplay;
     [SerializeField] private Text briefingWinText;
     [SerializeField] private Text briefingLossText;
@@ -60,7 +61,6 @@ public class CombatGrid : MonoBehaviour
     private Trait active_ability; //the move that we are selecting targets for.
     private Tile last_player_end_turn_tile; //the tile that the last active player unit ended its turn on. Influences enemy priority calculations.
     private bool set_order; //true on player's first move. Tells the game to set active_order to the unit's order.
-
 
     private (Tile, int, List<Tile>, Tile) enemy_active_info; //information about the move the enemy is performing.
     //Tile: dest tile | int: chosen trait index | List<Tile> affected tiles | Tile: origin tile
@@ -458,6 +458,14 @@ public class CombatGrid : MonoBehaviour
     {
         briefingDisplay.gameObject.SetActive(false);
     }
+    public void hover_help_button()
+    {
+        helpDisplay.gameObject.SetActive(true);
+    }
+    public void unhover_help_button()
+    {
+        helpDisplay.gameObject.SetActive(false);
+    }
     void update_order()
     {
         //updates the order bg visuals with the information in active_order.
@@ -538,7 +546,6 @@ public class CombatGrid : MonoBehaviour
         //start event, (well, there has to be one.)
         cDia.play_event(loadedMission.get_script(), which);
     }
-
     public void start_player_turn()
     {
         //go through all the party units.
@@ -820,6 +827,7 @@ public class CombatGrid : MonoBehaviour
     void start_enemy_turn()
     {
         //Debug.Log("enemy turn starting");
+        cam.lock_camera();
         animating = true;
         Unit enemyChosenUnit = select_enemy_unit();
         select_enemy_action(enemyChosenUnit);        
@@ -918,9 +926,16 @@ public class CombatGrid : MonoBehaviour
         //update enemy's position on the grid
         myGrid[unit.x, unit.y].remove_unit();
         myGrid[destTile.x, destTile.y].place_unit(unit);
+
+        cam.unlock_camera();
+        Vector3 moveHere = get_pos_from_coords(active_unit.x, active_unit.y) + new Vector3(0f, 0f, -10f);
+        cam.jump_to(moveHere);
+        cam.lock_camera();
+
         active_unit.x = destTile.x;
         active_unit.y = destTile.y;
 
+        
         StartCoroutine(move_obj_on_path(unit.gameObject, destTile.path, false));
     }
     void finish_enemy_movement()
@@ -981,6 +996,7 @@ public class CombatGrid : MonoBehaviour
         animating = false;
         //Debug.Log("enemy turn over.");
         next_turn();
+        cam.unlock_camera();
     }
 
     //Enemy AI helper functions
@@ -1113,11 +1129,22 @@ public class CombatGrid : MonoBehaviour
         }
         else
         {
-            foreach (Unit target in affectedUnits)
+            if (active_unit.get_isAlly())
             {
-                int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order);
-                target.take_dmg(dmg);
+                foreach (Unit target in affectedUnits)
+                {
+                    int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, playerUnits);
+                    target.take_dmg(dmg, active_ability.get_brkMult());
+                }
             }
+            else
+            {
+                foreach (Unit target in affectedUnits)
+                {
+                    int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, enemyUnits.ToArray());
+                    target.take_dmg(dmg, active_ability.get_brkMult());
+                }
+            }            
         }
         
         //do hpbar animations
@@ -1265,6 +1292,27 @@ public class CombatGrid : MonoBehaviour
     }
 
     //Tile interactivity
+    int sum_path_tile_cost(List<Tile> pathTaken, Unit u)
+    {
+        //for a list of tiles, returns the total mvCost it would take to traverse it.
+        //takes active_unit's passives into account.
+        int sum = 0;
+        for (int j = 1; j < pathTaken.Count; j++)
+        {
+            List<int> mvCostList = new List<int>();
+            for (int i = 0; i < u.get_traitList().Length; i++)
+            {
+                if (u.get_traitList()[i] != null && u.get_traitList()[i].get_isPassive())
+                {
+                    mvCostList.Add(u.get_traitList()[i].modify_movementCost(pathTaken[j]));
+                }
+            }
+            if (mvCostList.Count > 0) sum += mvCostList.Min();
+            else sum += pathTaken[j].get_movementCost();
+        }
+        //Debug.Log("sum path tile cost = " + sum);
+        return sum;
+    }
     public void traitButton_clicked(int which)
     {
         //when a traitButton is clicked 
@@ -1591,33 +1639,43 @@ public class CombatGrid : MonoBehaviour
         pathTaken.Add(start);
         if (start.path == null)
             start.path = new List<Tile>();
+        
         start.path.Clear();
         foreach (Tile t in pathTaken)
         {
             //if (!start.path.Contains(t))
             start.path.Add(t);
         }
-
+        
         v.Add(start); //add to visited list
-
+        
         if (moveLeft <= 0) return;
-
-        //add all adjacent tiles to the
-        //for each tile adjacent to start, DFS(start)
-
+        
         List<Tile> adjacentTiles = new List<Tile>();
         //add tiles based on coordinates, as long as they are not out of bounds.
-        /*
-        if (within_border(start.x + 1, start.y)) adjacentTiles.Add(myGrid[start.x + 1, start.y]);
-        if (within_border(start.x - 1, start.y)) adjacentTiles.Add(myGrid[start.x - 1, start.y]);
-        if (within_border(start.x, start.y + 1)) adjacentTiles.Add(myGrid[start.x, start.y + 1]);
-        if (within_border(start.x, start.y - 1)) adjacentTiles.Add(myGrid[start.x, start.y - 1]);
-        */
-        if (within_border(start.x + 1, start.y) && !v.Contains(myGrid[start.x + 1, start.y])) adjacentTiles.Add(myGrid[start.x + 1, start.y]);
-        if (within_border(start.x - 1, start.y) && !v.Contains(myGrid[start.x - 1, start.y])) adjacentTiles.Add(myGrid[start.x - 1, start.y]);
-        if (within_border(start.x, start.y + 1) && !v.Contains(myGrid[start.x, start.y + 1])) adjacentTiles.Add(myGrid[start.x, start.y + 1]);
-        if (within_border(start.x, start.y - 1) && !v.Contains(myGrid[start.x, start.y - 1])) adjacentTiles.Add(myGrid[start.x, start.y - 1]);
 
+        //check 4 adjacent tiles loop
+        for (int i = -1; i < 2; i++)
+        {
+            for (int j = -1; j < 2; j++)
+            {
+                //reject all non-adjacent tiles.
+                if (Math.Abs(i) + Math.Abs(j) != 1) continue;
+
+                //if on the map
+                if (within_border(start.x + i, start.y + j))
+                {
+                    if (myGrid[start.x + i, start.y + j].path == null) myGrid[start.x + 1, start.y].path = new List<Tile>();
+                    //if no path yet, or, our current path is less than the path already saved to the tile 
+                    if (!v.Contains(myGrid[start.x + i, start.y + j]) || sum_path_tile_cost(pathTaken, u) <= sum_path_tile_cost(myGrid[start.x + i, start.y + j].path, u))
+                    {
+                        adjacentTiles.Add(myGrid[start.x + i, start.y + j]);
+                    }
+                }
+            }
+        }
+
+        //perform dfs on each accepted tile
         foreach (Tile next in adjacentTiles)
         {
             //if movement cost is -1, the tile is impassable. Only continue if not.
@@ -1635,6 +1693,7 @@ public class CombatGrid : MonoBehaviour
             if (mvCostList.Count > 0) { mvCost = mvCostList.Min(); }
 
             //if mvCost <= 0, then it is impassable. Different values mean different types.  E.g. -1: water, -2: cliffs.
+            //Of course, traits can modify mvCost making certain terrain passable for a unit.
             if (mvCost > 0)
             {
                 //if tile is in the opponent's ZoC, then it costs all remaining movement.
@@ -1735,7 +1794,9 @@ public class CombatGrid : MonoBehaviour
         {
             //then jump
             Vector3 moveHere = get_pos_from_coords(playerUnits[which].x, playerUnits[which].y) + new Vector3(0f, 0f, -10f);
+            cam.unlock_camera();
             cam.jump_to(moveHere);
+            cam.lock_camera();
         }
         else
         {

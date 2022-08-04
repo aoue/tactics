@@ -224,7 +224,7 @@ public class Enemy : Unit
                     //score the attack based on projected damage.
                     if (targetTile.occupied())
                     {
-                        int projected_dmg = brain.calc_damage(this, targetTile.get_heldUnit(), t, targetTile, false, null);
+                        int projected_dmg = brain.calc_damage(this, targetTile.get_heldUnit(), t, targetTile, false, null, null);
 
                         if (projected_dmg >= targetTile.get_heldUnit().get_hp())
                         {

@@ -25,30 +25,19 @@ VAR label = 0
 //switch statement:
 {
 - label == 0: -> mission_begin
-- label == 1: -> round_one
 - label == -2: -> mission_end_win
 - label == -3: -> mission_end_loss
 }
 
 
 === mission_begin ===
-~jump(4, 4)
+~jump(3, 5)
 ~n("Voice")
 ~p(-1)
 //also, setup music here too.
 ~play_music(0)
 (music playing right?) This is dummy text for the start of the mission.
-~slide(0,0)
-sliding... Okay, we're changing tracks.
-~play_music(1)
 Time to fight!
--> END
-
-=== round_one ===
-~n("Man's voice")
-~jump(4, 0)
-Reinforcements!
-Oh my shoulder!
 -> END
 
 === mission_end_win ===

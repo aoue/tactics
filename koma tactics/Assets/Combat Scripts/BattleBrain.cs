@@ -9,14 +9,21 @@ public class BattleBrain
 
     //light, medium, heavy
     //the trait's affinity vs. the defender's affinity
+    //light does 2x to heavy, and takes 0.5x
+    //medium does 1.5x to light, and takes 0.75x
+    //heavy does 1x to medium, and takes 1x
+
+    //light good against heavy in both off and def
+    //medium good against light in both off and def, but not crazily
+    //heavy good against nothing; relies on pure stats.
     float[,] affinityMultArray = new float[3, 3]
     {
-        {1.0f, 0.5f, 2f },
-        {2f, 1.0f, 0.5f },
-        {0.5f, 2f, 1.0f }
+        {1.0f, 0.75f, 2.0f },
+        {1.25f, 1.0f, 1.0f },
+        {0.5f, 1.0f, 1.0f }
     };
 
-    public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile, bool playerAttacking, Order order)
+    public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile, bool playerAttacking, Order order, Unit[] u1_allies)
     {
         //use attacker's phys a or mag a?
         int atk;
@@ -68,7 +75,7 @@ public class BattleBrain
         //int dmg = Mathf.Max(1, (int)(((atk + t.get_power()) - def) * coverMod));
 
         //multiplicative damage formula:
-        int dmg = Mathf.Max(1, (int)(((atk * (t.get_power() + (u1.get_level() * 2)) / def) * coverMod * UnityEngine.Random.Range(0.85f, 1f))));
+        int dmg = Mathf.Max(1, (int)((t.get_power() / 2 + (atk * (t.get_power() + (u1.get_level() * 2)) / def) * coverMod * UnityEngine.Random.Range(0.85f, 1f))));
         dmg = order.order_damage(dmg);
 
         //once calc is done
@@ -78,7 +85,7 @@ public class BattleBrain
         {
             if (u1.get_traitList()[i] != null && u1.get_traitList()[i].get_isPassive())
             {
-                dmg = u1.get_traitList()[i].modify_dmg_dealt(dmg, u1, u2);
+                dmg = u1.get_traitList()[i].modify_dmg_dealt(dmg, u1, u2, u1_allies);
             }
         }
 
@@ -87,7 +94,7 @@ public class BattleBrain
         {
             if (u2.get_traitList()[i] != null && u2.get_traitList()[i].get_isPassive())
             {
-                dmg = u2.get_traitList()[i].modify_dmg_received(dmg, u1, u2);
+                dmg = u2.get_traitList()[i].modify_dmg_received(dmg, u1, u2, u1_allies);
             }
         }
 

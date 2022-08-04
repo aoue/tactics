@@ -101,7 +101,7 @@ public class Unit : MonoBehaviour
         ap = 1;
         unitSprite.color = new Color(1f, 1f, 1f);
     }
-    public void take_dmg(int dmg)
+    public void take_dmg(int dmg, float brkMultiplier)
     {
         //causes dmg to the unit.
         //Any dmg is dealt to both hp and brk.
@@ -110,7 +110,7 @@ public class Unit : MonoBehaviour
 
         if (!isBroken)
         {
-            brk -= dmg;
+            brk -= (int)(dmg * brkMultiplier);
             if (brk <= 0)
             {
                 brk_self();

@@ -49,8 +49,10 @@ MonoBehaviour:
   isPassive: 0
   targeting: 0
   aoe: 0
+  affinity: 0
   range: 1
-  power: 5
+  power: 10
+  brkMult: 0
   pwCost: 0
   usesPhysAttack: 1
   usesPhysDefense: 1

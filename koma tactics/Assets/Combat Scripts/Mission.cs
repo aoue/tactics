@@ -20,36 +20,25 @@ public class Mission : MonoBehaviour
     // -enemy unit reaches tile
 
     //tiles
-    [SerializeField] Tile empty;
-    [SerializeField] Tile lightlyWooded;
-
-    [SerializeField] Tile baseTileN;
-    [SerializeField] Tile baseTileP;
-    [SerializeField] Tile baseTileE;
-
-    //player auto-deployed units
-    //the IDs of the default deployed units. Get them from the reserve party. 
-    //If the id is not in the reserve party, then the player just misses out on that.
-    [SerializeField] int[] defUnits; 
-
-    //enemy auto-deployed units
-    [SerializeField] Enemy[] defEnemies;
+    [SerializeField] protected Tile[] missionTiles;
+    //enemy auto-deployed units types (prafabs)
+    [SerializeField] protected Enemy[] defEnemies;
 
     //mission settings
     // -win cond
     // -loss cond
-    [SerializeField] private int nextPartIndex; //the index of the part the overworld will resume at.
-    [SerializeField] private int starting_power;
-    [SerializeField] private string win_obj_descr;
-    [SerializeField] private string loss_obj_descr;
+    [SerializeField] protected int nextPartIndex; //the index of the part the overworld will resume at.
+    [SerializeField] protected int starting_power;
+    [SerializeField] protected string win_obj_descr;
+    [SerializeField] protected string loss_obj_descr;
    
-    [SerializeField] private TextAsset script;
-    [SerializeField] private int[] eventRounds; //add round number if event in for that round.
-    [SerializeField] private AudioClip[] musicList;
-    [SerializeField] private AudioClip[] soundList;
+    [SerializeField] protected TextAsset script;
+    [SerializeField] protected int[] eventRounds; //add round number if event in for that round.
+    [SerializeField] protected AudioClip[] musicList;
+    [SerializeField] protected AudioClip[] soundList;
 
-    //event indices
-    public virtual bool has_event(int roundNumber)
+    //virtuals
+    public bool has_event(int roundNumber)
     {
         //returns an int[] where every turn where there should be an event is an element.
         if (eventRounds.Contains(roundNumber)) return true;
@@ -84,29 +73,13 @@ public class Mission : MonoBehaviour
     {
         //returns an array representing the map
         Tile[,] layout = new Tile[5, 5] {
-            { empty, lightlyWooded, empty, empty, empty},
-            { empty, empty, empty, lightlyWooded, empty},
-            { lightlyWooded, empty, empty, empty, empty},
-            { baseTileE, empty, lightlyWooded, lightlyWooded, empty},
-            { lightlyWooded, empty, empty, empty, empty}
-        };
-        Tile[,] layout_large = new Tile[12, 12] {
-            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
-            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
-            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
-            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
-            { empty, lightlyWooded, empty, empty, empty, lightlyWooded, empty, empty, empty, empty, empty, empty},
-            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, lightlyWooded, empty, empty, empty},
-            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
-            { empty, lightlyWooded, empty, empty, empty, lightlyWooded, empty, empty, empty, empty, empty, empty},
-            { empty, lightlyWooded, empty, empty, empty, empty, empty, lightlyWooded, empty, empty, empty, empty},
-            { empty, lightlyWooded, empty, lightlyWooded, lightlyWooded, empty, empty, empty, empty, empty, empty, empty},
-            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty},
-            { empty, lightlyWooded, empty, empty, empty, empty, empty, empty, empty, empty, empty, empty}
+            { missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0]},
+            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0]},
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0]},
+            { missionTiles[2], missionTiles[0], missionTiles[1], missionTiles[1], missionTiles[0]},
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0]}
         };
         //the mission layout will maintain this orientation in game.
-
-        return layout_large;
         return layout;
     }
     public virtual int get_layout_x_dim() { return 12; }
@@ -117,8 +90,8 @@ public class Mission : MonoBehaviour
     {
         //returns an array of unit IDs and coords representing unit starting spots.
         (int, int, int)[] dep_array = {
-            (defUnits[1], 0, 0),
-            (defUnits[0], 3, 3)
+            (1, 0, 0),
+            (0, 3, 3)
         };
 
         return dep_array;

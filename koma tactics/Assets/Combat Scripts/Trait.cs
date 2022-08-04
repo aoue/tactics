@@ -51,13 +51,14 @@ public class Trait : MonoBehaviour
     [SerializeField] private int affinity; //used when attacking.
     [SerializeField] private int range; //determines how far the attack can reach
     [SerializeField] private int power; //determines, along with the attacker's and defender's stats, the damage dealt.
-    [SerializeField] private int pwCost; //determines, along with the attacker's and defender's stats, the damage dealt.
+    [SerializeField] private float brkMult; //determines the amount of brk dmg dealt.
+    [SerializeField] private int pwCost; //the power cost to use the move.
     [SerializeField] private bool usesPhysAttack; //on true, use attacker's phys attack for dmg calc. On false, use attacker's mag attack.
     [SerializeField] private bool usesPhysDefense; //on true, use target's phys def for dmg calc. On false, use target's mag def.
     [SerializeField] private bool isHeal;
 
     //passive traits
-    public virtual int modify_dmg_dealt(int dmg, Unit self, Unit enemy)
+    public virtual int modify_dmg_dealt(int dmg, Unit self, Unit enemy, Unit[] self_allies)
     {
         //will probably need the grid and playerList.
 
@@ -68,7 +69,7 @@ public class Trait : MonoBehaviour
 
         return dmg;
     }
-    public virtual int modify_dmg_received(int dmg, Unit self, Unit enemy)
+    public virtual int modify_dmg_received(int dmg, Unit self, Unit enemy, Unit[] self_allies)
     {
         //will probably need the grid too.
 
@@ -159,6 +160,7 @@ public class Trait : MonoBehaviour
     public int get_aff() { return affinity; }
     public int get_range() { return range; }
     public int get_power() { return power; }
+    public float get_brkMult() { return brkMult; }
     public int get_pwCost() { return pwCost; }
     public bool get_usesPhysAttack() { return usesPhysAttack; }
     public bool get_usesPhysDefense() { return usesPhysDefense; }
