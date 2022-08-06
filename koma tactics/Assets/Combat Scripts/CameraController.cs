@@ -106,28 +106,27 @@ public class CameraController : MonoBehaviour
         //called to move the camera to a specific position.
         transform.position = toHere;
     }
-    public void slide_to(Vector3 toHere, int x, int y)
+    public void slide_to(Vector3 toHere, int x, int y, bool duringEnemyTurn = false, float slideSpeed = 2f)
     {
         //only called when the camera is locked.
         //called to slide the camera to a specific position over time.
-        float slideDuration = (float)Math.Sqrt(Math.Pow(Math.Abs(transform.position.x - x), 2) + Math.Pow(Math.Abs(transform.position.y - y), 2));
-        StartCoroutine(slide_camera(toHere, slideDuration));
+        float slideDuration = (float)Math.Sqrt(Math.Pow(Math.Abs(transform.position.x - x), 2) + Math.Pow(Math.Abs(transform.position.y - y), 2));       
+
+        StartCoroutine(slide_camera(toHere, slideDuration, duringEnemyTurn, slideSpeed));
     }
-    IEnumerator slide_camera(Vector3 toHere, float slideDuration)
+    IEnumerator slide_camera(Vector3 toHere, float slideDuration, bool duringEnemyTurn, float slideSpeed)
     {
         canMove = false;
         float timeElapsed = 0f;
         while (timeElapsed < slideDuration && !canMove)
         {
             //2f * Time.deltaTime because the dimensions of a game tile is 2 by 2.
-            transform.position = Vector3.MoveTowards(transform.position, toHere, 2f * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, toHere, slideSpeed * Time.deltaTime);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
         if (!canMove) transform.position = toHere;
-        canMove = true;
+        if (!duringEnemyTurn) canMove = true;
     }
-
-    
-
+  
 }

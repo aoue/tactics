@@ -268,7 +268,7 @@ public class Enemy : Unit
                 //above and below
                 for (int i = dest.x - t.get_range(); i < dest.x + t.get_range() + 1; i++)
                 {
-                    if (within_border(i, dest.y, map_x_border, map_y_border) && i != dest.x)
+                    if (within_border(i, dest.y, map_x_border, map_y_border) && i != dest.x && Math.Abs(dest.x - i) >= t.get_min_range())
                     {
                         origins.Add(myGrid[i, dest.y]);
                     }
@@ -276,7 +276,7 @@ public class Enemy : Unit
                 //left and right
                 for (int j = dest.y - t.get_range(); j < dest.y + t.get_range() + 1; j++)
                 {
-                    if (within_border(dest.x, j, map_x_border, map_y_border) && j != dest.y)
+                    if (within_border(dest.x, j, map_x_border, map_y_border) && j != dest.y && Math.Abs(dest.y - j) >= t.get_min_range())
                     {
                         origins.Add(myGrid[dest.x, j]);
                     }
@@ -288,7 +288,7 @@ public class Enemy : Unit
                     for (int j = dest.y - 1; j < dest.y + 1 + 1; j++)
                     {
                         //if the tile is on the grid, and is not the unit's tile.
-                        if (within_border(i, j, map_x_border, map_y_border) && !(i == dest.x && j == dest.y))
+                        if (within_border(i, j, map_x_border, map_y_border) && !(i == dest.x && j == dest.y) && Math.Abs(dest.x - i) + Math.Abs(dest.y - j) >= t.get_min_range())
                         {
                             origins.Add(myGrid[i, j]);
                         }
@@ -297,7 +297,7 @@ public class Enemy : Unit
                 break;
             case TargetingType.RADIUS:
                 //borrow dfs code.
-                atk_dfs(origins, myGrid[dest.x, dest.y], t.get_range(), myGrid, map_x_border, map_y_border);
+                atk_dfs(origins, myGrid[dest.x, dest.y], t.get_range(), t.get_min_range(), myGrid, map_x_border, map_y_border);
                 origins.Remove(myGrid[dest.x, dest.y]);
                 break;
             case TargetingType.SELF:
@@ -369,9 +369,12 @@ public class Enemy : Unit
 
         return targetList;
     }
-    void atk_dfs(HashSet<Tile> v, Tile start, int rangeLeft, Tile[,] myGrid, int map_x_border, int map_y_border)
+    void atk_dfs(HashSet<Tile> v, Tile start, int rangeLeft, int min_range, Tile[,] myGrid, int map_x_border, int map_y_border)
     {
-        v.Add(start);
+        if (Math.Abs(x - start.x) + Math.Abs(y - start.y) >= min_range)
+        {
+            v.Add(start);
+        }
 
         List<Tile> adjacentTiles = new List<Tile>();
         //add tiles based on coordinates, as long as they are not out of bounds.
@@ -384,7 +387,7 @@ public class Enemy : Unit
         {
             if (rangeLeft > 0)
             {
-                atk_dfs(v, next, rangeLeft - 1, myGrid, map_x_border, map_y_border);
+                atk_dfs(v, next, rangeLeft - 1, min_range, myGrid, map_x_border, map_y_border);
             }
         }
     }

@@ -49,9 +49,12 @@ MonoBehaviour:
   isPassive: 0
   targeting: 0
   aoe: 0
+  minimum_range: 2
   affinity: 0
   range: 5
   power: 10
+  min_dmg_range: 0.85
+  max_dmg_range: 1
   brkMult: 1
   pwCost: 1
   usesPhysAttack: 0

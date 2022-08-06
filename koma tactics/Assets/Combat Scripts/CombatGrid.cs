@@ -1057,15 +1057,26 @@ public class CombatGrid : MonoBehaviour
         //move the object in from each path tile to the next
         //actually, we will be doing a movement animation here.       
         
+        //furthermore, if it's one of the player's units moving, then the player retains camera control.
+        //if it's the enemy moving though, then we'll slide the camera to the destination tile as the unit moves.
+
         if (!isPlayer && path.Count > 1)
         {
             yield return new WaitForSeconds(enemy_pause_before_movement);
         }
 
+        //camera slide at the same time, but only for enemies.
+        //the player shouldn't lose control of the camera during their turn.
+        if (!isPlayer)
+        {
+            Vector3 slide_dest = get_pos_from_coords(path[path.Count - 1].x, path[path.Count - 1].y) + new Vector3(0f, 0f, -10f);
+            cam.slide_to(slide_dest, path[0].x, path[0].y, true, 20f);
+        }       
+
         for (int i = 1; i < path.Count; i++)
         {
             float elapsedTime = 0f;
-            while (elapsedTime < 2*(1 / movement_animation_speed))
+            while (elapsedTime < 2 * (1 / movement_animation_speed))
             {
                 Vector3 dest = get_pos_from_coords(path[i].x, path[i].y);
 
@@ -1553,14 +1564,14 @@ public class CombatGrid : MonoBehaviour
             case TargetingType.LINE:                
                 for (int i = active_unit.x - t.get_range(); i < active_unit.x + t.get_range() + 1; i++)
                 {
-                    if (within_border(i, active_unit.y) && i != active_unit.x)
+                    if (within_border(i, active_unit.y) && i != active_unit.x && Math.Abs(active_unit.x - i) >= t.get_min_range())
                     {
                         visited.Add(myGrid[i, active_unit.y]);
                     }
                 }
                 for (int j = active_unit.y - t.get_range(); j < active_unit.y + t.get_range() + 1; j++)
                 {
-                    if (within_border(active_unit.x, j) && j != active_unit.y)
+                    if (within_border(active_unit.x, j) && j != active_unit.y && Math.Abs(active_unit.y - j) >= t.get_min_range())
                     {
                         visited.Add(myGrid[active_unit.x, j]);                       
                     }
@@ -1572,7 +1583,7 @@ public class CombatGrid : MonoBehaviour
                     for (int j = active_unit.y - 1; j < active_unit.y + 1 + 1; j++)
                     {
                         //if the tile is on the grid, and is not the unit's tile.
-                        if (within_border(i, j) && !(i == active_unit.x && j == active_unit.y))
+                        if (within_border(i, j) && !(i == active_unit.x && j == active_unit.y) && Math.Abs(active_unit.x - i) + Math.Abs(active_unit.y - j) >= t.get_min_range())
                         {
                             visited.Add(myGrid[i, j]);
                         }
@@ -1581,7 +1592,7 @@ public class CombatGrid : MonoBehaviour
                 break;
             case TargetingType.RADIUS:
                 //borrow dfs code.               
-                atk_dfs(visited, myGrid[active_unit.x, active_unit.y], t.get_range());
+                atk_dfs(visited, myGrid[active_unit.x, active_unit.y], t.get_range(), t.get_min_range());
                 visited.Remove(myGrid[active_unit.x, active_unit.y]);
                 break;
             case TargetingType.SELF:
@@ -1665,7 +1676,7 @@ public class CombatGrid : MonoBehaviour
                 //if on the map
                 if (within_border(start.x + i, start.y + j))
                 {
-                    if (myGrid[start.x + i, start.y + j].path == null) myGrid[start.x + 1, start.y].path = new List<Tile>();
+                    if (myGrid[start.x + i, start.y + j].path == null) myGrid[start.x + i, start.y + j].path = new List<Tile>();
                     //if no path yet, or, our current path is less than the path already saved to the tile 
                     if (!v.Contains(myGrid[start.x + i, start.y + j]) || sum_path_tile_cost(pathTaken, u) <= sum_path_tile_cost(myGrid[start.x + i, start.y + j].path, u))
                     {
@@ -1718,22 +1729,28 @@ public class CombatGrid : MonoBehaviour
 
         }
     }
-    void atk_dfs(HashSet<Tile> v, Tile start, int rangeLeft)
+    void atk_dfs(HashSet<Tile> v, Tile start, int rangeLeft, int min_range)
     {
-        v.Add(start);
+        //only add if allowed by minimum range
+        //i.e. if distance between the tiles of myGrid[active_unit.x, active_unit.y] and start is >= min_range
+        if ( Math.Abs(active_unit.x - start.x) + Math.Abs(active_unit.y - start.y) >= min_range )
+        {
+            v.Add(start);
+        }
+        
 
         List<Tile> adjacentTiles = new List<Tile>();
         //add tiles based on coordinates, as long as they are not out of bounds.
-        if (within_border(start.x + 1, start.y)) adjacentTiles.Add(myGrid[start.x + 1, start.y]);
-        if (within_border(start.x - 1, start.y)) adjacentTiles.Add(myGrid[start.x - 1, start.y]);
-        if (within_border(start.x, start.y + 1)) adjacentTiles.Add(myGrid[start.x, start.y + 1]);
-        if (within_border(start.x, start.y - 1)) adjacentTiles.Add(myGrid[start.x, start.y - 1]);
+        if (within_border(start.x + 1, start.y) && !v.Contains(myGrid[start.x + 1, start.y])) adjacentTiles.Add(myGrid[start.x + 1, start.y]);
+        if (within_border(start.x - 1, start.y) && !v.Contains(myGrid[start.x - 1, start.y])) adjacentTiles.Add(myGrid[start.x - 1, start.y]);
+        if (within_border(start.x, start.y + 1) && !v.Contains(myGrid[start.x, start.y + 1])) adjacentTiles.Add(myGrid[start.x, start.y + 1]);
+        if (within_border(start.x, start.y - 1) && !v.Contains(myGrid[start.x, start.y - 1])) adjacentTiles.Add(myGrid[start.x, start.y - 1]);
 
         foreach (Tile next in adjacentTiles)
         {
             if (rangeLeft > 0)
             {
-                atk_dfs(v, next, rangeLeft - 1);
+                atk_dfs(v, next, rangeLeft - 1, min_range);
             }
         }
     }

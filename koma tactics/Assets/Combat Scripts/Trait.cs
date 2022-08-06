@@ -48,9 +48,12 @@ public class Trait : MonoBehaviour
     //active stuff
     [SerializeField] private TargetingType targeting; //determines how tiles are validated for targeting.
     [SerializeField] private AoEType aoe; //determines how many tiles are actually hit by an attack.
+    [SerializeField] private int minimum_range; //used for validating tiles when attacking. Can only hit a tile where manhattan distance is >= x tiles away/
     [SerializeField] private int affinity; //used when attacking.
     [SerializeField] private int range; //determines how far the attack can reach
     [SerializeField] private int power; //determines, along with the attacker's and defender's stats, the damage dealt.
+    [SerializeField] private float min_dmg_range; //floor of random dmg distribution range.
+    [SerializeField] private float max_dmg_range; //ceiling of random dmg distribution range.
     [SerializeField] private float brkMult; //determines the amount of brk dmg dealt.
     [SerializeField] private int pwCost; //the power cost to use the move.
     [SerializeField] private bool usesPhysAttack; //on true, use attacker's phys attack for dmg calc. On false, use attacker's mag attack.
@@ -157,9 +160,12 @@ public class Trait : MonoBehaviour
     public bool get_isPassive() { return isPassive; }
     public TargetingType get_targetingType() { return targeting; }
     public AoEType get_AoEType() { return aoe; }
+    public int get_min_range() { return minimum_range; }
     public int get_aff() { return affinity; }
     public int get_range() { return range; }
     public int get_power() { return power; }
+    public float get_min_dmg_range() { return min_dmg_range; }
+    public float get_max_dmg_range() { return max_dmg_range; }
     public float get_brkMult() { return brkMult; }
     public int get_pwCost() { return pwCost; }
     public bool get_usesPhysAttack() { return usesPhysAttack; }

@@ -70,12 +70,17 @@ public class BattleBrain
                 else def = u2.get_magd();
             }
         }
-        
+
         //integer damage formula:
         //int dmg = Mathf.Max(1, (int)(((atk + t.get_power()) - def) * coverMod));
 
         //multiplicative damage formula:
-        int dmg = Mathf.Max(1, (int)((t.get_power() / 2 + (atk * (t.get_power() + (u1.get_level() * 2)) / def) * coverMod * UnityEngine.Random.Range(0.85f, 1f))));
+        int move_pw;
+        //same Affinity attack bonus:
+        if (u1.get_aff() == t.get_aff()) move_pw = (int)(t.get_power() * 1.5f);
+        else move_pw = t.get_power();
+
+        int dmg = Mathf.Max(1, (int)((2 * atk * (move_pw + (u1.get_level() * 2)) / (1.5f * def)) * coverMod * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));    
         dmg = order.order_damage(dmg);
 
         //once calc is done
@@ -126,7 +131,7 @@ public class BattleBrain
             else atk = u1.get_maga();
         }
 
-        int heal = Mathf.Max(1, (int)((atk + t.get_power() + (u1.get_level() * 2)) / 2 * UnityEngine.Random.Range(0.85f, 1f)));
+        int heal = Mathf.Max(1, (int)(((atk + t.get_power() + (u1.get_level() * 2)) / 2) * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
         if (order != null) heal = order.order_heal(heal);
 
         //once calc is done
