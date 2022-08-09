@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d755da71caf8e144ea51bba3446e61f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  traitSound: {fileID: 8300000, guid: b3fdfcc1fd23c8c42bbe0f1df3923bd1, type: 3}
   traitName: Blade Whips
   descr: Swings the blade arms through up to 2 targets in a line.
   unitType: 0

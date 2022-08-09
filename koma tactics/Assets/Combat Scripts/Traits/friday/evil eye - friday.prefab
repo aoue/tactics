@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d755da71caf8e144ea51bba3446e61f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  traitSound: {fileID: 0}
   traitName: Evil Eye
   descr: Intimidates the enemy. Deals low damage, but high break.
   unitType: 0

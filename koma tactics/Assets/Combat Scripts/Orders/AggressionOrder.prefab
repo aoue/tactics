@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orderName: Aggression
-  orderDescr: Allies physical attack is increased by 1.5x
+  orderDescr: Allies machine attack is increased by 1.5x

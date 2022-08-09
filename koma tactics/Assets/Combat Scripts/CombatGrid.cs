@@ -18,7 +18,7 @@ public class CombatGrid : MonoBehaviour
     private const float movement_animation_speed = 20f; //the number of units a unit moves per second. Remember: one of our tiles is 2 units.
     private const float combat_hpBar_duration = 0.5f; //how long we will watch the unit's hpbars decrease for.
     private const float combat_hpBar_linger = 0.05f; //how long we wait for the period between hpbars finishing decreasing and then dead/broken units being removed/updated
-    private const float combat_highlights_linger = 0f; //how long we wait for the period between dead/broken units being removed/updated and target highlights being unhighlighted
+    private const float combat_highlights_linger = 0.5f; //how long we wait for the period between dead/broken units being removed/updated and target highlights being unhighlighted
     private bool animating; //true while animating. Disables player input.
 
     [SerializeField] private MissionManager missionList; //all missions.
@@ -1118,10 +1118,14 @@ public class CombatGrid : MonoBehaviour
         }
         update_ZoC();
         animating = false;
+
+        //update uinformer visuals
+        uInformer.fill(active_unit, pw, true);
     }
     IEnumerator perform_attack_animation(List<Unit> affectedUnits, bool isPlayer)
     {
         //here's what it is to do:
+        // -plays move sound (or none if null)
         // -show health bars decreasing on all the affected units
         // -when animation done: any units that have died, remove their sprites.
         // -when that's done (and attack duration time has passed), hide affectedTiles
@@ -1157,8 +1161,11 @@ public class CombatGrid : MonoBehaviour
                 }
             }            
         }
-        
-        //do hpbar animations
+
+        //play move sound
+        audio.play_sound(active_ability.get_traitSound());
+
+        //do hpbar and brkbar animations
         float elapsedTime = 0f;
         while (elapsedTime < combat_hpBar_duration)
         {
@@ -1168,6 +1175,9 @@ public class CombatGrid : MonoBehaviour
             {
                 float endScale = (float)u.get_hp() / (float)u.get_hpMax();
                 u.slide_hpBar(endScale);
+
+                float brk_endScale = (float)u.get_brk() / (float)u.get_brkMax();
+                u.slide_brkBar(brk_endScale);
             }
 
             elapsedTime += Time.deltaTime;
@@ -1336,18 +1346,25 @@ public class CombatGrid : MonoBehaviour
         //(but only if you're hovering over the active unit)
         if (gameState == State.SELECT_TARGET && active_unit == uInformer.get_heldUnit())
         {
-            //if trait exists and is active
-            if (active_unit.get_traitList()[which] != null && !active_unit.get_traitList()[which].get_isPassive())
+            if (active_unit.get_traitList()[which] != null)
             {
-                clear_highlights();
-                active_ability = active_unit.get_traitList()[which];
+                if (active_unit.get_traitList()[which].get_isPassive() || active_unit.get_traitList()[which].get_pwCost() > pw)
+                {
+                    //hide highlights
+                    clear_highlights();
+                    clear_target_highlights();
+                }
+                else
+                {
+                    //show other valid move's highlights
+                    clear_highlights();
+                    active_ability = active_unit.get_traitList()[which];
 
-                //hide target highlights
-                clear_target_highlights();
-
-                highlight_attack(active_ability);
+                    //hide target highlights
+                    clear_target_highlights();
+                    highlight_attack(active_ability);
+                }
             }
-
         }
         //if we are not in target select, then you can update the unit informer
         uInformer.traitButtonHover(which);
@@ -1810,10 +1827,11 @@ public class CombatGrid : MonoBehaviour
         if (playerUnits[which] != null)
         {
             //then jump
-            Vector3 moveHere = get_pos_from_coords(playerUnits[which].x, playerUnits[which].y) + new Vector3(0f, 0f, -10f);
-            cam.unlock_camera();
-            cam.jump_to(moveHere);
-            cam.lock_camera();
+            if (gameState != State.ENEMY)
+            {
+                Vector3 moveHere = get_pos_from_coords(playerUnits[which].x, playerUnits[which].y) + new Vector3(0f, 0f, -10f);
+                cam.jump_to(moveHere);
+            }
         }
         else
         {

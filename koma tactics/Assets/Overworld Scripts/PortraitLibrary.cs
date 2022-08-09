@@ -13,6 +13,7 @@ public class PortraitLibrary : MonoBehaviour
     //Index:
     // 0:
     [SerializeField] private Sprite[] bgs;
+    [SerializeField] private Sprite[] frameCGs;
 
     //for event previews. no expression variations, all characters are in there, 1 sprite each.
     //The sprite is neck up, talking-portrait. Also used in combat events for the portrait slot.
@@ -44,6 +45,11 @@ public class PortraitLibrary : MonoBehaviour
     [SerializeField] private Sprite[] fridayFull;
     [SerializeField] private Sprite[] yveFull;
     [SerializeField] private Sprite[] naiFull;
+
+    public Sprite retrieve_cgFrame(int id)
+    {
+        return frameCGs[id];
+    }
 
     public Sprite retrieve_eventBg(int id)
     {

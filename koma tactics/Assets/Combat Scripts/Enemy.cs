@@ -64,24 +64,17 @@ public class Enemy : Unit
         //factors:
         int score = 0;
 
-        // -distance to closest player (more points if foolish) (remember: a lower value means you are closer.)
-        //if we want to keep distance, then the higher closestPlayerTile is the better.
-        //if we do not want to keep distance, then the lower closestPlayerTile is the better.
-        if (keepDistance)
-        {
-            score += closestPlayerTile;
-        }
-        else
-        {
-            if (unitAI == AI.FOOLISH) score -= (2 * closestPlayerTile);
-            else score -= closestPlayerTile;
-        }
-
         // -non-controlled tiles this move adds ZoC control to (less points if foolish)
         if (caresAboutZoC)
         {
             if (unitAI == AI.FOOLISH) score += tilesAddedToZoC;
             else score += (2 * tilesAddedToZoC);
+        }
+
+        if (!keepDistance)
+        {
+            if (unitAI == AI.FOOLISH) score -= (2 * closestPlayerTile);
+            else score -= closestPlayerTile;
         }
 
         // -moving less is good.
@@ -160,6 +153,15 @@ public class Enemy : Unit
             bestTraitIndex = ans.Item1;
             bestTileList = ans.Item2;
             bestAttackOrigin = ans.Item3;
+
+            //(keep distance, but you still want to be able to attack)
+            // -distance to closest player (more points if foolish) (remember: a lower value means you are closer.)
+            //if we want to keep distance, then the higher closestPlayerTile is the better.
+            //if we do not want to keep distance, then the lower closestPlayerTile is the better.
+            if (keepDistance)
+            {
+                score += closestPlayerTile;
+            }            
         }
 
         //return score (and have saved the bestTraitIndex and bestTargetList)

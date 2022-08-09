@@ -31,7 +31,8 @@ public class CombatDialoguer : MonoBehaviour
 
     [SerializeField] private Text nameText;
     [SerializeField] private Text sentenceText;
-    [SerializeField] private Image portrait;
+    [SerializeField] private Image cgFrame; //an image frame that shows up in the middle of the screen. 
+    [SerializeField] private Image portrait; //for showing the speaker's (box) portrait.
     private float textWait = 0.02f;
 
     private Story script;
@@ -64,7 +65,11 @@ public class CombatDialoguer : MonoBehaviour
         //Debug.Log("label = " + script.variablesState["label"]);
 
         link_external_functions();
-               
+
+        //set portrait, cgframe to 0. (not name, there must always be a name in this dialogues.)
+        portrait.gameObject.SetActive(false);
+        cgFrame.gameObject.SetActive(false);
+
         dialoguerCanvas.enabled = true;
         displayNextSentence();
     }
@@ -154,6 +159,10 @@ public class CombatDialoguer : MonoBehaviour
         {
             this.set_portrait(which);
         });
+        script.BindExternalFunction("cg", (int which) =>
+        {
+            this.set_cg(which);
+        });
         script.BindExternalFunction("jump", (int x, int y) =>
         {
             this.jump_camera(x, y);
@@ -188,6 +197,18 @@ public class CombatDialoguer : MonoBehaviour
             portrait.enabled = true;
         }
 
+    }
+    void set_cg(int which)
+    {
+        if (which == -1)
+        {
+            cgFrame.enabled = false;
+        }
+        else
+        {
+            cgFrame.sprite = pLibrary.retrieve_cgFrame(which);
+            cgFrame.enabled = true;
+        }
     }
     void jump_camera(int x, int y)
     {

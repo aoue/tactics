@@ -7,19 +7,15 @@ public class BattleBrain
 {
     //calculator for combat.
 
-    //light, medium, heavy
+    //(light, medium, heavy)
     //the trait's affinity vs. the defender's affinity
-    //light does 2x to heavy, and takes 0.5x
-    //medium does 1.5x to light, and takes 0.75x
-    //heavy does 1x to medium, and takes 1x
-
-    //light good against heavy in both off and def
-    //medium good against light in both off and def, but not crazily
-    //heavy good against nothing; relies on pure stats.
+    //light does 1x to light, 0.75x to medium, and 2x to heavy.
+    //medium to 1x to all.
+    //heavy does 0.5x to light, and 1x to medium and heavy.
     float[,] affinityMultArray = new float[3, 3]
     {
         {1.0f, 0.75f, 2.0f },
-        {1.25f, 1.0f, 1.0f },
+        {1.0f, 1.0f, 1.0f },
         {0.5f, 1.0f, 1.0f }
     };
 

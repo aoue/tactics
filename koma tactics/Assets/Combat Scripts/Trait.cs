@@ -40,6 +40,7 @@ public class Trait : MonoBehaviour
     //active traits:
     // -can be used as an attack for targeting, dmg, etc.
 
+    [SerializeField] private AudioClip traitSound; //the sound that plays when the trait is used. Or null for nothing.
     [SerializeField] private string traitName; //the name of the trait. Unique.
     [SerializeField] private string descr; //a 1-line (at the most) descr of the trait.
     [SerializeField] private UnitType unitType; //adds this unit type to the player unit.
@@ -123,30 +124,45 @@ public class Trait : MonoBehaviour
         }
         else
         {
-            buildStr += "Ability - ";
+            switch (affinity)
+            {
+                case 0:
+                    buildStr += "Light ";
+                    break;
+                case 1:
+                    buildStr += "Medium ";
+                    break;
+                case 2:
+                    buildStr += "Heavy ";
+                    break;
+                default:
+                    break;
+            }
+            buildStr += "Attack — ";
 
-            if (isHeal) buildStr += " Heal";
-            else buildStr += " Attack";
+            if (isHeal) buildStr += " Support";
+            else buildStr += " Offense";
 
-            if (usesPhysAttack)
-            {
-                buildStr += "| Physical vs. ";
-            }
-            else
-            {
-                buildStr += "| Magic vs. ";
-            }
-            if (usesPhysDefense)
-            {
-                buildStr += " Physical";
-            }
-            else
-            {
-                buildStr += " Magic";
-            }
+            if (usesPhysAttack) buildStr += "| Machine Atk vs. ";           
+            else buildStr += "| EAC Atk vs. ";
+            
+            if (usesPhysDefense) buildStr += " Machine Def";
+            else buildStr += " EAC Def";
+            
+            //replace with images
             buildStr += " (" + targeting + ", " + aoe + ")";
 
-            buildStr += "\n" + range + " Range | " + power + " Power | " + pwCost + " cost.";
+            if (minimum_range == 0)
+            {
+                buildStr += "\n" + range + " Range";
+            }
+            else
+            {
+                buildStr += "\n" + minimum_range + "-" + range + " Range";
+            }
+
+            buildStr += " | " + power + " Force | " + pwCost + " cost.";
+
         }
 
         //each has its own sep text and image
@@ -156,6 +172,7 @@ public class Trait : MonoBehaviour
         return buildStr + "\n<i>" + descr + "</i>";
     }
 
+    public AudioClip get_traitSound() { return traitSound; }
     public string get_traitName() { return traitName; }
     public bool get_isPassive() { return isPassive; }
     public TargetingType get_targetingType() { return targeting; }

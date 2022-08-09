@@ -14,7 +14,8 @@ public class Unit : MonoBehaviour
 
     //ui
     [SerializeField] private SpriteRenderer unitSprite;
-    [SerializeField] private Transform hpBar;
+    [SerializeField] private Transform hpBar; //marks hp / hpmax percentage, in red
+    [SerializeField] private Transform brkBar; //marks brk / brkmax percentage, in yellow
 
     //stats  
     [SerializeField] private Sprite box_portrait; //the small one.
@@ -61,7 +62,6 @@ public class Unit : MonoBehaviour
     {
         //called when the unit breaks.
         isBroken = true;
-        brk = brkMax;
         ap = 0;
         unitSprite.color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
     }
@@ -84,6 +84,7 @@ public class Unit : MonoBehaviour
         brk = brkMax;
         ap = 1;
         set_hpBar();
+        set_brkBar();
 
         //setup types array
         unitTypes = new List<UnitType>();
@@ -99,6 +100,11 @@ public class Unit : MonoBehaviour
     {
         //called at the start of a round.
         ap = 1;
+        if (brk == 0)
+        {
+            brk = brkMax;
+            set_brkBar();
+        }
         unitSprite.color = new Color(1f, 1f, 1f);
     }
     public void take_dmg(int dmg, float brkMultiplier)
@@ -110,8 +116,8 @@ public class Unit : MonoBehaviour
 
         if (!isBroken)
         {
-            brk -= (int)(dmg * brkMultiplier);
-            if (brk <= 0)
+            brk = Math.Max(0, (brk - (int)(dmg * brkMultiplier)));
+            if (brk == 0)
             {
                 brk_self();
             }
@@ -132,6 +138,12 @@ public class Unit : MonoBehaviour
         //set the scale of the sprite to hp / hpmax
         hpBar.localScale = new Vector3((float)hp / (float)hpMax, 1f);
     }
+    void set_brkBar()
+    {
+        //updates the hpbar:
+        //set the scale of the sprite to hp / hpmax
+        brkBar.localScale = new Vector3((float)brk / (float)brkMax, 0.5f);
+    }
     public void slide_hpBar(float hpBarScale)
     {
         //slides the hpBar scale towards hpBarScale by 1 unit.
@@ -144,7 +156,19 @@ public class Unit : MonoBehaviour
             hpBar.localScale += new Vector3(0.01f, 0f);
         }
     }
-    
+    public void slide_brkBar(float brkBarScale)
+    {
+        //slides the hpBar scale towards hpBarScale by 1 unit.
+        if (brkBar.localScale.x > brkBarScale)
+        {
+            brkBar.localScale += new Vector3(-0.01f, 0f);
+        }
+        else if (brkBar.localScale.x < brkBarScale)
+        {
+            brkBar.localScale += new Vector3(0.01f, 0f);
+        }
+    }
+
     //getters
     public float get_hpPercentage() { return (float)hp / (float)hpMax; }
     public int get_uniqueUnitID() { return uniqueUnitID; }

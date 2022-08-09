@@ -75,6 +75,7 @@ public class CameraController : MonoBehaviour
 
     public void lock_camera() { canMove = false; }
     public void unlock_camera() { canMove = true; }
+    public bool get_canMove() { return canMove; }
 
     public void setup(int xborder, int yborder)
     {

@@ -102,21 +102,22 @@ public class UnitInformer : MonoBehaviour
             if (u.get_unitOrder() != null)
             {
                 stats_1.text += "\n\n" + u.get_unitOrder().get_orderName()
-                + "\n" + u.get_unitOrder().get_orderDescr();
+                + "\n<i>" + u.get_unitOrder().get_orderDescr() + "</i>";
             }
                 
 
-            stats_2.text = "Phys Atk: " + u.get_physa()
-                + "\nPhys Def: " + u.get_physd()
-                + "\nMag Atk: " + u.get_maga()
-                + "\nMag Def: " + u.get_magd();
+            stats_2.text = "Machine Atk: " + u.get_physa()
+                + "\nMachine Def: " + u.get_physd()
+                + "\nEAC Atk: " + u.get_maga()
+                + "\nEAC Def: " + u.get_magd();
 
-            //trait-abiltiy window
+            //trait-abiltiy window           
             for (int i = 0; i < traitButtons.Length; i++)
-            {
+            {               
                 //fill trait-ability button text.
                 if (u.get_traitList()[i] != null)
                 {
+                    //Debug.Log("uinformer.fill() trait " + i + " pw =  " + pw + " pwCost = " + u.get_traitList()[i].get_pwCost());
                     if ( !allowButtonsInteractable || u.get_traitList()[i].get_isPassive() || u.get_traitList()[i].get_pwCost() > pw )
                     {
                         traitButtons[i].interactable = false;
