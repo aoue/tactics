@@ -60,8 +60,33 @@ public class Trait : MonoBehaviour
     [SerializeField] private bool usesPhysAttack; //on true, use attacker's phys attack for dmg calc. On false, use attacker's mag attack.
     [SerializeField] private bool usesPhysDefense; //on true, use target's phys def for dmg calc. On false, use target's mag def.
     [SerializeField] private bool isHeal;
+    [SerializeField] private bool usesTrigger; //if true, then can only be used once per deployment.
 
-    //passive traits
+    //state
+    //set to true in the relevant function, if applicable. Set to false in unit.start_of_mission()
+    //used to make sure one-time traits are only triggered once.
+    protected bool triggered = false; 
+
+    //for abilities, but on their use.
+    //that is, only the active trait's on_attack() will be called when the unit attacks.
+    public virtual void on_attack(Unit self, int totalDmg)
+    {
+        //the totalDmg is all the damage the unit dealt, in case it hit multiple targets.
+    }
+    public virtual void on_kill(Unit self, int totalDmg)
+    {
+        //the totalDmg is all the damage the unit dealt, in case it hit multiple targets.
+    }
+
+    //for strictly passive traits 
+    public virtual void on_own_death(Unit self)
+    {
+        //examples:
+        // -one time thing; return unit to x% health; triggered = true;
+        // -every time thing; x% chance to survive at 1 hp
+
+        
+    }
     public virtual int modify_dmg_dealt(int dmg, Unit self, Unit enemy, Unit[] self_allies)
     {
         //will probably need the grid and playerList.
@@ -121,6 +146,20 @@ public class Trait : MonoBehaviour
         if (isPassive)
         {
             buildStr += "Passive";
+
+            if (usesTrigger)
+            {
+                
+                if (triggered)
+                {
+                    buildStr += " (already used)";
+                }
+                else
+                {
+                    buildStr += " (not yet used)";
+                }
+            }
+
         }
         else
         {
@@ -189,5 +228,6 @@ public class Trait : MonoBehaviour
     public bool get_usesPhysDefense() { return usesPhysDefense; }
     public bool get_isHeal() { return isHeal; }
     public UnitType get_unitType() { return unitType; }
+    public void reset_triggered() { triggered = false; }
 
 }

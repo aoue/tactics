@@ -90,9 +90,16 @@ public class Unit : MonoBehaviour
         unitTypes = new List<UnitType>();
         foreach(Trait t in traitList)
         {
-            if (t != null && t.get_unitType() != UnitType.NOTHING)
+            if (t != null)
             {
-                unitTypes.Add(t.get_unitType());
+                //reset triggered state
+                t.reset_triggered();
+
+                //add to unit's trait list
+                if (t.get_unitType() != UnitType.NOTHING)
+                {
+                    unitTypes.Add(t.get_unitType());
+                }
             }
         }
     }
@@ -125,7 +132,18 @@ public class Unit : MonoBehaviour
 
         if (hp == 0)
         {
-            isDead = true;
+            foreach (Trait t in traitList)
+            {
+                if (t != null)
+                {
+                    t.on_own_death(this);
+                }              
+            }
+
+            if (hp == 0)
+            {
+                isDead = true;
+            }               
         }
     }
     public void take_heal(int heal)

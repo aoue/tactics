@@ -1134,6 +1134,7 @@ public class CombatGrid : MonoBehaviour
         // -each affected unit has had its hp updated, so now we adjust their hpbars in the animation segment
         //the move used could be an attack or it could be a heal.
         bool anyKills = false;
+        int totalDmg = 0;
         if (active_ability.get_isHeal())
         {
             foreach (Unit target in affectedUnits)
@@ -1149,7 +1150,9 @@ public class CombatGrid : MonoBehaviour
                 foreach (Unit target in affectedUnits)
                 {
                     int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, playerUnits);
+                    totalDmg += dmg;
                     target.take_dmg(dmg, active_ability.get_brkMult());
+                    
                 }
             }
             else
@@ -1157,9 +1160,13 @@ public class CombatGrid : MonoBehaviour
                 foreach (Unit target in affectedUnits)
                 {
                     int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, enemyUnits.ToArray());
-                    target.take_dmg(dmg, active_ability.get_brkMult());
+                    totalDmg += dmg;
+                    target.take_dmg(dmg, active_ability.get_brkMult());                  
                 }
-            }            
+            }
+
+            //unit's on_attack trait effect is called. 
+            active_ability.on_attack(active_unit, totalDmg);
         }
 
         //play move sound
@@ -1235,6 +1242,13 @@ public class CombatGrid : MonoBehaviour
                 }
             }
         }
+
+        //active ability's on kill trait effect called
+        if (anyKills)
+        {
+            active_ability.on_kill(active_unit, totalDmg);
+        }
+        
 
         yield return new WaitForSeconds(combat_highlights_linger);
 
