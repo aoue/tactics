@@ -47,8 +47,15 @@ public class CombatGrid : MonoBehaviour
     [SerializeField] private GameObject deploymentObj;
     [SerializeField] private Sprite defaultUnitShortcutSprite;
 
+    [SerializeField] private GameObject missionSummaryObj; //the object that all the mission summary stuff is on
+    [SerializeField] private Text missionSummaryTitleText; //the title text for the mission. will say 'Mission Clear' or 'Mission Fail'
+    [SerializeField] private Text[] objectivesTextList; //shows the breakdown for the main objective and each side objective. Shows success/fail and +exp gained.
+    [SerializeField] private Button continueRetryButton; //button that, if mission was won, loads the next part. if mission was lost, reloads the combat scene.
+    [SerializeField] private Button mainMenuButton; //button that is only available if the mission was lost. can go to main menu.
+
     private Tile[,] myGrid;
     private State gameState;
+    private bool overState = false;
 
     [SerializeField] private Order defaultOrder; //the default order. No effects. So we don't have to put if not null everywhere.
 
@@ -508,6 +515,65 @@ public class CombatGrid : MonoBehaviour
         update_ZoC();
     }
 
+    //Clear/Loss
+    public void show_mission_summary(bool isClear)
+    {
+        //displays the mission summary screen.
+        //shows:
+        // -mission clear/mission fail
+        // -main objective; + _ exp
+        // -side objectives; + _ exp (each)
+        // -continue button / retry and main menu button
+        overState = isClear;
+        if (overState)
+        {
+            missionSummaryTitleText.text = "Mission Clear";
+            continueRetryButton.gameObject.transform.GetChild(0).GetComponent<Text>().text = "Continue";
+            mainMenuButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            missionSummaryTitleText.text = "Mission Fail";
+            continueRetryButton.gameObject.transform.GetChild(0).GetComponent<Text>().text = "Retry";
+            mainMenuButton.gameObject.SetActive(true);
+        }
+
+        //for the objectives list:
+        // [0]: main objective. success if isClear, fail if not. (get text from mission)
+        // [i]: mission has got a list of bools it returns, where each bool is the state of whether that side objective is success.
+        // (there is a maximum number of side objectives allowed.)
+        uiCanvas.enabled = true;
+        missionSummaryObj.gameObject.SetActive(true);
+    }
+    public void mission_summary_button_pressed_1()
+    {
+        //the continue/retry button is pressed.
+        if (overState)
+        {
+            //continue; load next part
+            Debug.Log("continue pressed; loading overworld");
+            StartCoroutine(pause_before_loading_scene(1));
+        }
+        else
+        {
+            //retry; reload mission
+            Debug.Log("retry pressed; reloading combat");
+            StartCoroutine(pause_before_loading_scene(2));
+        }
+    }
+    public void mission_summary_button_pressed_2()
+    {
+        //the main menu button is pressed.
+        StartCoroutine(pause_before_loading_scene(0));
+    }
+    IEnumerator pause_before_loading_scene(int sceneIndex)
+    {
+        fader.fade_to_black_stay();
+        yield return new WaitForSeconds(2f);
+        Debug.Log("loading scene " + sceneIndex + " | carrier: nextpartindex = " + Carrier.Instance.get_nextPartIndex() + "carrier nextmissionindex = " + Carrier.Instance.get_nextMissionIndex());
+        SceneManager.LoadScene(sceneIndex);
+    }
+
     //Control
     public void post_mission_begin_dialogue()
     {
@@ -797,32 +863,7 @@ public class CombatGrid : MonoBehaviour
         //can be called with spacebar.
         finish_attack(false, true);
 
-    }
-    public void end_mission_win()
-    {
-        Debug.Log("Mission is won.");
-
-        //pass 1 to load overworld
-        StartCoroutine(pause_before_loading_overworld(1));
-
-    }
-    public void end_mission_loss()
-    {
-        //show loss menu:
-        // -retry mission (can reload scene to do this, probably)
-        // -main menu
-        //pass 0 to load main menu.
-        //pass 2 to reload combat scene again.
-        Debug.Log("Mission is lost.");
-
-    }
-    IEnumerator pause_before_loading_overworld(int sceneToLoad)
-    {
-        fader.fade_to_black_stay();
-        yield return new WaitForSeconds(2f);
-        Debug.Log("loading scene " + sceneToLoad + ". hermes' nextpartindex = " + Carrier.Instance.get_nextPartIndex());
-        SceneManager.LoadScene(sceneToLoad);
-    }
+    }  
 
     //Enemy Turn/AI
     void start_enemy_turn()

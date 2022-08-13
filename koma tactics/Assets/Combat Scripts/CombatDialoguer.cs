@@ -121,23 +121,16 @@ public class CombatDialoguer : MonoBehaviour
         
         switch (label)
         {
-            /*
-            case 0:
-                //beginning of mission: send the player back, and ensure the round still hasn't started yet.
-                //they need the chance to deploy their units.
-                cammy.unlock_camera();
-                cGrid.post_mission_begin_dialogue();
-                break;
-            */
             case -2:
                 //win.
-                cGrid.end_mission_win();
+                cGrid.show_mission_summary(true);
                 break;
             case -3:
                 //loss.
-                cGrid.end_mission_loss();               
+                cGrid.show_mission_summary(false);
                 break;
             default:
+                //normal events
                 cammy.unlock_camera();
                 cGrid.post_mission_begin_dialogue();
                 break;
