@@ -187,21 +187,8 @@ public class Trait : MonoBehaviour
             
             if (usesPhysDefense) buildStr += " Machine Def";
             else buildStr += " EAC Def";
-            
-            //replace with images
-            buildStr += " (" + targeting + ", " + aoe + ")";
 
-            if (minimum_range == 0)
-            {
-                buildStr += "\n" + range + " Range";
-            }
-            else
-            {
-                buildStr += "\n" + minimum_range + "-" + range + " Range";
-            }
-
-            buildStr += " | " + power + " Force | " + pwCost + " cost.";
-
+            buildStr += "\n" + power + " Force | " + pwCost + " cost.";
         }
 
         //each has its own sep text and image
@@ -219,6 +206,7 @@ public class Trait : MonoBehaviour
     public int get_min_range() { return minimum_range; }
     public int get_aff() { return affinity; }
     public int get_range() { return range; }
+    public int get_minimum_range() { return minimum_range; }
     public int get_power() { return power; }
     public float get_min_dmg_range() { return min_dmg_range; }
     public float get_max_dmg_range() { return max_dmg_range; }

@@ -10,25 +10,22 @@ public class UnitInformer : MonoBehaviour
     //click on a unit: heldUnit. When you are not mousing over a unit, it will show their stats.
     //hover over a unit: display this unit's information.
 
-    //it has:
-    // -name text (text)
-    // -affinity image
-    // -hp text and slider
-    // -brk text and slider
-    // -mvmt text
-    // -4 trait slots
-    // interactable:
-    // -expand/shrink toggle
-    //    -window with: (physa, physd, maga, magd)
-
-    [SerializeField] private Image active_portrait;
+    //held data
     [SerializeField] private Sprite[] affSprites;
+    [SerializeField] private Sprite[] targetingSprites; //order: line, square, radius, self
+    private string[] AoELabels = {"Single", "All-between", "All"}; //order: single, all betweeen, all
+
+    //main display
+    [SerializeField] private Image active_portrait;    
     [SerializeField] private Text nameText;
     [SerializeField] private Text unitTypesText;
     [SerializeField] private Image affImage;
     [SerializeField] private Text stats_1; //the main stats view. hp, brk, mvmt.
-    [SerializeField] private Text stats_2; //the side stats view. patk, pdef, maga, magd
 
+    //side display
+    [SerializeField] private Text stats_2; //the side stats view. patk, pdef, maga, magd
+    [SerializeField] private Image targetingImage; //from Targeting type
+    [SerializeField] private Text targetingLabel; //from AoE Type
     [SerializeField] private Text traitName;
     [SerializeField] private Text traitdescr; //three lines.
     [SerializeField] private Button[] traitButtons; //four buttons.
@@ -69,6 +66,14 @@ public class UnitInformer : MonoBehaviour
             passButton.gameObject.SetActive(false);
         }
     }
+
+    public void refresh()
+    {
+        if (heldUnit != null)
+        {
+            fill(heldUnit, -1, false);
+        }
+    }
     public void fill(Unit u, int pw, bool allowButtonsInteractable)
     {
         //set all fields with the unit's corresponding data
@@ -104,7 +109,6 @@ public class UnitInformer : MonoBehaviour
                 stats_1.text += "\n\n" + u.get_unitOrder().get_orderName()
                 + "\n<i>" + u.get_unitOrder().get_orderDescr() + "</i>";
             }
-                
 
             stats_2.text = "Machine Atk: " + u.get_physa()
                 + "\nMachine Def: " + u.get_physd()
@@ -137,9 +141,8 @@ public class UnitInformer : MonoBehaviour
                 }
             }
             //fill title and descr text with element 0 - the locked one. Not moveable. Every unit in the game has a trait at this slot.
-            traitName.text = u.get_traitList()[0].get_traitName();
-            traitdescr.text = u.get_traitList()[0].get_traitDescr();
-
+            //-must be active trait, must have 0 pw cost, etc. Locked.
+            traitButtonHover(0);
 
             if (!gameObject.active) gameObject.SetActive(true);
         }
@@ -151,12 +154,35 @@ public class UnitInformer : MonoBehaviour
 
         if (heldUnit != null && heldUnit.get_traitList()[which] != null)
         {
+            //set trait name and descr
             traitName.text = heldUnit.get_traitList()[which].get_traitName();
             traitdescr.text = heldUnit.get_traitList()[which].get_traitDescr();
-        }
-        
-    }
 
+            //set trait targeting diagram
+
+            if (heldUnit.get_traitList()[which].get_isPassive())
+            {
+                targetingLabel.text = "";
+                targetingImage.enabled = false;
+            }
+            else
+            {
+                targetingImage.sprite = targetingSprites[(int)heldUnit.get_traitList()[which].get_targetingType()];
+                targetingLabel.text = AoELabels[(int)heldUnit.get_traitList()[which].get_AoEType()];
+
+                if (heldUnit.get_traitList()[which].get_minimum_range() == 0)
+                {
+                    targetingLabel.text += "\n" + heldUnit.get_traitList()[which].get_range() + " Range";
+                }
+                else
+                {
+                    targetingLabel.text += "\n" + heldUnit.get_traitList()[which].get_minimum_range() + "-" + heldUnit.get_traitList()[which].get_range() + " Range";
+                }
+
+                targetingImage.enabled = true;
+            }
+        }
+    }
     public void hide()
     {
         gameObject.SetActive(false);

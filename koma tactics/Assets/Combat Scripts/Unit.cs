@@ -22,6 +22,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private Sprite active_portrait;  //the large one.
     [SerializeField] private string unitName;
     [SerializeField] private int level;
+    [SerializeField] private int exp; //for player units; it's the unspent exp they have. For enemy units, it's the exp they drop on kill.
     [SerializeField] private bool isAlly; //true if player unit. False is not.
     [SerializeField] private int aff; //0: light, 1: medium, 2: heavy
     [SerializeField] private int movement;
@@ -204,6 +205,7 @@ public class Unit : MonoBehaviour
     public int get_controlRange() { return controlRange; }
     public int get_pwCost() { return pwCost; }
     public int get_level() { return level; }
+    public int get_exp() { return exp; }
     public int get_physa() { return phys_atk; }
     public int get_physd() { return phys_def; }
     public int get_maga() { return magic_atk; }

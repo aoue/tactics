@@ -102,6 +102,7 @@ public class CombatGrid : MonoBehaviour
         loadedMission = missionList.get_mission(Carrier.Instance.get_nextMissionIndex());
         Carrier.Instance.set_nextPartIndex(loadedMission.get_nextPartIndex());
         reserveParty = Carrier.Instance.get_reserveParty();
+        Carrier.Instance.set_exp(0);
 
         display_grid(loadedMission);
         display_units(loadedMission);
@@ -1169,6 +1170,9 @@ public class CombatGrid : MonoBehaviour
             active_ability.on_attack(active_unit, totalDmg);
         }
 
+        //update uinformer (show the real hp of whatever unit was there)
+        uInformer.refresh();
+
         //play move sound
         audio.play_sound(active_ability.get_traitSound());
 
@@ -1191,7 +1195,6 @@ public class CombatGrid : MonoBehaviour
             yield return null;
         }
         
-
         yield return new WaitForSeconds(combat_hpBar_linger);
 
         //adjust states based on break and death
@@ -1220,6 +1223,8 @@ public class CombatGrid : MonoBehaviour
                 }
                 else
                 {
+                    //get exp from defeating enemy
+                    Carrier.Instance.inc_exp(target.get_exp());
                     //remove from enemy list
                     enemyUnits.Remove(target);
                 }
@@ -1247,8 +1252,7 @@ public class CombatGrid : MonoBehaviour
         if (anyKills)
         {
             active_ability.on_kill(active_unit, totalDmg);
-        }
-        
+        }               
 
         yield return new WaitForSeconds(combat_highlights_linger);
 

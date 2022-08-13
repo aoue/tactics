@@ -21,6 +21,9 @@ public class Carrier : MonoBehaviour
     private int nextMissionIndex; //set by overworld when loading a combat mission.
     private bool startingNewGame; //set to true by main menu on the new game button. Otherwise, always false.
 
+    private int gainedExp; //exp gained in a mission
+    private int levelCap; //the max level a unit is allowed to achieve. Stops the player from overleveling.
+
     [SerializeField] private Unit[] allPlayerUnits; //the carrier knows all the units.
 
     void Awake()
@@ -40,12 +43,14 @@ public class Carrier : MonoBehaviour
     public void new_game()
     {
         //called by main menu
+        gainedExp = 0;
         nextMissionIndex = 0;
     }
     public void reset()
     {
         //set to the state that it has at the start of the game.
         //this works, because main menu sets startingNewGame to true. No where else can it be set to true.
+        gainedExp = 0;
         nextPartIndex = 0;
         nextMissionIndex = 0;
         reserveParty = new List<Unit>();
@@ -69,8 +74,13 @@ public class Carrier : MonoBehaviour
     public int get_nextPartIndex() { return nextPartIndex; }
     public int get_nextMissionIndex() { return nextMissionIndex; }
     public List<Unit> get_reserveParty() { return reserveParty; }  
+    public int get_exp() { return gainedExp; }
+    public int get_level_cap() { return levelCap; }
 
-    //GETTERS
+    //SETTERS
+    public void set_level_cap(int i) { }
+    public void set_exp(int i) { gainedExp = 0; }
+    public void inc_exp(int i) { gainedExp += i; }
     public void set_nextPartIndex(int i) { nextPartIndex = i; }
     public void set_nextMissionIndex(int i) { nextMissionIndex = i; }
 

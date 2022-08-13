@@ -320,6 +320,7 @@ MonoBehaviour:
   active_portrait: {fileID: 21300000, guid: 259da52cdff04264382f961c200e9515, type: 3}
   unitName: Prata
   level: 1
+  exp: 0
   isAlly: 1
   aff: 1
   movement: 3
@@ -334,7 +335,7 @@ MonoBehaviour:
   phys_def: 70
   magic_atk: 70
   magic_def: 70
-  unitOrder: {fileID: 1157932611524118855, guid: f654bce372817474ca44f35a71638e34,
+  unitOrder: {fileID: 2497933080290425583, guid: ecf60bb980dfc9c469a20450586f18a3,
     type: 3}
   traitList:
   - {fileID: 4139798574039622529, guid: ac170af480b24354890d79b268462a91, type: 3}
