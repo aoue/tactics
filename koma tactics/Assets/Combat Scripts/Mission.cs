@@ -31,7 +31,9 @@ public class Mission : MonoBehaviour
     [SerializeField] protected int starting_power;
     [SerializeField] protected string win_obj_descr;
     [SerializeField] protected string loss_obj_descr;
-   
+    [SerializeField] private string[] side_objectives_descrs; //descriptions for each side objective. parallel.
+    [SerializeField] private int[] objectives_rewards; //exp reward for each objective accomplished. main is 0, 1+ is side.
+
     [SerializeField] protected TextAsset script;
     [SerializeField] protected int[] eventRounds; //add round number if event in for that round.
     [SerializeField] protected AudioClip[] musicList;
@@ -66,6 +68,18 @@ public class Mission : MonoBehaviour
             }
         }
         return true;
+    }
+    
+    //side objectives
+    public virtual bool[] side_objectives_states(Unit[] pl, List<Unit> el, int roundNumber)
+    {
+        //returns list of ints, where each int corresponds to the state of a side objective.
+        //each element corresponds to a side objective result.
+        // ObjectiveState.in_progress: objective not completed.
+        // false: objective not completed
+        // true: objective completed
+
+        return null;
     }
 
     //map setup
@@ -144,6 +158,65 @@ public class Mission : MonoBehaviour
     }
 
     //getters
+    public string print_objectives(bool isClear, bool isBriefing, Unit[] pl, List<Unit> el, int roundNumber)
+    {
+        //returns the descr + dscription of each side objective.
+        //1 per line.
+        //max 4.
+
+        //first, do main objective
+        string buildStr = win_obj_descr + "\n";
+        
+        bool[] successStates = side_objectives_states(pl, el, roundNumber);
+        if (successStates == null) return buildStr;
+
+        for (int i = 0; i < side_objectives_descrs.Length; i++)
+        {
+            buildStr += "\n-" + side_objectives_descrs[i];
+        }
+
+        return buildStr;
+    }
+    public string print_objectives_rewards(bool isClear, Unit[] pl, List<Unit> el, int roundNumber)
+    {
+        string buildStr = "";
+
+        if (isClear)
+        {
+            buildStr += "—Passed— (" + objectives_rewards[0] + " exp!)\n";
+        }
+
+        bool[] successStates = side_objectives_states(pl, el, roundNumber);
+        if (successStates == null) return buildStr;
+
+        for (int i = 0; i < side_objectives_descrs.Length; i++)
+        {
+            buildStr += "\n";
+            if (successStates[i])
+            {
+                buildStr += "—Passed— +" + objectives_rewards[i + 1] + " exp!";
+            }
+            else
+            {
+                buildStr += "—Failed—";
+            }
+        }
+
+        return buildStr;
+    }
+    public int get_objectives_exp(Unit[] pl, List<Unit> el, int roundNumber)
+    {
+        int sum = objectives_rewards[0];
+        bool[] successStates = side_objectives_states(pl, el, roundNumber);
+        for (int i = 0; i < successStates.Length; i++)
+        {
+            if (successStates[i])
+            {
+                sum += objectives_rewards[i + 1];
+            }
+        }
+        return sum;
+    }
     public int get_nextPartIndex() { return nextPartIndex; }
     public int get_starting_power() { return starting_power; }
     public string get_lossDescr() { return loss_obj_descr; }

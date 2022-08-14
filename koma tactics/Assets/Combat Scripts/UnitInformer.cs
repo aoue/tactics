@@ -102,12 +102,13 @@ public class UnitInformer : MonoBehaviour
 
             stats_1.text = "HP: " + u.get_hp() + " / " + u.get_hpMax()
                 + "\nBRK: " + u.get_brk() + " / " + u.get_brkMax()
-                + "\nMovement: " + u.get_movement();
+                + "\nMovement: " + u.get_movement()
+                + "\nControl: " + u.get_controlRange();
 
             if (u.get_unitOrder() != null)
             {
                 stats_1.text += "\n\n" + u.get_unitOrder().get_orderName()
-                + "\n<i>" + u.get_unitOrder().get_orderDescr() + "</i>";
+                + "\nOrder—<i>" + u.get_unitOrder().get_orderDescr() + "</i>";
             }
 
             stats_2.text = "Machine Atk: " + u.get_physa()

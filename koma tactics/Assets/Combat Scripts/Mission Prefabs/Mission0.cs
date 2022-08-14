@@ -28,6 +28,28 @@ public class Mission0 : Mission
         }
         return true;
     }
+    public override bool[] side_objectives_states(Unit[] pl, List<Unit> el, int roundNumber)
+    {
+        //returns list of ints, where each int corresponds to the state of a side objective.
+        //each element corresponds to a side objective result.
+        // ObjectiveState.in_progress: objective not completed.
+        // false: objective not completed
+        // true: objective completed
+
+        bool[] retList = new bool[] { false };
+
+        //Side objective: no units are defeated
+        int alivePlayerUnits = 0;
+        foreach(Unit u in pl)
+        {
+            if (u != null) alivePlayerUnits++;
+        }
+        if (alivePlayerUnits >= 4) retList[0] = true;
+
+        Debug.Log("side_objectives_states yo ho ho");
+
+        return retList;
+    }
 
     //map setup
     public override Tile[,] get_layout()

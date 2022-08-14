@@ -49,7 +49,8 @@ public class CombatGrid : MonoBehaviour
 
     [SerializeField] private GameObject missionSummaryObj; //the object that all the mission summary stuff is on
     [SerializeField] private Text missionSummaryTitleText; //the title text for the mission. will say 'Mission Clear' or 'Mission Fail'
-    [SerializeField] private Text[] objectivesTextList; //shows the breakdown for the main objective and each side objective. Shows success/fail and +exp gained.
+    [SerializeField] private Text objectivesSummaryText; //displays objective and side objective state
+    [SerializeField] private Text expSummaryText; //displays objective and side objective rewards.
     [SerializeField] private Button continueRetryButton; //button that, if mission was won, loads the next part. if mission was lost, reloads the combat scene.
     [SerializeField] private Button mainMenuButton; //button that is only available if the mission was lost. can go to main menu.
 
@@ -457,8 +458,8 @@ public class CombatGrid : MonoBehaviour
         //gets information from mission to display:
         // -win objective
         // -lose objective
-        briefingWinText.text = loadedMission.get_winDescr();
-        briefingLossText.text = loadedMission.get_lossDescr();
+        briefingWinText.text = "Clear—" + loadedMission.print_objectives(true, true, playerUnits, enemyUnits, roundNumber);
+        briefingLossText.text = "Loss—" + loadedMission.get_lossDescr();
         briefingDisplay.gameObject.SetActive(true);
         
     }
@@ -542,6 +543,10 @@ public class CombatGrid : MonoBehaviour
         // [0]: main objective. success if isClear, fail if not. (get text from mission)
         // [i]: mission has got a list of bools it returns, where each bool is the state of whether that side objective is success.
         // (there is a maximum number of side objectives allowed.)
+
+        objectivesSummaryText.text = loadedMission.print_objectives(overState, false, playerUnits, enemyUnits, roundNumber);
+        expSummaryText.text = loadedMission.print_objectives_rewards(overState, playerUnits, enemyUnits, roundNumber);
+
         uiCanvas.enabled = true;
         missionSummaryObj.gameObject.SetActive(true);
     }
@@ -552,6 +557,10 @@ public class CombatGrid : MonoBehaviour
         {
             //continue; load next part
             Debug.Log("continue pressed; loading overworld");
+
+            //load up all the exp from the objectives into the carrier
+            Carrier.Instance.inc_exp(loadedMission.get_objectives_exp(playerUnits, enemyUnits, roundNumber));
+
             StartCoroutine(pause_before_loading_scene(1));
         }
         else
