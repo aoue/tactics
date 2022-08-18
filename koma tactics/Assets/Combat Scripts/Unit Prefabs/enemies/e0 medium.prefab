@@ -233,7 +233,7 @@ MonoBehaviour:
   isAlly: 0
   aff: 1
   movement: 3
-  hpMax: 1
+  hpMax: 65
   hp: 65
   brkMax: 30
   brk: 30
@@ -246,8 +246,8 @@ MonoBehaviour:
   magic_def: 50
   unitOrder: {fileID: 0}
   traitList:
-  - {fileID: 8439347060211842814, guid: f3350804f48495b4189521aedfcf9c7e, type: 3}
   - {fileID: 6414102865098984256, guid: 221ae8b076f55f04b8bc8cda3409439e, type: 3}
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -258,7 +258,7 @@ MonoBehaviour:
   unitAI: 0
   keepDistance: 1
   caresAboutZoC: 0
-  lessMoving: 0
+  lessMoving: 1
   caresAboutBases: 0
   caresAboutCover: 1
   caresAboutKills: 0

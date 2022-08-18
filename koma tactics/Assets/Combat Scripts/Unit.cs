@@ -217,10 +217,9 @@ public class Unit : MonoBehaviour
     public Order get_unitOrder() { return unitOrder; }
 
     //virtuals (for enemy AI)
+    public virtual void reset_selection_variables() {; }
     public virtual int calculate_priority(Tile relevantTile) { return -1; }
     public virtual int score_move(int closestPlayerTile, Tile dest, int tilesAddedToZoC, Tile[,] myGrid, HashSet<Tile> visited) { return -1; }
     public virtual int score_attack(Trait t, List<Tile> targetList, BattleBrain brain) { return -1; }
-    public virtual List<Tile> get_bestTileList() { return null; }
-    public virtual int get_bestTraitIndex() { return -2; }
-    public virtual Tile get_bestAttackOrigin() { return null; }
+    public virtual (int, List<Tile>, Tile) get_action_information(int actionIndex) { return (-1, null, null); }
 }

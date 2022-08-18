@@ -8,15 +8,14 @@ public class BattleBrain
     //calculator for combat.
 
     //(light, medium, heavy)
-    //the trait's affinity vs. the defender's affinity
-    //light does 1x to light, 0.75x to medium, and 2x to heavy.
-    //medium to 1x to all.
-    //heavy does 0.5x to light, and 1x to medium and heavy.
+    //the attacker's affinity vs. the defender's affinity
+    //medium to 0.75x to light.
+    //heavy does 0.25x to light
     float[,] affinityMultArray = new float[3, 3]
     {
-        {1.0f, 0.75f, 2.0f },
         {1.0f, 1.0f, 1.0f },
-        {0.5f, 1.0f, 1.0f }
+        {0.75f, 1.0f, 1.0f },
+        {0.25f, 1.0f, 1.0f }
     };
 
     public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile, bool playerAttacking, Order order, Unit[] u1_allies)
@@ -68,15 +67,11 @@ public class BattleBrain
         }
 
         //integer damage formula:
-        //int dmg = Mathf.Max(1, (int)(((atk + t.get_power()) - def) * coverMod));
+        //int dmg = Mathf.Max(1, (int)((u1.get_level() + atk + t.get_power() - def) * coverMod * affinityMultArray[u1.get_aff(), u2.get_aff()] * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
 
         //multiplicative damage formula:
-        int move_pw;
-        //same Affinity attack bonus:
-        if (u1.get_aff() == t.get_aff()) move_pw = (int)(t.get_power() * 1.5f);
-        else move_pw = t.get_power();
-
-        int dmg = Mathf.Max(1, (int)((2 * atk * (move_pw + (u1.get_level() * 2)) / (1.5f * def)) * coverMod * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));    
+        int dmg = Mathf.Max(1, (int)((2 * atk * (t.get_power() + (u1.get_level() * 2)) / (1.5f * def)) * coverMod * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range()) * affinityMultArray[u1.get_aff(), u2.get_aff()]));
+        Debug.Log("dmg= " + dmg);
         dmg = order.order_damage(dmg);
 
         //once calc is done
@@ -98,9 +93,6 @@ public class BattleBrain
                 dmg = u2.get_traitList()[i].modify_dmg_received(dmg, u1, u2, u1_allies);
             }
         }
-
-        //finally, apply affinity triangle multiplier
-        dmg = Math.Max(1, (int)(affinityMultArray[t.get_aff(), u2.get_aff()] * dmg));
 
         return dmg;
     }

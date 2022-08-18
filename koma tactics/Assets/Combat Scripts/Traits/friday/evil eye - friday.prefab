@@ -53,7 +53,7 @@ MonoBehaviour:
   minimum_range: 0
   affinity: 0
   range: 1
-  power: 5
+  power: 7
   min_dmg_range: 0.85
   max_dmg_range: 1
   brkMult: 2
@@ -61,3 +61,4 @@ MonoBehaviour:
   usesPhysAttack: 0
   usesPhysDefense: 0
   isHeal: 0
+  usesTrigger: 0

@@ -331,10 +331,10 @@ MonoBehaviour:
   ap: 1
   controlRange: 2
   pwCost: 1
-  phys_atk: 70
-  phys_def: 70
-  magic_atk: 70
-  magic_def: 70
+  phys_atk: 80
+  phys_def: 85
+  magic_atk: 80
+  magic_def: 80
   unitOrder: {fileID: 2497933080290425583, guid: ecf60bb980dfc9c469a20450586f18a3,
     type: 3}
   traitList:

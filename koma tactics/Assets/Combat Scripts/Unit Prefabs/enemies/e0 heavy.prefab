@@ -522,7 +522,7 @@ MonoBehaviour:
   isAlly: 0
   aff: 2
   movement: 3
-  hpMax: 1
+  hpMax: 90
   hp: 90
   brkMax: 40
   brk: 40

@@ -14,8 +14,22 @@ public class Enemy : Unit
     [SerializeField] private int pri_range; //(range is -pri_range, pri_range)
     [SerializeField] private int pri_panic;
     [SerializeField] private float panic_threshold; //float representing a fraction of health.
-    
-    
+
+    //saved between moves (attacking stuff). Each triple is associated with a dest tile in cGrid's select_enemy_action()
+    //Reset when a unit starts selection each time it's activated.
+    private List<(int, List<Tile>, Tile)> moveInformationList;
+    /*
+    private int bestTraitIndex;
+    private Tile bestAttackOrigin;
+    private List<Tile> bestTileList;
+    */
+
+    public override void reset_selection_variables()
+    {
+        if (moveInformationList == null) moveInformationList = new List<(int, List<Tile>, Tile)>();
+        else moveInformationList.Clear();
+    }
+
     public override int calculate_priority(Tile relevantTile)
     {
         //priority process:
@@ -57,9 +71,6 @@ public class Enemy : Unit
     //(necessarily done together)
     public override int score_move(int closestPlayerTile, Tile dest, int tilesAddedToZoC, Tile[,] myGrid, HashSet<Tile> visited)
     {
-        bestTileList = new List<Tile>();
-        bestTraitIndex = -2;
-
         //score a grid destination.
         //factors:
         int score = 0;
@@ -71,31 +82,24 @@ public class Enemy : Unit
             else score += (2 * tilesAddedToZoC);
         }
 
-        if (!keepDistance)
-        {
-            if (unitAI == AI.FOOLISH) score -= (2 * closestPlayerTile);
-            else score -= closestPlayerTile;
-        }
+        //if the unit doesn't care about keeping distance from the player,
+        //i.e., the unit wants to charge straight in
+        score -= closestPlayerTile;
 
-        // -moving less is good.
-        //calculate the manhattan distance between this tile and your starting position:
         if (lessMoving)
         {
             score -= Math.Abs(x - dest.x) + Math.Abs(y - dest.y);
         }
 
         // -capturing a base is good
-        if (caresAboutBases)
+        if (caresAboutBases && dest is BaseTile)
         {
-            if (dest is BaseTile)
-            {
-                score += 1;
-            }
+            score += 1;           
         }
 
         if (caresAboutCover)
         {
-            score += (int)(dest.get_cover() * 10);
+            score += (int)(dest.get_cover()*10);
         }
 
         // finally, score all possible (traits)attacks the enemy can make too and add that to the sum.
@@ -139,29 +143,29 @@ public class Enemy : Unit
                 }
             }
         }
-        //of course, there's the option of not attacking. 
-        if (runningMax <= 0)
+
+        //Debug.Log("I'm thinking of dest " + dest.x + ", " + dest.y + " | and here's what i think of attacking: " + runningMax);
+
+        //if any attack was found
+        if ( runningMax > 0 )
         {
-            bestTraitIndex = -2;
-            bestTileList = null;
-            bestAttackOrigin = null;
-        }
-        else
-        {
-            //randomly pick one of the runningMaxList
+            //randomly pick one of the runningMaxList, and add to move information list.
             (int, List<Tile>, Tile) ans =  runningMaxList[UnityEngine.Random.Range(0, runningMaxList.Count)];
-            bestTraitIndex = ans.Item1;
-            bestTileList = ans.Item2;
-            bestAttackOrigin = ans.Item3;
+            moveInformationList.Add(ans);
 
             //(keep distance, but you still want to be able to attack)
             // -distance to closest player (more points if foolish) (remember: a lower value means you are closer.)
-            //if we want to keep distance, then the higher closestPlayerTile is the better.
-            //if we do not want to keep distance, then the lower closestPlayerTile is the better.
+            //if we want to keep distance, then the higher/farther closestPlayerTile is the better.
+            //if we do not want to keep distance, then the lower/closer closestPlayerTile is the better.
             if (keepDistance)
             {
-                score += closestPlayerTile;
-            }            
+                score += (2 * closestPlayerTile);
+            }
+        }
+        else
+        {
+            //we have to add dummy to move information list, regardless, though, so the indexing can work.
+            moveInformationList.Add( (-2, null, null) );
         }
 
         //return score (and have saved the bestTraitIndex and bestTargetList)
@@ -270,17 +274,31 @@ public class Enemy : Unit
                 //above and below
                 for (int i = dest.x - t.get_range(); i < dest.x + t.get_range() + 1; i++)
                 {
-                    if (within_border(i, dest.y, map_x_border, map_y_border) && i != dest.x && Math.Abs(dest.x - i) >= t.get_min_range())
+                    if (within_border(i, dest.y, map_x_border, map_y_border) && i != dest.x)
                     {
-                        origins.Add(myGrid[i, dest.y]);
+                        if (Math.Abs(dest.x - i) >= t.get_min_range())
+                        {
+                            origins.Add(myGrid[i, dest.y]);
+                        }
+                        if (myGrid[i, dest.y].get_blocksAttacks())
+                        {
+                            break;
+                        }                       
                     }
                 }
                 //left and right
                 for (int j = dest.y - t.get_range(); j < dest.y + t.get_range() + 1; j++)
                 {
-                    if (within_border(dest.x, j, map_x_border, map_y_border) && j != dest.y && Math.Abs(dest.y - j) >= t.get_min_range())
+                    if (within_border(dest.x, j, map_x_border, map_y_border) && j != dest.y)
                     {
-                        origins.Add(myGrid[dest.x, j]);
+                        if (Math.Abs(dest.y - j) >= t.get_min_range())
+                        {
+                            origins.Add(myGrid[dest.x, j]);
+                        }
+                        if (myGrid[dest.x, j].get_blocksAttacks())
+                        {
+                            break;
+                        }
                     }
                 }
                 break;
@@ -299,7 +317,7 @@ public class Enemy : Unit
                 break;
             case TargetingType.RADIUS:
                 //borrow dfs code.
-                atk_dfs(origins, myGrid[dest.x, dest.y], t.get_range(), t.get_min_range(), myGrid, map_x_border, map_y_border);
+                atk_dfs(dest, origins, myGrid[dest.x, dest.y], t.get_range(), t.get_min_range(), myGrid, map_x_border, map_y_border);
                 origins.Remove(myGrid[dest.x, dest.y]);
                 break;
             case TargetingType.SELF:
@@ -371,11 +389,17 @@ public class Enemy : Unit
 
         return targetList;
     }
-    void atk_dfs(HashSet<Tile> v, Tile start, int rangeLeft, int min_range, Tile[,] myGrid, int map_x_border, int map_y_border)
+    void atk_dfs(Tile dest, HashSet<Tile> v, Tile start, int rangeLeft, int min_range, Tile[,] myGrid, int map_x_border, int map_y_border)
     {
-        if (Math.Abs(x - start.x) + Math.Abs(y - start.y) >= min_range)
+        //here, dest is the tile the unit is imagining it is on. We have to use dest.x,y instead of real x,y
+        if (Math.Abs(dest.x - start.x) + Math.Abs(dest.y - start.y) >= min_range)
         {
             v.Add(start);
+        }
+
+        if (start.get_blocksAttacks())
+        {
+            return;
         }
 
         List<Tile> adjacentTiles = new List<Tile>();
@@ -389,7 +413,7 @@ public class Enemy : Unit
         {
             if (rangeLeft > 0)
             {
-                atk_dfs(v, next, rangeLeft - 1, min_range, myGrid, map_x_border, map_y_border);
+                atk_dfs(dest, v, next, rangeLeft - 1, min_range, myGrid, map_x_border, map_y_border);
             }
         }
     }
@@ -399,13 +423,9 @@ public class Enemy : Unit
         return false;
     }
 
-    private int bestTraitIndex;
-    private Tile bestAttackOrigin;
-    private List<Tile> bestTileList;
-
-    public override int get_bestTraitIndex() { return bestTraitIndex; }
-    public override Tile get_bestAttackOrigin() { return bestAttackOrigin; }
-    public override List<Tile> get_bestTileList() { return bestTileList; }
+    public override (int, List<Tile>, Tile) get_action_information(int actionIndex)
+    {
+        return moveInformationList[actionIndex];
+    }
     
-
 }

@@ -5,12 +5,13 @@ using UnityEngine;
 public class Mission0 : Mission
 {
     //The file for mission0.
+    
 
     //mission win/loss conditions
     public override bool is_mission_won(Unit[] pl, List<Unit> el, Tile[,] grid)
     {
         //win if 3 or less enemies remain
-        if (el.Count <= 3) 
+        if (el.Count == 3) 
         {
             return true;
         }
@@ -28,7 +29,7 @@ public class Mission0 : Mission
         }
         return true;
     }
-    public override bool[] side_objectives_states(Unit[] pl, List<Unit> el, int roundNumber)
+    public override bool[] side_objectives_states(Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties)
     {
         //returns list of ints, where each int corresponds to the state of a side objective.
         //each element corresponds to a side objective result.
@@ -36,20 +37,30 @@ public class Mission0 : Mission
         // false: objective not completed
         // true: objective completed
 
-        bool[] retList = new bool[] { false };
+        bool[] retList = new bool[] { true, true };
 
-        //Side objective: no units are defeated
-        int alivePlayerUnits = 0;
-        foreach(Unit u in pl)
+        //Side objective: 
+        // -no units are defeated
+        if (anyPlayerCasualties)
         {
-            if (u != null) alivePlayerUnits++;
+            retList[0] = false;
         }
-        if (alivePlayerUnits >= 4) retList[0] = true;
-
-        Debug.Log("side_objectives_states yo ho ho");
-
+        
+        // -win within _ rounds
+        if (roundNumber > 10)
+        {
+            retList[1] = false;
+        }
+        
         return retList;
     }
+
+
+    //tile legend:
+    // 0: empty/snow
+    // 1: light woods
+    // 2: tracks 
+    // 3: heavy woods
 
     //map setup
     public override Tile[,] get_layout()
@@ -81,18 +92,20 @@ public class Mission0 : Mission
     public override (int, int, int)[] get_deployment_spots()
     {
         //returns an array of unit IDs and coords representing unit starting spots.
+        //unit id, row, depth into that row (if no unit with the id in reserve party, then we fail silently. all good)
         (int, int, int)[] dep_array = {
-            (0, 1, 1),
+            (0, 1, 1),           
             (1, 2, 1),
             (2, 3, 2),
             (3, 3, 4)
+            
         };
         return dep_array;
     }
     public override (Enemy, int, int)[] get_enemy_spots()
     {
         //returns an array of units and coords representing unit starting spots.
-        //row, depth into that row
+        //enemy, row, depth into that row
         (Enemy, int, int)[] dep_array = {
             //close right pair
             (defEnemies[0], 2, 7),
@@ -109,7 +122,6 @@ public class Mission0 : Mission
             //far bottom right pair
             (defEnemies[0], 10, 10),
             (defEnemies[1], 9, 9)
-
         };
 
         return dep_array;

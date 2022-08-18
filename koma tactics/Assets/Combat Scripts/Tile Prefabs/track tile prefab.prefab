@@ -226,8 +226,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileName: Empty
+  blocksAttacks: 0
   movementCost: 1
-  coverReduction: 0.15
+  coverReduction: 0.1
   descr: There's nothing there.
   targetIcon: {fileID: 6385258596423270383}
   zocRenderer: {fileID: 426206500638501661}

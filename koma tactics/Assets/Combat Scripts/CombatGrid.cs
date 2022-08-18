@@ -46,6 +46,7 @@ public class CombatGrid : MonoBehaviour
     [SerializeField] private Text briefingLossText;
     [SerializeField] private GameObject deploymentObj;
     [SerializeField] private Sprite defaultUnitShortcutSprite;
+    [SerializeField] private Text roundNumberText;
 
     [SerializeField] private GameObject missionSummaryObj; //the object that all the mission summary stuff is on
     [SerializeField] private Text missionSummaryTitleText; //the title text for the mission. will say 'Mission Clear' or 'Mission Fail'
@@ -57,6 +58,7 @@ public class CombatGrid : MonoBehaviour
     private Tile[,] myGrid;
     private State gameState;
     private bool overState = false;
+    private bool anyPlayerCasualties = false; //to check if any player units were killed.
 
     [SerializeField] private Order defaultOrder; //the default order. No effects. So we don't have to put if not null everywhere.
 
@@ -70,7 +72,7 @@ public class CombatGrid : MonoBehaviour
     private Tile last_player_end_turn_tile; //the tile that the last active player unit ended its turn on. Influences enemy priority calculations.
     private bool set_order; //true on player's first move. Tells the game to set active_order to the unit's order.
 
-    private (Tile, int, List<Tile>, Tile) enemy_active_info; //information about the move the enemy is performing.
+    private (int, List<Tile>, Tile) enemy_active_info; //information about the move the enemy is performing.
     //Tile: dest tile | int: chosen trait index | List<Tile> affected tiles | Tile: origin tile
 
     private int map_x_border;
@@ -105,7 +107,8 @@ public class CombatGrid : MonoBehaviour
         targetHighlightGroup = new List<Tile>();
         active_order = defaultOrder;
         allowRoundEvent = true;
-        roundNumber = 0;
+        roundNumber = 1;
+        roundNumberText.text = "Round 1";
 
         loadedMission = missionList.get_mission(Carrier.Instance.get_nextMissionIndex());
         Carrier.Instance.set_nextPartIndex(loadedMission.get_nextPartIndex());
@@ -458,7 +461,7 @@ public class CombatGrid : MonoBehaviour
         //gets information from mission to display:
         // -win objective
         // -lose objective
-        briefingWinText.text = "Clear—" + loadedMission.print_objectives(true, true, playerUnits, enemyUnits, roundNumber);
+        briefingWinText.text = "Clear—" + loadedMission.print_objectives(true, true, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties);
         briefingLossText.text = "Loss—" + loadedMission.get_lossDescr();
         briefingDisplay.gameObject.SetActive(true);
         
@@ -544,8 +547,8 @@ public class CombatGrid : MonoBehaviour
         // [i]: mission has got a list of bools it returns, where each bool is the state of whether that side objective is success.
         // (there is a maximum number of side objectives allowed.)
 
-        objectivesSummaryText.text = loadedMission.print_objectives(overState, false, playerUnits, enemyUnits, roundNumber);
-        expSummaryText.text = loadedMission.print_objectives_rewards(overState, playerUnits, enemyUnits, roundNumber);
+        objectivesSummaryText.text = loadedMission.print_objectives(overState, false, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties);
+        expSummaryText.text = loadedMission.print_objectives_rewards(overState, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties);
 
         uiCanvas.enabled = true;
         missionSummaryObj.gameObject.SetActive(true);
@@ -559,7 +562,7 @@ public class CombatGrid : MonoBehaviour
             Debug.Log("continue pressed; loading overworld");
 
             //load up all the exp from the objectives into the carrier
-            Carrier.Instance.inc_exp(loadedMission.get_objectives_exp(playerUnits, enemyUnits, roundNumber));
+            Carrier.Instance.inc_exp(loadedMission.get_objectives_exp(playerUnits, enemyUnits, roundNumber, anyPlayerCasualties));
 
             StartCoroutine(pause_before_loading_scene(1));
         }
@@ -651,7 +654,9 @@ public class CombatGrid : MonoBehaviour
             StartCoroutine(start_event_after_pause(-3));
             return;
         }
-        if (roundNumber == 0 && allowRoundEvent)
+
+        //if it's the start of the mission
+        if (roundNumber == 1 && allowRoundEvent)
         {
             //play start of mission event:         
             cam.lock_camera();
@@ -681,7 +686,11 @@ public class CombatGrid : MonoBehaviour
             pw = Math.Min(30, active_order.order_power_flat(pw)); 
 
             update_pw();
-            enable_all_unitShortcuts();
+            if (is_deployment_possible())
+            {
+                enable_all_unitShortcuts();
+            }
+            
             // -calc turn pattern
             turn_order();
             // -wait for player to click round start button.
@@ -839,6 +848,7 @@ public class CombatGrid : MonoBehaviour
         set_order = true;
         update_order();
         roundNumber += 1;
+        roundNumberText.text = "Round " + roundNumber;
         allowRoundEvent = true;
         next_turn();
     }
@@ -903,6 +913,7 @@ public class CombatGrid : MonoBehaviour
 
         //Debug.Log("chosenIndex is " + chosenIndex + " with a pri score of " + runningMax);
         active_unit = enemyUnits[chosenIndex];
+        active_unit.reset_selection_variables();
         return enemyUnits[chosenIndex];
     }
     void select_enemy_action(Unit chosenUnit)
@@ -921,10 +932,11 @@ public class CombatGrid : MonoBehaviour
         //so we now have visited set up as a list of all possible destination tiles.
         //find the best (destination tile, trait attack, targetlist) triple.
         int runningMax = -1;
-        //(Tile, int, List<Unit>, Tile) best = (null, -2, null, null);
 
-        List<(Tile, int, List<Tile>, Tile)> bestList = new List<(Tile, int, List<Tile>, Tile)>();
-        foreach (Tile t in visited)
+        //dest tile, action information index
+        List<(Tile, int)> bestList = new List<(Tile, int)>();
+        int counter = 0;
+        foreach(Tile t in visited)
         {
             if (!t.isValid) continue;
             //find position of closest player unit.
@@ -934,41 +946,46 @@ public class CombatGrid : MonoBehaviour
             if (runningMax == -1)
             {
                 runningMax = score;
-                bestList.Add((t, chosenUnit.get_bestTraitIndex(), chosenUnit.get_bestTileList(), chosenUnit.get_bestAttackOrigin()));
+                bestList.Add((t, counter));
             }
             else if (score > runningMax)
             {
                 runningMax = score;
                 bestList.Clear();
-                bestList.Add((t, chosenUnit.get_bestTraitIndex(), chosenUnit.get_bestTileList(), chosenUnit.get_bestAttackOrigin()));
+                bestList.Add((t, counter));
             }
             else if (score == runningMax)
             {
-                bestList.Add((t, chosenUnit.get_bestTraitIndex(), chosenUnit.get_bestTileList(), chosenUnit.get_bestAttackOrigin()));
+                bestList.Add((t, counter));
+            }
+            counter++;
+        }
+        //testing
+        /*
+        Debug.Log("bestlist count = " + bestList.Count);
+        foreach( (Tile, int, List<Tile>, Tile) element in bestList)
+        {
+            Tile temp1 = element.Item1;
+            int temp2 = element.Item2;
+            List<Tile> temp3 = element.Item3;
+            Tile temp4 = element.Item4;
+            Debug.Log("BESTLIST ELEMENT:");
+            Debug.Log("chosen dest tile = " + temp1.x + ", " + temp1.y);
+            Debug.Log("chosen trait to use = " + temp2);
+            if (temp3 != null && temp4 != null)
+            {
+                Debug.Log("chosen targetlist count = " + temp3.Count);
+                Debug.Log("chosen attack origin tile = " + temp4.x + ", " + temp4.y);
             }
         }
-        //randomly select from bestList
-        enemy_active_info = bestList[UnityEngine.Random.Range(0, bestList.Count)];
-        /*
-        Tile temp1 = best.Item1;
-        int temp2 = best.Item2;
-        List<Unit> temp3 = best.Item3;
-        Tile temp4 = best.Item4;
-
-        //testing
-        Debug.Log("BEST:");
-        temp1.highlight_target_mv();
-        
-        Debug.Log("chosen dest tile = " + temp1.x + ", " + temp1.y);       
-        Debug.Log("chosen trait to use = " + temp2);
-        if (temp3 != null && temp4 != null)
-        {
-            Debug.Log("chosen targetlist count = " + temp3.Count);
-            Debug.Log("chosen attack origin tile = " + temp4.x + ", " + temp4.y);
-            temp4.highlight_target(true);
-        }
         */
-        execute_enemy_movement(chosenUnit, enemy_active_info.Item1);
+
+        //randomly select from bestList
+        (Tile, int) best = bestList[UnityEngine.Random.Range(0, bestList.Count)];
+        //int, tilelist, tile
+        enemy_active_info = active_unit.get_action_information(best.Item2);
+        
+        execute_enemy_movement(chosenUnit, best.Item1);
     }
     void execute_enemy_movement(Unit unit, Tile destTile)
     {
@@ -1004,11 +1021,11 @@ public class CombatGrid : MonoBehaviour
 
         //perform attack
         //check if we're going to be performing an attack:
-        if ( enemy_active_info.Item2 >= 0 )
+        if ( enemy_active_info.Item1 >= 0 )
         {
-            active_ability = active_unit.get_traitList()[enemy_active_info.Item2];
+            active_ability = active_unit.get_traitList()[enemy_active_info.Item1];
             highlight_attack(active_ability); //adds all the potential origins to visited
-            List<Unit> affectedUnits = tileList_to_targetList(enemy_active_info.Item3);
+            List<Unit> affectedUnits = tileList_to_targetList(enemy_active_info.Item2);
             StartCoroutine(perform_enemy_attack_1(affectedUnits));
         }
         else
@@ -1031,7 +1048,7 @@ public class CombatGrid : MonoBehaviour
         clear_target_highlights();
         clear_highlights();
         myGrid[active_unit.x, active_unit.y].highlight_target_mv();
-        enemy_active_info = (null, -2, null, null);
+        enemy_active_info = (-2, null, null);
         //dec ap, and set to grey.
         active_unit.dec_ap();
 
@@ -1195,9 +1212,9 @@ public class CombatGrid : MonoBehaviour
             }
         }
         else
-        {
+        {            
             if (active_unit.get_isAlly())
-            {
+            {              
                 foreach (Unit target in affectedUnits)
                 {
                     int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, playerUnits);
@@ -1256,6 +1273,7 @@ public class CombatGrid : MonoBehaviour
                 anyKills = true;
                 if (target.get_isAlly())
                 {
+                    anyPlayerCasualties = true;
                     //remove from player list
                     for (int i = 0; i < playerUnits.Length; i++)
                     {
@@ -1649,16 +1667,32 @@ public class CombatGrid : MonoBehaviour
             case TargetingType.LINE:                
                 for (int i = active_unit.x - t.get_range(); i < active_unit.x + t.get_range() + 1; i++)
                 {
-                    if (within_border(i, active_unit.y) && i != active_unit.x && Math.Abs(active_unit.x - i) >= t.get_min_range())
+                    if (within_border(i, active_unit.y) && i != active_unit.x)
                     {
-                        visited.Add(myGrid[i, active_unit.y]);
-                    }
+                        //if the tile is valid, then add to list you can hit
+                        if (Math.Abs(active_unit.x - i) >= t.get_min_range())
+                        {
+                            visited.Add(myGrid[i, active_unit.y]);
+                        }
+                        //stop exploring if the tile blocks attacks, though.
+                        if (myGrid[i, active_unit.y].get_blocksAttacks())
+                        {
+                            break;
+                        }
+                    }  
                 }
                 for (int j = active_unit.y - t.get_range(); j < active_unit.y + t.get_range() + 1; j++)
                 {
-                    if (within_border(active_unit.x, j) && j != active_unit.y && Math.Abs(active_unit.y - j) >= t.get_min_range())
+                    if (within_border(active_unit.x, j) && j != active_unit.y)
                     {
-                        visited.Add(myGrid[active_unit.x, j]);                       
+                        if (Math.Abs(active_unit.y - j) >= t.get_min_range())
+                        {
+                            visited.Add(myGrid[active_unit.x, j]);
+                        }
+                        if (myGrid[active_unit.x, j].get_blocksAttacks())
+                        {
+                            break;
+                        }
                     }
                 }
                 break;
@@ -1676,7 +1710,7 @@ public class CombatGrid : MonoBehaviour
                 }
                 break;
             case TargetingType.RADIUS:
-                //borrow dfs code.               
+                //borrow dfs code.
                 atk_dfs(visited, myGrid[active_unit.x, active_unit.y], t.get_range(), t.get_min_range());
                 visited.Remove(myGrid[active_unit.x, active_unit.y]);
                 break;
@@ -1762,8 +1796,14 @@ public class CombatGrid : MonoBehaviour
                 if (within_border(start.x + i, start.y + j))
                 {
                     if (myGrid[start.x + i, start.y + j].path == null) myGrid[start.x + i, start.y + j].path = new List<Tile>();
-                    //if no path yet, or, our current path is less than the path already saved to the tile 
-                    if (!v.Contains(myGrid[start.x + i, start.y + j]) || sum_path_tile_cost(pathTaken, u) <= sum_path_tile_cost(myGrid[start.x + i, start.y + j].path, u))
+                    //overwrite tile's path IF: 
+                    // -it has no path yet
+                    // -OR, our current path is less than the path already saved to the tile
+                    // -OR, our current path is the same cost as the path already saved in cost, but is shorter in length
+                    if (!v.Contains(myGrid[start.x + i, start.y + j])
+                        || sum_path_tile_cost(pathTaken, u) < sum_path_tile_cost(myGrid[start.x + i, start.y + j].path, u)
+                        || (sum_path_tile_cost(pathTaken, u) == sum_path_tile_cost(myGrid[start.x + i, start.y + j].path, u) && pathTaken.Count < myGrid[start.x + i, start.y + j].path.Count)
+                        )
                     {
                         adjacentTiles.Add(myGrid[start.x + i, start.y + j]);
                     }
@@ -1822,10 +1862,15 @@ public class CombatGrid : MonoBehaviour
         {
             v.Add(start);
         }
-        
+
+        if (start.get_blocksAttacks())
+        {
+            return;
+        }
 
         List<Tile> adjacentTiles = new List<Tile>();
         //add tiles based on coordinates, as long as they are not out of bounds.
+
         if (within_border(start.x + 1, start.y) && !v.Contains(myGrid[start.x + 1, start.y])) adjacentTiles.Add(myGrid[start.x + 1, start.y]);
         if (within_border(start.x - 1, start.y) && !v.Contains(myGrid[start.x - 1, start.y])) adjacentTiles.Add(myGrid[start.x - 1, start.y]);
         if (within_border(start.x, start.y + 1) && !v.Contains(myGrid[start.x, start.y + 1])) adjacentTiles.Add(myGrid[start.x, start.y + 1]);
@@ -1835,6 +1880,9 @@ public class CombatGrid : MonoBehaviour
         {
             if (rangeLeft > 0)
             {
+
+                //determine whether we can proceed; (that is, whether we can fire through this building type.)
+                //e.g. you cannot fire through solid buildings or heavy woods               
                 atk_dfs(v, next, rangeLeft - 1, min_range);
             }
         }
@@ -2012,11 +2060,11 @@ public class CombatGrid : MonoBehaviour
         {
             if (b.get_ownership() == BaseOwnership.PLAYER && !b.occupied() && playerUnits.Contains(null))
             {
-                Debug.Log("deployment is possible");
+                //Debug.Log("deployment is possible");
                 return true;
             }
         }
-        Debug.Log("deployment is not possible");
+        //Debug.Log("deployment is not possible");
         return false;
     }
     void enable_all_unitShortcuts()
