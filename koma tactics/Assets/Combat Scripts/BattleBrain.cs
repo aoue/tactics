@@ -67,11 +67,11 @@ public class BattleBrain
         }
 
         //integer damage formula:
-        //int dmg = Mathf.Max(1, (int)((u1.get_level() + atk + t.get_power() - def) * coverMod * affinityMultArray[u1.get_aff(), u2.get_aff()] * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
+        int dmg = Mathf.Max(1, (int)((u1.get_level() + atk + t.get_power() - def) * coverMod * affinityMultArray[u1.get_aff(), u2.get_aff()] * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
 
         //multiplicative damage formula:
-        int dmg = Mathf.Max(1, (int)((2 * atk * (t.get_power() + (u1.get_level() * 2)) / (1.5f * def)) * coverMod * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range()) * affinityMultArray[u1.get_aff(), u2.get_aff()]));
-        Debug.Log("dmg= " + dmg);
+        //int dmg = Mathf.Max(1, (int)((2 * atk * (t.get_power() + (u1.get_level() * 2)) / (1.5f * def)) * coverMod * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range()) * affinityMultArray[u1.get_aff(), u2.get_aff()]));
+
         dmg = order.order_damage(dmg);
 
         //once calc is done
@@ -119,7 +119,13 @@ public class BattleBrain
             else atk = u1.get_maga();
         }
 
-        int heal = Mathf.Max(1, (int)(((atk + t.get_power() + (u1.get_level() * 2)) / 2) * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
+
+        //integer based formula
+        int heal = Mathf.Max(1, (int)((u1.get_level() + atk + t.get_power()) * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
+
+        //multiplicative formula
+        //int heal = Mathf.Max(1, (int)(((atk + t.get_power() + (u1.get_level() * 2)) / 2) * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
+
         if (order != null) heal = order.order_heal(heal);
 
         //once calc is done

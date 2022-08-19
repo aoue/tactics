@@ -50,10 +50,11 @@ MonoBehaviour:
   isPassive: 0
   targeting: 0
   aoe: 1
+  ignores_blocking_terrain: 1
   minimum_range: 0
   affinity: 1
   range: 2
-  power: 10
+  power: 3
   min_dmg_range: 0.85
   max_dmg_range: 1
   brkMult: 1
@@ -61,3 +62,4 @@ MonoBehaviour:
   usesPhysAttack: 1
   usesPhysDefense: 1
   isHeal: 0
+  usesTrigger: 0

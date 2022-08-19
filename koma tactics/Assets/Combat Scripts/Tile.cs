@@ -91,7 +91,6 @@ public class Tile : MonoBehaviour
         else 
         {
             targetIcon.color = new Color(0f, 200f / 255f, 0f);
-
         }
 
         targetIcon.enabled = true;
@@ -117,7 +116,7 @@ public class Tile : MonoBehaviour
     {
         //the tile has been told by the combatGrid to highlight for attack. red: attack, green: heal.
         if (isAttack) gameObject.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 105f / 255f, 97f / 255f);
-        else gameObject.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 105f / 255f, 97f / 255f);
+        else gameObject.GetComponent<SpriteRenderer>().color = new Color(110f / 255f, 1f, 46f / 255f);
     }
     public void remove_highlight()
     {

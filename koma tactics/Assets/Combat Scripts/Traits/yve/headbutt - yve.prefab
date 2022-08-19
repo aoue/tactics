@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d755da71caf8e144ea51bba3446e61f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  traitSound: {fileID: 0}
   traitName: Headbutt
   descr: A strong headbutt.
   unitType: 0
@@ -52,7 +53,7 @@ MonoBehaviour:
   minimum_range: 0
   affinity: 1
   range: 1
-  power: 15
+  power: 5
   min_dmg_range: 0.85
   max_dmg_range: 1
   brkMult: 0.75
@@ -60,3 +61,4 @@ MonoBehaviour:
   usesPhysAttack: 1
   usesPhysDefense: 1
   isHeal: 0
+  usesTrigger: 0

@@ -323,18 +323,18 @@ MonoBehaviour:
   exp: 0
   isAlly: 1
   aff: 1
-  movement: 4
-  hpMax: 60
-  hp: 60
-  brkMax: 30
-  brk: 30
+  movement: 5
+  hpMax: 20
+  hp: 20
+  brkMax: 10
+  brk: 10
   ap: 1
   controlRange: 0
   pwCost: 2
-  phys_atk: 75
-  phys_def: 55
-  magic_atk: 60
-  magic_def: 60
+  phys_atk: 10
+  phys_def: 4
+  magic_atk: 10
+  magic_def: 4
   unitOrder: {fileID: 1061129556949874303, guid: e4dd241e33a19f64e954004bc480469e,
     type: 3}
   traitList:

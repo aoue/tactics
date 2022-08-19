@@ -32,7 +32,8 @@ public class Unit : MonoBehaviour
     [SerializeField] private int brk;
     [SerializeField] private int ap;
 
-    [SerializeField] private int controlRange; //tiles outward that their ZoC extends in each direction.
+    [SerializeField] private int controlRangeBase; //tiles outward that their ZoC extends in each direction. Real value. 
+    [SerializeField] private int controlRange; //tiles outward that their ZoC extends in each direction. Set to 0 when unit broken.
     [SerializeField] private int pwCost; //deploy cost
     [SerializeField] private int phys_atk;
     [SerializeField] private int phys_def;
@@ -64,6 +65,7 @@ public class Unit : MonoBehaviour
         //called when the unit breaks.
         isBroken = true;
         ap = 0;
+        controlRange = 0;
         unitSprite.color = new Color(27f / 255f, 27f / 255f, 27f / 255f);
     }
     public void recall(int h)
@@ -111,6 +113,7 @@ public class Unit : MonoBehaviour
         if (brk == 0)
         {
             brk = brkMax;
+            controlRange = controlRangeBase;
             set_brkBar();
         }
         unitSprite.color = new Color(1f, 1f, 1f);
@@ -217,7 +220,8 @@ public class Unit : MonoBehaviour
     public Order get_unitOrder() { return unitOrder; }
 
     //virtuals (for enemy AI)
-    public virtual void reset_selection_variables() {; }
+    public virtual void clear_moveInformationList_except_last() { }
+    public virtual void reset_selection_variables() { }
     public virtual int calculate_priority(Tile relevantTile) { return -1; }
     public virtual int score_move(int closestPlayerTile, Tile dest, int tilesAddedToZoC, Tile[,] myGrid, HashSet<Tile> visited) { return -1; }
     public virtual int score_attack(Trait t, List<Tile> targetList, BattleBrain brain) { return -1; }

@@ -229,21 +229,21 @@ MonoBehaviour:
   active_portrait: {fileID: 21300000, guid: d692c2a687c50db43be207e5eafe7ceb, type: 3}
   unitName: Medium Machine
   level: 1
-  exp: 0
+  exp: 8
   isAlly: 0
   aff: 1
-  movement: 3
-  hpMax: 65
-  hp: 65
-  brkMax: 30
-  brk: 30
+  movement: 4
+  hpMax: 30
+  hp: 30
+  brkMax: 15
+  brk: 15
   ap: 1
   controlRange: 1
   pwCost: 0
-  phys_atk: 70
-  phys_def: 55
-  magic_atk: 50
-  magic_def: 50
+  phys_atk: 11
+  phys_def: 6
+  magic_atk: 7
+  magic_def: 6
   unitOrder: {fileID: 0}
   traitList:
   - {fileID: 6414102865098984256, guid: 221ae8b076f55f04b8bc8cda3409439e, type: 3}

@@ -49,6 +49,7 @@ public class Trait : MonoBehaviour
     //active stuff
     [SerializeField] private TargetingType targeting; //determines how tiles are validated for targeting.
     [SerializeField] private AoEType aoe; //determines how many tiles are actually hit by an attack.
+    [SerializeField] private bool ignores_blocking_terrain; //if true, then the move is not affected by tiles that block attacks
     [SerializeField] private int minimum_range; //used for validating tiles when attacking. Can only hit a tile where manhattan distance is >= x tiles away/
     [SerializeField] private int affinity; //used when attacking.
     [SerializeField] private int range; //determines how far the attack can reach
@@ -217,5 +218,6 @@ public class Trait : MonoBehaviour
     public bool get_isHeal() { return isHeal; }
     public UnitType get_unitType() { return unitType; }
     public void reset_triggered() { triggered = false; }
+    public bool get_ignores_blocking_terrain() { return ignores_blocking_terrain; }
 
 }

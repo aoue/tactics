@@ -18,12 +18,13 @@ public class Enemy : Unit
     //saved between moves (attacking stuff). Each triple is associated with a dest tile in cGrid's select_enemy_action()
     //Reset when a unit starts selection each time it's activated.
     private List<(int, List<Tile>, Tile)> moveInformationList;
-    /*
-    private int bestTraitIndex;
-    private Tile bestAttackOrigin;
-    private List<Tile> bestTileList;
-    */
 
+    public override void clear_moveInformationList_except_last()
+    {
+        //removes all elements from the list except for the last one.
+        if (moveInformationList == null || moveInformationList.Count < 2) return;
+        else moveInformationList.RemoveRange(0, moveInformationList.Count - 1);       
+    }
     public override void reset_selection_variables()
     {
         if (moveInformationList == null) moveInformationList = new List<(int, List<Tile>, Tile)>();
@@ -50,11 +51,7 @@ public class Enemy : Unit
         return pri_base + UnityEngine.Random.Range(-pri_range, pri_range) + panicAdd + relevanceAdd;
     }
 
-
-    //3 different AIs: (each unit has its own.)
-    // -foolish: advance with all units; do not compare attack scores, just attack closest.
-    // -regular: advance rationally; do not compare attack scores, just attack closest.
-    // -elite: advance rationally; compare attacks and pick best.
+    //ai parameters
     [SerializeField] private AI unitAI;
     [SerializeField] private bool keepDistance; //false if the unit charges straight in. True if the unit keeps distance.
     [SerializeField] private bool caresAboutZoC; //true if the unit cares about ZoC score. False if doesn't care.
@@ -84,7 +81,16 @@ public class Enemy : Unit
 
         //if the unit doesn't care about keeping distance from the player,
         //i.e., the unit wants to charge straight in
-        score -= closestPlayerTile;
+
+        if (unitAI == AI.FOOLISH)
+        {
+            score -= (3 * closestPlayerTile);
+        }
+        else
+        {
+            score -= closestPlayerTile;
+        }
+        
 
         if (lessMoving)
         {
@@ -164,7 +170,6 @@ public class Enemy : Unit
         }
         else
         {
-            //we have to add dummy to move information list, regardless, though, so the indexing can work.
             moveInformationList.Add( (-2, null, null) );
         }
 
@@ -280,7 +285,7 @@ public class Enemy : Unit
                         {
                             origins.Add(myGrid[i, dest.y]);
                         }
-                        if (myGrid[i, dest.y].get_blocksAttacks())
+                        if (!t.get_ignores_blocking_terrain() && myGrid[i, dest.y].get_blocksAttacks())
                         {
                             break;
                         }                       
@@ -295,7 +300,7 @@ public class Enemy : Unit
                         {
                             origins.Add(myGrid[dest.x, j]);
                         }
-                        if (myGrid[dest.x, j].get_blocksAttacks())
+                        if (!t.get_ignores_blocking_terrain() && myGrid[dest.x, j].get_blocksAttacks())
                         {
                             break;
                         }
@@ -317,7 +322,7 @@ public class Enemy : Unit
                 break;
             case TargetingType.RADIUS:
                 //borrow dfs code.
-                atk_dfs(dest, origins, myGrid[dest.x, dest.y], t.get_range(), t.get_min_range(), myGrid, map_x_border, map_y_border);
+                atk_dfs(dest, origins, myGrid[dest.x, dest.y], t.get_range(), t.get_min_range(), myGrid, map_x_border, map_y_border, t, true);
                 origins.Remove(myGrid[dest.x, dest.y]);
                 break;
             case TargetingType.SELF:
@@ -389,7 +394,7 @@ public class Enemy : Unit
 
         return targetList;
     }
-    void atk_dfs(Tile dest, HashSet<Tile> v, Tile start, int rangeLeft, int min_range, Tile[,] myGrid, int map_x_border, int map_y_border)
+    void atk_dfs(Tile dest, HashSet<Tile> v, Tile start, int rangeLeft, int min_range, Tile[,] myGrid, int map_x_border, int map_y_border, Trait t, bool originTile)
     {
         //here, dest is the tile the unit is imagining it is on. We have to use dest.x,y instead of real x,y
         if (Math.Abs(dest.x - start.x) + Math.Abs(dest.y - start.y) >= min_range)
@@ -397,10 +402,9 @@ public class Enemy : Unit
             v.Add(start);
         }
 
-        if (start.get_blocksAttacks())
-        {
-            return;
-        }
+        if (!originTile && !t.get_ignores_blocking_terrain() && start.get_blocksAttacks()) return;
+
+        if (rangeLeft == 0) return;
 
         List<Tile> adjacentTiles = new List<Tile>();
         //add tiles based on coordinates, as long as they are not out of bounds.
@@ -411,18 +415,14 @@ public class Enemy : Unit
 
         foreach (Tile next in adjacentTiles)
         {
-            if (rangeLeft > 0)
-            {
-                atk_dfs(dest, v, next, rangeLeft - 1, min_range, myGrid, map_x_border, map_y_border);
-            }
+            atk_dfs(dest, v, next, rangeLeft - 1, min_range, myGrid, map_x_border, map_y_border, t, false);
+            
         }
     }
     bool within_border(int local_x, int local_y, int map_x_border, int map_y_border)
     {
-        if (local_x < map_x_border && local_x >= 0 && local_y < map_y_border && local_y >= 0) return true;
-        return false;
+        return (local_x < map_x_border && local_x >= 0 && local_y < map_y_border && local_y >= 0);
     }
-
     public override (int, List<Tile>, Tile) get_action_information(int actionIndex)
     {
         return moveInformationList[actionIndex];

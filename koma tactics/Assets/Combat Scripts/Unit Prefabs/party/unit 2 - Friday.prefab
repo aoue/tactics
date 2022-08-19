@@ -356,20 +356,21 @@ MonoBehaviour:
   active_portrait: {fileID: 21300000, guid: f184da805c6557d4b805ab3033f8559f, type: 3}
   unitName: Jyr
   level: 1
+  exp: 0
   isAlly: 1
   aff: 1
-  movement: 3
-  hpMax: 70
-  hp: 70
-  brkMax: 35
-  brk: 35
+  movement: 4
+  hpMax: 30
+  hp: 30
+  brkMax: 15
+  brk: 15
   ap: 1
   controlRange: 1
   pwCost: 3
-  phys_atk: 55
-  phys_def: 60
-  magic_atk: 95
-  magic_def: 70
+  phys_atk: 6
+  phys_def: 4
+  magic_atk: 15
+  magic_def: 8
   unitOrder: {fileID: 6773564134839013533, guid: 811d92a95922178449a6c964f02d0d96,
     type: 3}
   traitList:

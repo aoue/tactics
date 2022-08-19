@@ -550,6 +550,8 @@ public class CombatGrid : MonoBehaviour
         objectivesSummaryText.text = loadedMission.print_objectives(overState, false, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties);
         expSummaryText.text = loadedMission.print_objectives_rewards(overState, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties);
 
+        expSummaryText.text += "\n\n\n—Total: " + (loadedMission.get_objectives_exp(playerUnits, enemyUnits, roundNumber, anyPlayerCasualties) + Carrier.Instance.get_exp());
+
         uiCanvas.enabled = true;
         missionSummaryObj.gameObject.SetActive(true);
     }
@@ -952,36 +954,19 @@ public class CombatGrid : MonoBehaviour
             {
                 runningMax = score;
                 bestList.Clear();
+                chosenUnit.clear_moveInformationList_except_last();
+                counter = 0;
                 bestList.Add((t, counter));
             }
             else if (score == runningMax)
             {
-                bestList.Add((t, counter));
+                bestList.Add((t, counter));                
             }
             counter++;
         }
-        //testing
-        /*
-        Debug.Log("bestlist count = " + bestList.Count);
-        foreach( (Tile, int, List<Tile>, Tile) element in bestList)
-        {
-            Tile temp1 = element.Item1;
-            int temp2 = element.Item2;
-            List<Tile> temp3 = element.Item3;
-            Tile temp4 = element.Item4;
-            Debug.Log("BESTLIST ELEMENT:");
-            Debug.Log("chosen dest tile = " + temp1.x + ", " + temp1.y);
-            Debug.Log("chosen trait to use = " + temp2);
-            if (temp3 != null && temp4 != null)
-            {
-                Debug.Log("chosen targetlist count = " + temp3.Count);
-                Debug.Log("chosen attack origin tile = " + temp4.x + ", " + temp4.y);
-            }
-        }
-        */
-
         //randomly select from bestList
         (Tile, int) best = bestList[UnityEngine.Random.Range(0, bestList.Count)];
+
         //int, tilelist, tile
         enemy_active_info = active_unit.get_action_information(best.Item2);
         
@@ -1054,10 +1039,6 @@ public class CombatGrid : MonoBehaviour
 
         //clear remnants of highlighting
         myGrid[active_unit.x, active_unit.y].hide_target_icon();
-        if (anyKills)
-        {
-            update_ZoC();
-        }
 
         active_unit = null;
         active_ability = null;
@@ -1261,6 +1242,8 @@ public class CombatGrid : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
+        update_ZoC();
         
         yield return new WaitForSeconds(combat_hpBar_linger);
 
@@ -1362,8 +1345,6 @@ public class CombatGrid : MonoBehaviour
         }
         pw -= pw_cost;
         update_pw();
-
-        if (anyKills) update_ZoC();
 
         //prepare for enemy phase
         if (active_unit != null)
@@ -1675,8 +1656,9 @@ public class CombatGrid : MonoBehaviour
                             visited.Add(myGrid[i, active_unit.y]);
                         }
                         //stop exploring if the tile blocks attacks, though.
-                        if (myGrid[i, active_unit.y].get_blocksAttacks())
+                        if (!t.get_ignores_blocking_terrain() && myGrid[i, active_unit.y].get_blocksAttacks())
                         {
+                            //(!t.get_ignores_blocking_terrain() && next.get_blocksAttacks())
                             break;
                         }
                     }  
@@ -1689,7 +1671,7 @@ public class CombatGrid : MonoBehaviour
                         {
                             visited.Add(myGrid[active_unit.x, j]);
                         }
-                        if (myGrid[active_unit.x, j].get_blocksAttacks())
+                        if (!t.get_ignores_blocking_terrain() && myGrid[active_unit.x, j].get_blocksAttacks())
                         {
                             break;
                         }
@@ -1711,7 +1693,7 @@ public class CombatGrid : MonoBehaviour
                 break;
             case TargetingType.RADIUS:
                 //borrow dfs code.
-                atk_dfs(visited, myGrid[active_unit.x, active_unit.y], t.get_range(), t.get_min_range());
+                atk_dfs(visited, myGrid[active_unit.x, active_unit.y], t.get_range(), t.get_min_range(), true);
                 visited.Remove(myGrid[active_unit.x, active_unit.y]);
                 break;
             case TargetingType.SELF:
@@ -1801,7 +1783,7 @@ public class CombatGrid : MonoBehaviour
                     // -OR, our current path is less than the path already saved to the tile
                     // -OR, our current path is the same cost as the path already saved in cost, but is shorter in length
                     if (!v.Contains(myGrid[start.x + i, start.y + j])
-                        || sum_path_tile_cost(pathTaken, u) < sum_path_tile_cost(myGrid[start.x + i, start.y + j].path, u)
+                        || (sum_path_tile_cost(pathTaken, u) < sum_path_tile_cost(myGrid[start.x + i, start.y + j].path, u))
                         || (sum_path_tile_cost(pathTaken, u) == sum_path_tile_cost(myGrid[start.x + i, start.y + j].path, u) && pathTaken.Count < myGrid[start.x + i, start.y + j].path.Count)
                         )
                     {
@@ -1830,7 +1812,9 @@ public class CombatGrid : MonoBehaviour
 
             //if mvCost <= 0, then it is impassable. Different values mean different types.  E.g. -1: water, -2: cliffs.
             //Of course, traits can modify mvCost making certain terrain passable for a unit.
-            if (mvCost > 0)
+
+            //if (mvCost > 0) //<-- you can pay what you have left for the last tile.
+            if ( moveLeft >= mvCost ) //<-- you must be able to pay the movement cost in full.
             {
                 //if tile is in the opponent's ZoC, then it costs all remaining movement.
                 if (isPlayer && next.enemy_controlled)
@@ -1844,7 +1828,6 @@ public class CombatGrid : MonoBehaviour
                 else
                 {
                     dfs(v, next, moveLeft - mvCost, isPlayer, u, pathTaken);
-                    
                 }
 
                 //hmm... maybe instead of just removing the latest element, we need to remove as many elements as it went deep.
@@ -1854,7 +1837,7 @@ public class CombatGrid : MonoBehaviour
 
         }
     }
-    void atk_dfs(HashSet<Tile> v, Tile start, int rangeLeft, int min_range)
+    void atk_dfs(HashSet<Tile> v, Tile start, int rangeLeft, int min_range, bool originTile)
     {
         //only add if allowed by minimum range
         //i.e. if distance between the tiles of myGrid[active_unit.x, active_unit.y] and start is >= min_range
@@ -1863,10 +1846,9 @@ public class CombatGrid : MonoBehaviour
             v.Add(start);
         }
 
-        if (start.get_blocksAttacks())
-        {
-            return;
-        }
+        if (!originTile && !active_ability.get_ignores_blocking_terrain() && start.get_blocksAttacks()) return;
+
+        if (rangeLeft == 0) return;
 
         List<Tile> adjacentTiles = new List<Tile>();
         //add tiles based on coordinates, as long as they are not out of bounds.
@@ -1877,14 +1859,8 @@ public class CombatGrid : MonoBehaviour
         if (within_border(start.x, start.y - 1) && !v.Contains(myGrid[start.x, start.y - 1])) adjacentTiles.Add(myGrid[start.x, start.y - 1]);
 
         foreach (Tile next in adjacentTiles)
-        {
-            if (rangeLeft > 0)
-            {
-
-                //determine whether we can proceed; (that is, whether we can fire through this building type.)
-                //e.g. you cannot fire through solid buildings or heavy woods               
-                atk_dfs(v, next, rangeLeft - 1, min_range);
-            }
+        {           
+            atk_dfs(v, next, rangeLeft - 1, min_range, false);           
         }
     }
     bool within_border(int x, int y)
@@ -2241,5 +2217,4 @@ public class CombatGrid : MonoBehaviour
 
         return targetList;
     }
-
 }
