@@ -557,7 +557,7 @@ MonoBehaviour:
   exp: 5
   isAlly: 0
   aff: 0
-  movement: 5
+  movement: 4
   hpMax: 15
   hp: 15
   brkMax: 10

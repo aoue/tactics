@@ -50,8 +50,8 @@ MonoBehaviour:
   isPassive: 0
   targeting: 0
   aoe: 1
-  ignores_blocking_terrain: 1
-  minimum_range: 0
+  ignores_blocking_terrain: 0
+  minimum_range: 2
   affinity: 1
   range: 2
   power: 3

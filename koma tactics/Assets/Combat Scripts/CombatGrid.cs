@@ -1645,10 +1645,11 @@ public class CombatGrid : MonoBehaviour
         //for a text description of the targeting types, see the legend in Trait.cs
         switch (t.get_targetingType())
         {
-            case TargetingType.LINE:                
-                for (int i = active_unit.x - t.get_range(); i < active_unit.x + t.get_range() + 1; i++)
+            case TargetingType.LINE:
+                //to left
+                for (int i = active_unit.x - 1; i > active_unit.x - t.get_range() - 1; i--)
                 {
-                    if (within_border(i, active_unit.y) && i != active_unit.x)
+                    if (within_border(i, active_unit.y))
                     {
                         //if the tile is valid, then add to list you can hit
                         if (Math.Abs(active_unit.x - i) >= t.get_min_range())
@@ -1658,14 +1659,46 @@ public class CombatGrid : MonoBehaviour
                         //stop exploring if the tile blocks attacks, though.
                         if (!t.get_ignores_blocking_terrain() && myGrid[i, active_unit.y].get_blocksAttacks())
                         {
-                            //(!t.get_ignores_blocking_terrain() && next.get_blocksAttacks())
                             break;
                         }
-                    }  
+                    }
                 }
-                for (int j = active_unit.y - t.get_range(); j < active_unit.y + t.get_range() + 1; j++)
+                //to right
+                for (int i = active_unit.x + 1; i < active_unit.x + t.get_range() + 1; i++)
                 {
-                    if (within_border(active_unit.x, j) && j != active_unit.y)
+                    if (within_border(i, active_unit.y))
+                    {
+                        //if the tile is valid, then add to list you can hit
+                        if (Math.Abs(active_unit.x - i) >= t.get_min_range())
+                        {
+                            visited.Add(myGrid[i, active_unit.y]);
+                        }
+                        //stop exploring if the tile blocks attacks, though.
+                        if (!t.get_ignores_blocking_terrain() && myGrid[i, active_unit.y].get_blocksAttacks())
+                        {
+                            break;
+                        }
+                    }
+                }
+                //to top
+                for (int j = active_unit.y + 1; j < active_unit.y + t.get_range() + 1; j++)
+                {
+                    if (within_border(active_unit.x, j))
+                    {
+                        if (Math.Abs(active_unit.y - j) >= t.get_min_range())
+                        {
+                            visited.Add(myGrid[active_unit.x, j]);
+                        }
+                        if (!t.get_ignores_blocking_terrain() && myGrid[active_unit.x, j].get_blocksAttacks())
+                        {
+                            break;
+                        }
+                    }
+                }
+                //to bottom
+                for (int j = active_unit.y - 1; j > active_unit.y - t.get_range() - 1; j--)
+                {
+                    if (within_border(active_unit.x, j))
                     {
                         if (Math.Abs(active_unit.y - j) >= t.get_min_range())
                         {
@@ -1814,7 +1847,9 @@ public class CombatGrid : MonoBehaviour
             //Of course, traits can modify mvCost making certain terrain passable for a unit.
 
             //if (mvCost > 0) //<-- you can pay what you have left for the last tile.
-            if ( moveLeft >= mvCost ) //<-- you must be able to pay the movement cost in full.
+            //heavy: must pay full cost for every tile.
+            //light and medium: can pay what you have for last tile.
+            if ((u.get_aff() == 2 && moveLeft >= mvCost) || ( u.get_aff() <= 1 && mvCost > 0)) 
             {
                 //if tile is in the opponent's ZoC, then it costs all remaining movement.
                 if (isPlayer && next.enemy_controlled)

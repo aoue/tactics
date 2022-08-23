@@ -276,25 +276,59 @@ public class Enemy : Unit
         switch (t.get_targetingType())
         {
             case TargetingType.LINE:
-                //above and below
-                for (int i = dest.x - t.get_range(); i < dest.x + t.get_range() + 1; i++)
+                //to left
+                for (int i = dest.x - 1; i > dest.x - t.get_range() - 1; i--)
                 {
-                    if (within_border(i, dest.y, map_x_border, map_y_border) && i != dest.x)
+                    if (within_border(i, dest.y, map_x_border, map_y_border))
                     {
+                        //if the tile is valid, then add to list you can hit
                         if (Math.Abs(dest.x - i) >= t.get_min_range())
                         {
                             origins.Add(myGrid[i, dest.y]);
                         }
+                        //stop exploring if the tile blocks attacks, though.
                         if (!t.get_ignores_blocking_terrain() && myGrid[i, dest.y].get_blocksAttacks())
                         {
                             break;
-                        }                       
+                        }
                     }
                 }
-                //left and right
-                for (int j = dest.y - t.get_range(); j < dest.y + t.get_range() + 1; j++)
+                //to right
+                for (int i = dest.x + 1; i < dest.x + t.get_range() + 1; i++)
                 {
-                    if (within_border(dest.x, j, map_x_border, map_y_border) && j != dest.y)
+                    if (within_border(i, dest.y, map_x_border, map_y_border))
+                    {
+                        //if the tile is valid, then add to list you can hit
+                        if (Math.Abs(dest.x - i) >= t.get_min_range())
+                        {
+                            origins.Add(myGrid[i, dest.y]);
+                        }
+                        //stop exploring if the tile blocks attacks, though.
+                        if (!t.get_ignores_blocking_terrain() && myGrid[i, dest.y].get_blocksAttacks())
+                        {
+                            break;
+                        }
+                    }
+                }
+                //to top
+                for (int j = dest.y + 1; j < dest.y + t.get_range() + 1; j++)
+                {
+                    if (within_border(dest.x, j, map_x_border, map_y_border))
+                    {
+                        if (Math.Abs(dest.y - j) >= t.get_min_range())
+                        {
+                            origins.Add(myGrid[dest.x, j]);
+                        }
+                        if (!t.get_ignores_blocking_terrain() && myGrid[dest.x, j].get_blocksAttacks())
+                        {
+                            break;
+                        }
+                    }
+                }
+                //to bottom
+                for (int j = dest.y - 1; j > dest.y - t.get_range() - 1; j--)
+                {
+                    if (within_border(dest.x, j, map_x_border, map_y_border))
                     {
                         if (Math.Abs(dest.y - j) >= t.get_min_range())
                         {

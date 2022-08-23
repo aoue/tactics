@@ -43,17 +43,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f48f0dfe41863c408c88637215617ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  traitSound: {fileID: 0}
   traitName: Attachment
-  descr: Damage resistance increased if within 3 tiles of Friday
+  descr: Resist 1/4 of damage received if within 3 tiles of Yvette.
   unitType: 0
   isPassive: 1
   targeting: 0
   aoe: 0
+  ignores_blocking_terrain: 0
+  minimum_range: 0
   affinity: 0
   range: 0
   power: 0
+  min_dmg_range: 0
+  max_dmg_range: 0
   brkMult: 0
   pwCost: 0
   usesPhysAttack: 0
   usesPhysDefense: 0
   isHeal: 0
+  usesTrigger: 0

@@ -232,12 +232,13 @@ MonoBehaviour:
   exp: 8
   isAlly: 0
   aff: 1
-  movement: 4
+  movement: 3
   hpMax: 30
   hp: 30
   brkMax: 15
   brk: 15
   ap: 1
+  controlRangeBase: 0
   controlRange: 1
   pwCost: 0
   phys_atk: 11
