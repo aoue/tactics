@@ -107,8 +107,8 @@ public class UnitInformer : MonoBehaviour
 
             if (u.get_unitOrder() != null)
             {
-                stats_1.text += "\n\n" + u.get_unitOrder().get_orderName()
-                + "\nOrder—<i>" + u.get_unitOrder().get_orderDescr() + "</i>";
+                stats_1.text += "\n\nOrder—" + u.get_unitOrder().get_orderName()
+                + "\n<i>" + u.get_unitOrder().get_orderDescr() + "</i>";
             }
 
             stats_2.text = "Machine Atk: " + u.get_physa()

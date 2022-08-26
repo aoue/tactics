@@ -9,6 +9,7 @@ public class Enemy : Unit
     //derived from unit.
     //has AI.
 
+    private int activation_delay; //the number of rounds this unit passes when activated. Also, when greater than 0, returns -100 for pri.
     
     [SerializeField] private int pri_base;
     [SerializeField] private int pri_range; //(range is -pri_range, pri_range)
@@ -38,6 +39,11 @@ public class Enemy : Unit
         // -add random value from pri range
         // -if hp < panic threshold, add panic pri
         // -relevance score: add points based on unit's distance to where the last active player unit ended its turn.
+
+        if (activation_delay > 0)
+        {
+            return -100;
+        }
 
         int panicAdd = 0;
         if ((float)get_hp() / (float)get_hpMax() < panic_threshold) panicAdd = pri_panic;
@@ -461,5 +467,9 @@ public class Enemy : Unit
     {
         return moveInformationList[actionIndex];
     }
-    
+
+    public void set_activation_delay(int x) { activation_delay = x; }
+    public override void dec_act_delay() { activation_delay--; }
+    public override void cancel_act_delay() { activation_delay = 0; }
+    public override int get_act_delay() { return activation_delay; }
 }

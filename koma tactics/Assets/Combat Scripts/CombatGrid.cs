@@ -337,6 +337,7 @@ public class CombatGrid : MonoBehaviour
         {
             int x_pos = m.get_enemy_spots()[i].Item2;
             int y_pos = m.get_enemy_spots()[i].Item3;
+            int act_delay = m.get_enemy_spots()[i].Item4;
 
             //Vector3 instPos = new Vector3(2 * transform_x(x_pos), 2 * transform_y(y_pos), 0f);
             Vector3 instPos = get_pos_from_coords(x_pos, y_pos);
@@ -348,6 +349,7 @@ public class CombatGrid : MonoBehaviour
             myGrid[x_pos, y_pos].place_unit(inst_u);
 
             inst_u.start_of_mission(); //do start of mission setup
+            inst_u.set_activation_delay(act_delay);
 
             inst_u.x = x_pos;
             inst_u.y = y_pos;
@@ -918,19 +920,31 @@ public class CombatGrid : MonoBehaviour
         active_unit.reset_selection_variables();
         return enemyUnits[chosenIndex];
     }
+    IEnumerator pass_enemy_turn(Unit chosenUnit)
+    {
+        //used to pass the enemy's turn
+        cam.unlock_camera();
+        Vector3 moveHere = get_pos_from_coords(active_unit.x, active_unit.y) + new Vector3(0f, 0f, -10f);
+        cam.jump_to(moveHere);
+        cam.lock_camera();
+
+        yield return new WaitForSeconds(1f);
+
+        end_enemy_turn(false, true);
+    }
     void select_enemy_action(Unit chosenUnit)
     {
-        //generate all the possible movement destinations for the unit.
-        //for each position:
-        //  if the manhattan distance between the unit and the closest player unit < range
-        //      for each active trait that the unit has:
-        //          generate targetlist (can be 1 unit, can be more.) 
-        //          score targetlist; save it. (hitting allies is negative. Elites will never do it, regardless.)
+        //selects the best destination, trait, target location for chosenUnit.
+        //if the unit's activation delay is > 0, though, then do nothing.
+       
+        if (chosenUnit.get_act_delay() > 0)
+        {
+            chosenUnit.dec_act_delay();
+            StartCoroutine(pass_enemy_turn(chosenUnit));
+            return;
+        }
 
-        //highlight all possible movement locations
-        //myGrid[chosenUnit.x, chosenUnit.y].highlight_target_mv();
         highlight_tiles_mv(chosenUnit, false);
-
         //so we now have visited set up as a list of all possible destination tiles.
         //find the best (destination tile, trait attack, targetlist) triple.
         int runningMax = -1;

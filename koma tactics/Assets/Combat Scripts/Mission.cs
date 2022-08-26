@@ -111,11 +111,11 @@ public class Mission : MonoBehaviour
 
         return dep_array;
     }
-    public virtual (Enemy, int, int)[] get_enemy_spots()
+    public virtual (Enemy, int, int, int)[] get_enemy_spots()
     {
         //returns an array of units and coords representing unit starting spots.
-        (Enemy, int, int)[] dep_array = {
-            (defEnemies[0], 4, 4)//,
+        (Enemy, int, int, int)[] dep_array = {
+            (defEnemies[0], 4, 4, 0)//,
             //(defEnemies[0], 3, 2),
             //(defEnemies[0], 1, 3)
         };

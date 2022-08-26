@@ -24,7 +24,6 @@ EXTERNAL remove_unit(id) //removes unit from reserve party pool based on unit id
 ~add_unit(0)
 ~add_unit(1)
 ~add_unit(2)
-~add_unit(3)
 
 ~n("")
 p0 imm.

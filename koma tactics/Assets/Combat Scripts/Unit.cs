@@ -123,7 +123,8 @@ public class Unit : MonoBehaviour
         //causes dmg to the unit.
         //Any dmg is dealt to both hp and brk.
         //if brk reaches 0, then the unit breaks. (ap = 0)
-        hp = Mathf.Max(0, hp - dmg);
+        cancel_act_delay();
+        hp = Mathf.Max(0, hp - dmg);       
 
         if (!isBroken)
         {
@@ -226,4 +227,9 @@ public class Unit : MonoBehaviour
     public virtual int score_move(int closestPlayerTile, Tile dest, int tilesAddedToZoC, Tile[,] myGrid, HashSet<Tile> visited) { return -1; }
     public virtual int score_attack(Trait t, List<Tile> targetList, BattleBrain brain) { return -1; }
     public virtual (int, List<Tile>, Tile) get_action_information(int actionIndex) { return (-1, null, null); }
+    public virtual void cancel_act_delay() { }
+    public virtual int get_act_delay() { return 0; }
+    public virtual void dec_act_delay() { }
+
+
 }

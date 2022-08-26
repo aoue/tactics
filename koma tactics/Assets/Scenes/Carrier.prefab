@@ -46,5 +46,4 @@ MonoBehaviour:
   allPlayerUnits:
   - {fileID: 3091262671685752835, guid: 74b805501d58d1a48841c84f74746b3f, type: 3}
   - {fileID: 6669561844638855848, guid: 80de8ee9a67fcec4e8f857e0f4fe3e6b, type: 3}
-  - {fileID: 8630799189674794802, guid: c242a259ae9c5414f9b433c8a7169611, type: 3}
   - {fileID: 302569972232621701, guid: c17207c336cf3cf4abafb911e91a835b, type: 3}

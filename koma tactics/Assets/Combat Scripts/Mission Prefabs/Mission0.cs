@@ -66,25 +66,27 @@ public class Mission0 : Mission
     {
         //returns an array representing the map
         //row, depth into that row
-        Tile[,] layout0 = new Tile[12, 12] {
+        Tile[,] layout0 = new Tile[7, 12] {
             { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[0]},
             { missionTiles[0], missionTiles[0], missionTiles[3], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[3], missionTiles[3]},
             { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[3], missionTiles[3], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0]},
             { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[3], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0]},
             { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1]},
             { missionTiles[2], missionTiles[2], missionTiles[2], missionTiles[2], missionTiles[2], missionTiles[2], missionTiles[2], missionTiles[2], missionTiles[2], missionTiles[2], missionTiles[2], missionTiles[2]},
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0]},
+            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0]}
+            /*           
             { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0]},
             { missionTiles[0], missionTiles[3], missionTiles[3], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[3], missionTiles[0], missionTiles[0], missionTiles[0]},
             { missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[3], missionTiles[3], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0]},
             { missionTiles[1], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[3], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0]},
             { missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0]}
+            */
         };
         //the mission layout will maintain this orientation in game.
         
         return layout0;
     }
-    public override int get_layout_x_dim() { return 12; }
+    public override int get_layout_x_dim() { return 7; }
     public override int get_layout_y_dim() { return 12; }
 
     //unit setup and reinforcements
@@ -95,28 +97,26 @@ public class Mission0 : Mission
         (int, int, int)[] dep_array = {
             (0, 3, 1),           
             (1, 4, 1),
-            (2, 4, 0),
-            (3, 4, 3)
-            
+            (2, 4, 0)           
         };
         return dep_array;
     }
-    public override (Enemy, int, int)[] get_enemy_spots()
+    public override (Enemy, int, int, int)[] get_enemy_spots()
     {
         //returns an array of units and coords representing unit starting spots.
-        //enemy, row, depth into that row
-        (Enemy, int, int)[] dep_array = {
-            //top right pair
-            (defEnemies[0], 1, 9),
-            (defEnemies[2], 2, 10),
+        //enemy, row, depth into that row, activation delay
+        (Enemy, int, int, int)[] dep_array = {
+           
+            //light pair
+            (defEnemies[0], 0, 3, 0),
+            (defEnemies[0], 1, 4, 0),
 
-            //middle pair
-            (defEnemies[0], 6, 7),
-            (defEnemies[0], 6, 8),
+            //med pair
+            (defEnemies[1], 2, 9, 2),
+            (defEnemies[1], 3, 9, 2),
 
-            //bottom pair
-            (defEnemies[1], 10, 8),
-            (defEnemies[1], 11, 10)
+            //heavy
+            (defEnemies[2], 4, 11, 4)
         };
 
         return dep_array;

@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orderName: Power Conservation
-  orderDescr: +1 PW at the end of each player turn.
+  orderDescr: +2 PW each time an allied unit ends its turn.
