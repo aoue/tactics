@@ -58,6 +58,8 @@ public class CombatGrid : MonoBehaviour
     private Tile[,] myGrid;
     private State gameState;
     private bool overState = false;
+    private bool playerArrived = false; //set to true if a player unit ends turn on arrival tile.
+    private bool enemyArrived = false; //set to true if an enemy unit ends turn on defend tile.
     private bool anyPlayerCasualties = false; //to check if any player units were killed.
 
     [SerializeField] private Order defaultOrder; //the default order. No effects. So we don't have to put if not null everywhere.
@@ -324,11 +326,6 @@ public class CombatGrid : MonoBehaviour
                     break;
                 }
             }           
-
-            //setup the shortcut button:
-            // -hide text
-            // -put unit's box image into the slot.
-            
         }
 
         //deploy enemies too
@@ -338,6 +335,7 @@ public class CombatGrid : MonoBehaviour
             int x_pos = m.get_enemy_spots()[i].Item2;
             int y_pos = m.get_enemy_spots()[i].Item3;
             int act_delay = m.get_enemy_spots()[i].Item4;
+            int times_to_level_up = m.get_enemy_spots()[i].Item5;
 
             //Vector3 instPos = new Vector3(2 * transform_x(x_pos), 2 * transform_y(y_pos), 0f);
             Vector3 instPos = get_pos_from_coords(x_pos, y_pos);
@@ -350,9 +348,9 @@ public class CombatGrid : MonoBehaviour
 
             inst_u.start_of_mission(); //do start of mission setup
             inst_u.set_activation_delay(act_delay);
-
             inst_u.x = x_pos;
             inst_u.y = y_pos;
+            inst_u.level_up(times_to_level_up);
             enemyUnits.Add(inst_u);
         }
 
@@ -491,13 +489,15 @@ public class CombatGrid : MonoBehaviour
         uInformer.hide();
         tInformer.hide();
     }
-    void spawn_reinforcements((Enemy, int, int)[] reinforcements)
+    void spawn_reinforcements((Enemy, int, int, int, int)[] reinforcements)
     {
         //deploy enemies too
         for (int i = 0; i < reinforcements.Length; i++)
         {
             int x_pos = reinforcements[i].Item2;
             int y_pos = reinforcements[i].Item3;
+            int act_delay = reinforcements[i].Item4;
+            int times_to_level_up = reinforcements[i].Item5;
 
             //only spawn the unit if the tile it would be spawned on is NOT occupied.
             if (!myGrid[x_pos, y_pos].occupied())
@@ -515,6 +515,9 @@ public class CombatGrid : MonoBehaviour
                 inst_u.x = x_pos;
                 inst_u.y = y_pos;
                 inst_u.dec_ap();
+                inst_u.set_activation_delay(act_delay);
+                inst_u.level_up(times_to_level_up);
+                //level the unit up however many times
                 enemyUnits.Add(inst_u);
             }                        
         }
@@ -619,7 +622,7 @@ public class CombatGrid : MonoBehaviour
         yield return new WaitForSeconds(pause_before_event_start);
 
         //spawn reinforcements, if any:
-        (Enemy, int, int)[] reinforcements = loadedMission.get_enemy_reinforcements(which);
+        (Enemy, int, int, int, int)[] reinforcements = loadedMission.get_enemy_reinforcements(which);
         if (reinforcements != null)
         {
             //spawn them.
@@ -648,12 +651,12 @@ public class CombatGrid : MonoBehaviour
     public void next_turn()
     {       
         //handle mission over and start (+ their event playing)
-        if (loadedMission.is_mission_won(playerUnits, enemyUnits, myGrid) && allowRoundEvent)
+        if (loadedMission.is_mission_won(playerUnits, enemyUnits, myGrid) || playerArrived /*&& allowRoundEvent*/)
         {   
             StartCoroutine(start_event_after_pause(-2));
             return;
         }
-        else if (loadedMission.is_mission_lost(playerUnits, enemyUnits, myGrid) && allowRoundEvent)
+        else if (loadedMission.is_mission_lost(playerUnits, enemyUnits, myGrid) || enemyArrived /*&& allowRoundEvent*/)
         {
             StartCoroutine(start_event_after_pause(-3));
             return;
@@ -928,7 +931,7 @@ public class CombatGrid : MonoBehaviour
         cam.jump_to(moveHere);
         cam.lock_camera();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.25f);
 
         end_enemy_turn(false, true);
     }
@@ -1002,6 +1005,7 @@ public class CombatGrid : MonoBehaviour
         active_unit.x = destTile.x;
         active_unit.y = destTile.y;
 
+        if (destTile is DefendTile) enemyArrived = true;
         
         StartCoroutine(move_obj_on_path(unit.gameObject, destTile.path, false));
     }
@@ -1399,7 +1403,7 @@ public class CombatGrid : MonoBehaviour
         //for a list of tiles, returns the total mvCost it would take to traverse it.
         //takes active_unit's passives into account.
         int sum = 0;
-        for (int j = 1; j < pathTaken.Count; j++)
+        for (int j = 0; j < pathTaken.Count; j++)
         {
             List<int> mvCostList = new List<int>();
             for (int i = 0; i < u.get_traitList().Length; i++)
@@ -1412,8 +1416,8 @@ public class CombatGrid : MonoBehaviour
             if (mvCostList.Count > 0) sum += mvCostList.Min();
             else sum += pathTaken[j].get_movementCost();
         }
-        //Debug.Log("sum path tile cost = " + sum);
-        return sum;
+        //Debug.Log("sum path tile cost = " + sum + ", u mvmt = " + active_order.order_movement(u.get_movement()));
+        return Math.Min(sum, active_order.order_movement(u.get_movement()));
     }
     public void traitButton_clicked(int which)
     {
@@ -1544,6 +1548,8 @@ public class CombatGrid : MonoBehaviour
                 myGrid[x_pos, y_pos].place_unit(active_unit);
                 active_unit.x = x_pos;
                 active_unit.y = y_pos;
+
+                if (myGrid[x_pos, y_pos] is ArriveTile) playerArrived = true;
 
                 //actually, perform movement animation here.
                 animating = true;

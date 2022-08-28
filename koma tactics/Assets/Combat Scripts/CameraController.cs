@@ -27,7 +27,6 @@ public class CameraController : MonoBehaviour
     private float rightBorder;
     private float leftBorder;
 
-
     void Update()
     {
         if (!canMove) return;
@@ -82,24 +81,25 @@ public class CameraController : MonoBehaviour
         //called at the start of a mission by combatGrid, who sets the values of 
         //the borders based on the map size.
 
-        //set camera borders (with math)
+        //e.g. map dimensions are x=7 by y=12
+        //y limits coords: 0, 12
+        //x limits coords: 0, 22
 
-        float xcenter = 2 * ((xborder - 1) / 2);
-        float ycenter = 2 * ((yborder - 1) / 2);
-
-        topBorder = ((2 * yborder)); 
-        bottomBorder = ((0));
-        rightBorder = ((2 * xborder));
-        leftBorder = ((0));
+        //you can go 3 tiles away from the border in any direction
+        topBorder = (2 * (xborder - 3));
+        bottomBorder = 6;
+        rightBorder = (2 * (yborder - 3));
+        leftBorder = 6;
 
         //set camera size
         maxSize = 12;
         minSize = 6;
 
         //set starting position (in the middle)
+        float xcenter = (2 * (yborder - 1)) / 2;
+        float ycenter = (2 * (xborder - 1)) / 2;
         Vector3 startpos = new Vector3(xcenter, ycenter, - 10f);
-        transform.position = startpos;
-
+        transform.localPosition = startpos;
     }
     public void jump_to(Vector3 toHere)
     {

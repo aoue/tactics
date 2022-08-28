@@ -5,7 +5,8 @@ EXTERNAL p(pId) //pId to show corresponding BOX portrait. -1 to hide.
 EXTERNAL show(whichSlot, portraitID) //shows full portrait
 EXTERNAL hide(whichSlot) //hides full portrait
 EXTERNAL talk(mode) //1: use quotes | 0: use parantheses.
-EXTERNAL toggle_font()
+EXTERNAL toggle_font() //turns font to ancients font.
+EXTERNAL aside() //turns text to italics, to mark an aside.
 EXTERNAL shake(intensity, duration) //camera shake. both parameters are ints. actual duration = 0.05f seconds * duration
 
 //Music:

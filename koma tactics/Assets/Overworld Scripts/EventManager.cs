@@ -48,6 +48,7 @@ public class EventManager : MonoBehaviour
     private bool usingDefaultFont = true;
     private bool isTalking = true; //determines the mode of speech which is used when nametext is not empty. can either be true:talk [""] or false:think [()] 
     private bool isCentered = false; //determines whether to use sentenceText or use centeredText in typeSentence().
+    private bool asideOn = false;
 
     [SerializeField] private GameObject settingsView; //lets player adjust vn settings, like text speed.
 
@@ -276,7 +277,9 @@ public class EventManager : MonoBehaviour
                 if (skipOn == true)
                 {
                     //i.e., if skip is turned on while the sentence is playing.
-                    typeHere.text = sentence;
+
+                    if (asideOn) typeHere.text = "<i>" + sentence + "</i>";
+                    else typeHere.text = sentence;
                     break;
                 }
 
@@ -306,7 +309,8 @@ public class EventManager : MonoBehaviour
         }
         else
         {
-            typeHere.text = sentence;
+            if (asideOn) typeHere.text = "<i>" + sentence + "</i>";
+            else typeHere.text = sentence;
             yield return new WaitForSeconds(0.1f);
         }
         
@@ -553,6 +557,10 @@ public class EventManager : MonoBehaviour
         {
             this.toggle_font();
         });
+        script.BindExternalFunction("aside", () =>
+        {
+            this.toggle_aside();
+        });
         script.BindExternalFunction("show", (int which, int index) =>
         {
             this.set_portrait_slot(which, index);
@@ -616,6 +624,10 @@ public class EventManager : MonoBehaviour
             sentenceText.font = defaultFont;
         }
         usingDefaultFont = !usingDefaultFont;
+    }    
+    void toggle_aside()
+    {
+        asideOn = !asideOn;
     }
 
     //visual effects

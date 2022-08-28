@@ -60,6 +60,7 @@ public class Mission0 : Mission
     // 1: light woods
     // 2: tracks 
     // 3: heavy woods
+    // 4: defend tile
 
     //map setup
     public override Tile[,] get_layout()
@@ -101,22 +102,22 @@ public class Mission0 : Mission
         };
         return dep_array;
     }
-    public override (Enemy, int, int, int)[] get_enemy_spots()
+    public override (Enemy, int, int, int, int)[] get_enemy_spots()
     {
-        //returns an array of units and coords representing unit starting spots.
-        //enemy, row, depth into that row, activation delay
-        (Enemy, int, int, int)[] dep_array = {
+        //returns an array of units and information needed to spawn them in.
+        //unit, row, depth into that row, act delay, times to level up
+        (Enemy, int, int, int, int)[] dep_array = {
            
             //light pair
-            (defEnemies[0], 0, 3, 0),
-            (defEnemies[0], 1, 4, 0),
+            (defEnemies[0], 0, 3, 0, 0),
+            (defEnemies[0], 1, 4, 0, 0),
 
             //med pair
-            (defEnemies[1], 2, 9, 2),
-            (defEnemies[1], 3, 9, 2),
+            (defEnemies[1], 2, 9, 2, 0),
+            (defEnemies[1], 3, 9, 2, 0),
 
             //heavy
-            (defEnemies[2], 4, 11, 4)
+            (defEnemies[2], 4, 11, 4, 0)
         };
 
         return dep_array;

@@ -20,6 +20,13 @@ public class Enemy : Unit
     //Reset when a unit starts selection each time it's activated.
     private List<(int, List<Tile>, Tile)> moveInformationList;
 
+    public override void level_up(int times)
+    {
+        //levels up the unit; meaning increasing its stats, the specified number of times.
+        //this is used so a single prefab type can be used regardless of the level it is supposed to be.
+    }
+
+
     public override void clear_moveInformationList_except_last()
     {
         //removes all elements from the list except for the last one.
@@ -75,8 +82,14 @@ public class Enemy : Unit
     public override int score_move(int closestPlayerTile, Tile dest, int tilesAddedToZoC, Tile[,] myGrid, HashSet<Tile> visited)
     {
         //score a grid destination.
+
         //factors:
         int score = 0;
+
+        if (dest is DefendTile)
+        {
+            score += 1000;
+        }
 
         // -non-controlled tiles this move adds ZoC control to (less points if foolish)
         if (caresAboutZoC)
@@ -472,4 +485,5 @@ public class Enemy : Unit
     public override void dec_act_delay() { activation_delay--; }
     public override void cancel_act_delay() { activation_delay = 0; }
     public override int get_act_delay() { return activation_delay; }
+    public override bool get_isAlly() { return false; }
 }

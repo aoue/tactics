@@ -226,6 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileName: Empty
+  blocksAttacks: 0
   movementCost: 1
   coverReduction: 0
   descr: There's nothing there.
@@ -278,7 +279,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 29097b3f051049f409c6b3c0fd307564, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2b89ffdddb6df164bac52e5d1fb94c37, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

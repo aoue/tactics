@@ -105,11 +105,23 @@ public class UnitInformer : MonoBehaviour
                 + "\nMovement: " + u.get_movement()
                 + "\nControl: " + u.get_controlRange();
 
-            if (u.get_unitOrder() != null)
+            if (u.get_isAlly())
             {
-                stats_1.text += "\n\nOrder—" + u.get_unitOrder().get_orderName()
-                + "\n<i>" + u.get_unitOrder().get_orderDescr() + "</i>";
+                if (u.get_unitOrder() != null)
+                {
+                    stats_1.text += "\n\nOrder—" + u.get_unitOrder().get_orderName()
+                    + "\n<i>" + u.get_unitOrder().get_orderDescr() + "</i>";
+                }
             }
+            else
+            {
+                if (u.get_act_delay() > 0)
+                {
+                    stats_1.text += "\n\nWaiting—<i>" + u.get_act_delay() + " rounds</i>";
+                }
+            }
+
+            
 
             stats_2.text = "Machine Atk: " + u.get_physa()
                 + "\nMachine Def: " + u.get_physd()
@@ -131,8 +143,6 @@ public class UnitInformer : MonoBehaviour
                     {
                         traitButtons[i].interactable = true;
                     }
-                        
-
                     traitButtons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "(" + (i+1) + ") " + u.get_traitList()[i].get_traitName();
                 }
                 else

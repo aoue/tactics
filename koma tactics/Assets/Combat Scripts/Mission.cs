@@ -111,26 +111,28 @@ public class Mission : MonoBehaviour
 
         return dep_array;
     }
-    public virtual (Enemy, int, int, int)[] get_enemy_spots()
+    public virtual (Enemy, int, int, int, int)[] get_enemy_spots()
     {
-        //returns an array of units and coords representing unit starting spots.
-        (Enemy, int, int, int)[] dep_array = {
-            (defEnemies[0], 4, 4, 0)//,
+        //returns an array of units and information needed to spawn them in.
+        //unit, row, depth into that row, act delay, times to level up
+        (Enemy, int, int, int, int)[] dep_array = {
+            (defEnemies[0], 4, 4, 0, 0)//,
             //(defEnemies[0], 3, 2),
             //(defEnemies[0], 1, 3)
         };
 
         return dep_array;
     }
-    public virtual (Enemy, int, int)[] get_enemy_reinforcements(int roundNumber)
+    public virtual (Enemy, int, int, int, int)[] get_enemy_reinforcements(int roundNumber)
     {
+        //unit, row, depth into that row, act delay, times to level up
         switch (roundNumber)
         {
             case 0:
                 break;
             case 1:
                 //(Enemy, int, int)[] dep_array = {
-                //    (defEnemies[0], 4, 0),
+                //    (defEnemies[0], 4, 0, 0),
                 //};
                 //return dep_array;
                 break;

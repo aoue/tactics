@@ -247,7 +247,7 @@ MonoBehaviour:
   magic_def: 6
   unitOrder: {fileID: 0}
   traitList:
-  - {fileID: 6414102865098984256, guid: 221ae8b076f55f04b8bc8cda3409439e, type: 3}
+  - {fileID: 8439347060211842814, guid: f3350804f48495b4189521aedfcf9c7e, type: 3}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
