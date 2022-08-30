@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class Tile : MonoBehaviour
@@ -12,10 +13,12 @@ public class Tile : MonoBehaviour
     [SerializeField] private int movementCost; //-1 for impassable.
     [SerializeField] private float coverReduction; //high means more dmg reduction. From 0 to 1.
     [SerializeField] private string descr;
+    [SerializeField] private bool unitBehindActualImage;
 
     //for marking zone of control. start disabled.
     [SerializeField] private SpriteRenderer targetIcon;
     [SerializeField] private SpriteRenderer zocRenderer;
+    [SerializeField] private SpriteRenderer debrisRenderer;
 
     //control markers. Restrict movement of the opposing side if true.
     public bool player_controlled { get; set; }
@@ -42,15 +45,36 @@ public class Tile : MonoBehaviour
     public void place_unit(Unit u)
     {
         heldUnit = u;
+        if (unitBehindActualImage)
+        {
+            //then set actual image alpha to 0.5
+            Color tempColor = gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color;
+            tempColor.a = 0.5f;
+            gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = tempColor;
+        }
     }
     public void remove_unit()
     {
         heldUnit = null;
+        if (unitBehindActualImage)
+        {
+            //then set actual image alpha to 1
+            Color tempColor = gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color;
+            tempColor.a = 1f;
+            gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = tempColor;
+        }
     }
     public bool occupied()
     {
         if (heldUnit == null) return false;
         return true;
+    }
+    public void destroy_unit()
+    {
+        //called when a unit dies on the tile. Shows machine debris on the tile.
+        //Note: for better immersion, etc, have several random debris images to choose from.
+        //and every time a unit is destroyed on the same tile, randomly enable another debris image.
+        debrisRenderer.enabled = true;
     }
 
     //Mouse

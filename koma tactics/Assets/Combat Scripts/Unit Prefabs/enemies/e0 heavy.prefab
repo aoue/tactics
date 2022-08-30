@@ -519,7 +519,6 @@ MonoBehaviour:
   unitName: Heavy Machine
   level: 1
   exp: 9
-  isAlly: 0
   aff: 2
   movement: 3
   hpMax: 40
@@ -527,6 +526,7 @@ MonoBehaviour:
   brkMax: 20
   brk: 20
   ap: 1
+  controlRangeBase: 1
   controlRange: 1
   pwCost: 0
   phys_atk: 15

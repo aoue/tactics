@@ -67,6 +67,7 @@ public class BattleBrain
         }
 
         //integer damage formula:
+        //Debug.Log("performing attack calc. u1 aff =" + u1.get_aff() + " | u2 aff =" + u2.get_aff() + "| aff mult = " + affinityMultArray[u1.get_aff(), u2.get_aff()]);
         int dmg = Mathf.Max(1, (int)((u1.get_level() + atk + t.get_power() - def) * coverMod * affinityMultArray[u1.get_aff(), u2.get_aff()] * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
 
         //multiplicative damage formula:

@@ -321,8 +321,7 @@ MonoBehaviour:
   unitName: Corionova
   level: 1
   exp: 0
-  isAlly: 1
-  aff: 1
+  aff: 0
   movement: 4
   hpMax: 20
   hp: 20

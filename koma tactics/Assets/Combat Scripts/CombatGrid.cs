@@ -79,6 +79,7 @@ public class CombatGrid : MonoBehaviour
 
     private int map_x_border;
     private int map_y_border;
+    private List<Tile> zocTiles; //a list of all the tiles marked by ZoC. For resetting here, rather than searching every goddamn tile.
 
     private int turnPatternIndex;
     private bool[] turnPattern; //list of bools representing the turn pattern. True: player's turn, False: enemy turn.
@@ -105,6 +106,7 @@ public class CombatGrid : MonoBehaviour
         playerUnits = new Unit[8];
         brain = new BattleBrain();
         baseList = new List<Tile>();
+        zocTiles = new List<Tile>();
         visited = new HashSet<Tile>();
         targetHighlightGroup = new List<Tile>();
         active_order = defaultOrder;
@@ -361,15 +363,13 @@ public class CombatGrid : MonoBehaviour
         //(either player or enemy)
 
         //first, reset all tiles zones of control.
-        for (int i = 0; i < map_x_border; i++)
+        foreach(Tile t in zocTiles)
         {
-            for (int j = 0; j < map_y_border; j++)
-            {
-                myGrid[i, j].player_controlled = false;
-                myGrid[i, j].enemy_controlled = false;
-                myGrid[i, j].set_ZoC_color();
-            }
+            t.player_controlled = false;
+            t.enemy_controlled = false;
+            t.set_ZoC_color();
         }
+        zocTiles.Clear();
 
         //then, for all player units, mark all tiles.
         //and highlight them.
@@ -383,7 +383,7 @@ public class CombatGrid : MonoBehaviour
                 if ( within_border(i, u.y) )
                 {
                     myGrid[i, u.y].player_controlled = true;
-                    myGrid[i, u.y].set_ZoC_color();
+                    zocTiles.Add(myGrid[i, u.y]);
                 }
             }
             //north and south tiles:
@@ -393,7 +393,7 @@ public class CombatGrid : MonoBehaviour
                 if (within_border(u.x, j))
                 {
                     myGrid[u.x, j].player_controlled = true;
-                    myGrid[u.x, j].set_ZoC_color();
+                    zocTiles.Add(myGrid[u.x, j]);
                 }
             }
         }
@@ -408,7 +408,7 @@ public class CombatGrid : MonoBehaviour
                 if (within_border(i, u.y))
                 {
                     myGrid[i, u.y].enemy_controlled = true;
-                    myGrid[i, u.y].set_ZoC_color();
+                    zocTiles.Add(myGrid[i, u.y]);
                 }
             }
             //north and south tiles:
@@ -418,10 +418,14 @@ public class CombatGrid : MonoBehaviour
                 if (within_border(u.x, j))
                 {
                     myGrid[u.x, j].enemy_controlled = true;
-                    myGrid[u.x, j].set_ZoC_color();
+                    zocTiles.Add(myGrid[u.x, j]);
                 }
             }
-        }        
+        }
+        foreach (Tile t in zocTiles)
+        {
+            t.set_ZoC_color();
+        }
     }
     void update_pw()
     {
@@ -523,6 +527,10 @@ public class CombatGrid : MonoBehaviour
         }
         update_ZoC();
     }
+    void spawn_player_reinforcements()
+    {
+
+    }
 
     //Clear/Loss
     public void show_mission_summary(bool isClear)
@@ -621,7 +629,7 @@ public class CombatGrid : MonoBehaviour
         fader.fade_to_black(pause_before_event_start);
         yield return new WaitForSeconds(pause_before_event_start);
 
-        //spawn reinforcements, if any:
+        //spawn reinforcements, if any: (only enemy can get reinforcements)
         (Enemy, int, int, int, int)[] reinforcements = loadedMission.get_enemy_reinforcements(which);
         if (reinforcements != null)
         {
@@ -931,9 +939,10 @@ public class CombatGrid : MonoBehaviour
         cam.jump_to(moveHere);
         cam.lock_camera();
 
-        yield return new WaitForSeconds(0.25f);
+        //yield return new WaitForSeconds(0.25f);
 
         end_enemy_turn(false, true);
+        yield return null;
     }
     void select_enemy_action(Unit chosenUnit)
     {
@@ -1300,6 +1309,7 @@ public class CombatGrid : MonoBehaviour
                 //if target is the one being shown in the unit informer; then clear unit informer.
                 if (uInformer.get_heldUnit() == target) uInformer.hide();
 
+                myGrid[target.x, target.y].destroy_unit();
                 myGrid[target.x, target.y].remove_unit();
                 Destroy(target.gameObject);
             }
@@ -1874,11 +1884,11 @@ public class CombatGrid : MonoBehaviour
                 //if tile is in the opponent's ZoC, then it costs all remaining movement.
                 if (isPlayer && next.enemy_controlled)
                 {
-                    dfs(v, next, moveLeft - u.get_movement(), isPlayer, u, pathTaken);
+                    dfs(v, next, moveLeft - 10, isPlayer, u, pathTaken);
                 }
                 else if (!isPlayer && next.player_controlled)
                 {
-                    dfs(v, next, moveLeft - u.get_movement(), isPlayer, u, pathTaken);
+                    dfs(v, next, moveLeft - 10, isPlayer, u, pathTaken);
                 }
                 else
                 {

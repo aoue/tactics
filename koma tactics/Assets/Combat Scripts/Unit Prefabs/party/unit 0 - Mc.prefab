@@ -321,7 +321,6 @@ MonoBehaviour:
   unitName: Prata
   level: 1
   exp: 0
-  isAlly: 1
   aff: 1
   movement: 3
   hpMax: 35

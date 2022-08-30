@@ -555,7 +555,6 @@ MonoBehaviour:
   unitName: Light Machine
   level: 1
   exp: 5
-  isAlly: 0
   aff: 0
   movement: 4
   hpMax: 15
@@ -563,8 +562,8 @@ MonoBehaviour:
   brkMax: 10
   brk: 10
   ap: 1
-  controlRangeBase: 1
-  controlRange: 1
+  controlRangeBase: 0
+  controlRange: 0
   pwCost: 0
   phys_atk: 10
   phys_def: 4
