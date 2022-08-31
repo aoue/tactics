@@ -934,15 +934,15 @@ public class CombatGrid : MonoBehaviour
     IEnumerator pass_enemy_turn(Unit chosenUnit)
     {
         //used to pass the enemy's turn
-        cam.unlock_camera();
+        
+       // cam.unlock_camera();
         Vector3 moveHere = get_pos_from_coords(active_unit.x, active_unit.y) + new Vector3(0f, 0f, -10f);
         cam.jump_to(moveHere);
-        cam.lock_camera();
+        //cam.lock_camera();
 
-        //yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.2f);
 
         end_enemy_turn(false, true);
-        yield return null;
     }
     void select_enemy_action(Unit chosenUnit)
     {
@@ -1859,7 +1859,10 @@ public class CombatGrid : MonoBehaviour
         //perform dfs on each accepted tile
         foreach (Tile next in adjacentTiles)
         {
-            //if movement cost is -1, the tile is impassable. Only continue if not.
+            //if movement cost is less than 0, then the tile is impassable.
+            //each number below 0 corresponds to some kind of impassable terrain.
+            // -1: reinforcement terrain. impassable to everyone.
+            // -2: water
 
             //calc new movement cost according to unit's traits.
             List<int> mvCostList = new List<int>();
@@ -1879,16 +1882,17 @@ public class CombatGrid : MonoBehaviour
             //if (mvCost > 0) //<-- you can pay what you have left for the last tile.
             //heavy: must pay full cost for every tile.
             //light and medium: can pay what you have for last tile.
-            if ((u.get_aff() == 2 && moveLeft >= mvCost) || ( u.get_aff() <= 1 && mvCost > 0)) 
+            //we check mvCost > 0 to see if tile is impassable.
+            if (mvCost > 0 && ((u.get_aff() == 2 && moveLeft >= mvCost) || ( u.get_aff() <= 1 && mvCost > 0))) 
             {
                 //if tile is in the opponent's ZoC, then it costs all remaining movement.
                 if (isPlayer && next.enemy_controlled)
                 {
-                    dfs(v, next, moveLeft - 10, isPlayer, u, pathTaken);
+                    dfs(v, next, 0, isPlayer, u, pathTaken);
                 }
                 else if (!isPlayer && next.player_controlled)
                 {
-                    dfs(v, next, moveLeft - 10, isPlayer, u, pathTaken);
+                    dfs(v, next, 0, isPlayer, u, pathTaken);
                 }
                 else
                 {

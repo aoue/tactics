@@ -15,7 +15,9 @@ public class Tile : MonoBehaviour
     [SerializeField] private string descr;
     [SerializeField] private bool unitBehindActualImage;
 
-    //for marking zone of control. start disabled.
+    //for highlight and marking zoc, targeting, etc. start disabled.
+    [SerializeField] private SpriteRenderer highlightLayer; //used to highlight the tile either light blue (for movement), green (for heal move), or red (for attack move)
+    private float highlightAlpha; 
     [SerializeField] private SpriteRenderer targetIcon;
     [SerializeField] private SpriteRenderer zocRenderer;
     [SerializeField] private SpriteRenderer debrisRenderer;
@@ -30,6 +32,12 @@ public class Tile : MonoBehaviour
 
     public bool isValid { get; set; }
     public List<Tile> path { get; set; } //used for tracing paths during movement generation.
+
+    void Start()
+    {
+        highlightAlpha = highlightLayer.color.a;
+        //highlightAlpha = 1f;
+    }
 
     //State
     public virtual BaseOwnership get_ownership() { return BaseOwnership.NEUTRAL; }
@@ -127,24 +135,28 @@ public class Tile : MonoBehaviour
     {
         //the tile has been told by the combatGrid to highlight for movement.
         //set sheen to blue.
-        //gameObject.GetComponent<SpriteRenderer>().color = new Color(204f/255f, 255f/255f, 255f/255f);
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 1f);
+        highlightLayer.color = new Color(0f, 1f, 1f, highlightAlpha);
+        highlightLayer.enabled = true;
     }
     public void highlight_deploy()
     {
         //the tile has been told by the combatGrid to highlight for movement.
         //set sheen to blue.
-        gameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+        Color setMe = Color.yellow;
+        setMe.a = highlightAlpha;
+        highlightLayer.color = setMe;
+        highlightLayer.enabled = true;
     }
     public void highlight_atk(bool isAttack)
     {
         //the tile has been told by the combatGrid to highlight for attack. red: attack, green: heal.
-        if (isAttack) gameObject.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 105f / 255f, 97f / 255f);
-        else gameObject.GetComponent<SpriteRenderer>().color = new Color(110f / 255f, 1f, 46f / 255f);
+        if (isAttack) highlightLayer.color = new Color(255f / 255f, 105f / 255f, 97f / 255f, highlightAlpha);
+        else highlightLayer.color = new Color(110f / 255f, 1f, 46f / 255f, highlightAlpha);
+        highlightLayer.enabled = true;
     }
     public void remove_highlight()
     {
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
+        highlightLayer.enabled = false;
     }
     public void set_ZoC_color()
     {

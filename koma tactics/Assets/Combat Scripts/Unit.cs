@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using TMPro;
 
+public enum Faction { UNKNOWN, LABRADORS, ALSATIANS };
 public class Unit : MonoBehaviour
 {
     //map
@@ -11,6 +12,7 @@ public class Unit : MonoBehaviour
     public int y { get; set; }
 
     [SerializeField] private int uniqueUnitID; //every player unit has a unique unit id.
+    [SerializeField] private Faction factionAff; //the faction the unit belongs to.
 
     //ui
     [SerializeField] private SpriteRenderer unitSprite;
@@ -218,6 +220,7 @@ public class Unit : MonoBehaviour
     public bool get_isBroken() { return isBroken; }
     public Trait[] get_traitList() { return traitList; }
     public Order get_unitOrder() { return unitOrder; }
+    public Faction get_factionAff() { return factionAff; }
 
     //virtuals (for enemy AI)
     public virtual void clear_moveInformationList_except_last() { }

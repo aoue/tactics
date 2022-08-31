@@ -105,6 +105,14 @@ public class CameraController : MonoBehaviour
     {
         //only called when the camera is locked.
         //called to move the camera to a specific position.
+
+        float real_x = Mathf.Min(rightBorder, toHere.x);
+        real_x = Mathf.Max(leftBorder, real_x);
+
+        float real_y = Mathf.Min(topBorder, toHere.y);
+        real_y = Mathf.Max(bottomBorder, real_y);
+
+        Vector3 real_pos = new Vector3(real_x, real_y, -10f);
         transform.position = toHere;
     }
     public void slide_to(Vector3 toHere, int x, int y, bool duringEnemyTurn = false, float slideSpeed = 2f)

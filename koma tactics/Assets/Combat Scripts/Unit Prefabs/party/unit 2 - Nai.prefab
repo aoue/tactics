@@ -313,6 +313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uniqueUnitID: 2
+  factionAff: 1
   unitSprite: {fileID: 302569972232621700}
   hpBar: {fileID: 302569972262988287}
   brkBar: {fileID: 3370929047622581898}

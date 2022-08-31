@@ -116,8 +116,9 @@ public class Mission0 : Mission
             (defEnemies[1], 2, 9, 2, 0),
             (defEnemies[1], 3, 9, 2, 0),
 
-            //heavy
-            (defEnemies[2], 4, 11, 4, 0)
+            //heavy pair
+            (defEnemies[2], 4, 11, 4, 0),
+            (defEnemies[2], 6, 11, 4, 0)
         };
 
         return dep_array;

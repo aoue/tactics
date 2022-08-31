@@ -11,9 +11,11 @@ public class UnitInformer : MonoBehaviour
     //hover over a unit: display this unit's information.
 
     //held data
+    [SerializeField] private Sprite[] factionSprites; //used to fill the faction bg. It's a long narrow stripe.
     [SerializeField] private Sprite[] affSprites;
     [SerializeField] private Sprite[] targetingSprites; //order: line, square, radius, self
     private string[] AoELabels = {"Single", "All-between", "All"}; //order: single, all betweeen, all
+
 
     //main display
     [SerializeField] private Image active_portrait;    
@@ -21,6 +23,17 @@ public class UnitInformer : MonoBehaviour
     [SerializeField] private Text unitTypesText;
     [SerializeField] private Image affImage;
     [SerializeField] private Text stats_1; //the main stats view. hp, brk, mvmt.
+
+    //faction display
+    // (remember, change that default light purple color. It's just a placeholder.)
+    // legend:
+    // 0: name: unknown | main bg: static | stripe colour: grey
+    // 1: name: labradors | main bg: lab flag | stripe colour: ?
+    // 2: name: alsatians | main bg: alsatians flag | stripe colour: ?
+    // 
+    [SerializeField] private Image factionDisplay;
+    [SerializeField] private Image factionStripe;
+    [SerializeField] private Text factionText;
 
     //side display
     [SerializeField] private Text stats_2; //the side stats view. patk, pdef, maga, magd
@@ -84,7 +97,6 @@ public class UnitInformer : MonoBehaviour
             heldUnit = u;
             //portrait
             active_portrait.sprite = u.get_active_p();
-            active_portrait.gameObject.SetActive(true);
 
             //main stats window
             string buildUnitTypeStr = affConverter[u.get_aff()];
@@ -121,12 +133,31 @@ public class UnitInformer : MonoBehaviour
                 }
             }
 
-            
-
             stats_2.text = "Machine Atk: " + u.get_physa()
                 + "\nMachine Def: " + u.get_physd()
                 + "\nEAC Atk: " + u.get_maga()
                 + "\nEAC Def: " + u.get_magd();
+
+            //faction window
+            switch (u.get_factionAff())
+            {
+                case Faction.UNKNOWN:
+                    factionText.text = "U N K N O W N";
+                    factionStripe.color = new Color(1f, 1f, 1f);
+                    break;
+                case Faction.LABRADORS:
+                    factionText.text = "L A B R A D O R S";
+                    factionStripe.color = new Color(1f, 1f, 1f);
+                    break;
+                case Faction.ALSATIANS:
+                    factionText.text = "A L S A T I A N S";
+                    factionStripe.color = new Color(1f, 1f, 1f);
+                    break;
+                default:
+                    break;
+            }
+            factionDisplay.sprite = factionSprites[(int)(u.get_factionAff())];
+            factionDisplay.gameObject.SetActive(true);
 
             //trait-abiltiy window           
             for (int i = 0; i < traitButtons.Length; i++)
@@ -197,7 +228,7 @@ public class UnitInformer : MonoBehaviour
     public void hide()
     {
         gameObject.SetActive(false);
-        active_portrait.gameObject.SetActive(false);
+        factionDisplay.gameObject.SetActive(false);
     }
 
 }

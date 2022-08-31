@@ -227,6 +227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uniqueUnitID: 1
+  factionAff: 1
   unitSprite: {fileID: 6669561844638855849}
   hpBar: {fileID: 6669561845419999469}
   brkBar: {fileID: 7258099661184774020}
@@ -235,7 +236,6 @@ MonoBehaviour:
   unitName: Regi
   level: 1
   exp: 0
-  isAlly: 1
   aff: 2
   movement: 3
   hpMax: 50
@@ -243,6 +243,7 @@ MonoBehaviour:
   brkMax: 25
   brk: 25
   ap: 1
+  controlRangeBase: 0
   controlRange: 1
   pwCost: 4
   phys_atk: 16
