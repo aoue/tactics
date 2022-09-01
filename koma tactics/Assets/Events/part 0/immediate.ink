@@ -25,6 +25,11 @@ EXTERNAL remove_unit(id) //removes unit from reserve party pool based on unit id
 ~add_unit(1)
 ~add_unit(2)
 
+//temporary: for testing mission 1 directly.
+//note: part 1 imm will have to add these, then part 2 imm will have to remove them.
+~add_unit(4)
+~add_unit(5)
+
 ~n("")
 p0 imm.
 end.

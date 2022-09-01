@@ -34,9 +34,8 @@ VAR label = 0
 ~jump(3, 5)
 ~n("Voice")
 ~p(-1)
-//also, setup music here too.
 ~play_music(0)
-(music playing right?) This is dummy text for the start of the mission.
+mission 0 dummy.
 Time to fight!
 -> END
 

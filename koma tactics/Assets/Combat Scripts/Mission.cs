@@ -49,7 +49,7 @@ public class Mission : MonoBehaviour
     }
 
     //mission win/loss conditions
-    public virtual bool is_mission_won(Unit[] pl, List<Unit> el, Tile[,] grid)
+    public virtual bool is_mission_won(Unit[] pl, List<Unit> el, Tile[,] grid, int roundNumber, List<Tile> baseList)
     {
         //default is all enemy units dead
         if (el.Count == 0)
@@ -58,7 +58,7 @@ public class Mission : MonoBehaviour
         }
         return false;
     }
-    public virtual bool is_mission_lost(Unit[] pl, List<Unit> el, Tile[,] grid)
+    public virtual bool is_mission_lost(Unit[] pl, List<Unit> el, Tile[,] grid, int roundNumber, List<Tile> baseList)
     {
         //default is all player units dead
         for(int i = 0; i < pl.Length; i++)
@@ -72,7 +72,7 @@ public class Mission : MonoBehaviour
     }
     
     //side objectives
-    public virtual bool[] side_objectives_states(Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties)
+    public virtual bool[] side_objectives_states(Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties, List<Tile> baseList)
     {
         //returns list of ints, where each int corresponds to the state of a side objective.
         //each element corresponds to a side objective result.
@@ -161,7 +161,7 @@ public class Mission : MonoBehaviour
     }
 
     //objectives helpers
-    public string print_objectives(bool isClear, bool isBriefing, Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties)
+    public string print_objectives(bool isClear, bool isBriefing, Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties, List<Tile> baseList)
     {
         //returns the descr + dscription of each side objective.
         //1 per line.
@@ -170,7 +170,7 @@ public class Mission : MonoBehaviour
         //first, do main objective
         string buildStr = win_obj_descr + "\n";
         
-        bool[] successStates = side_objectives_states(pl, el, roundNumber, anyPlayerCasualties);
+        bool[] successStates = side_objectives_states(pl, el, roundNumber, anyPlayerCasualties, baseList);
         if (successStates == null) return buildStr;
 
         for (int i = 0; i < side_objectives_descrs.Length; i++)
@@ -180,7 +180,7 @@ public class Mission : MonoBehaviour
 
         return buildStr;
     }
-    public string print_objectives_rewards(bool isClear, Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties)
+    public string print_objectives_rewards(bool isClear, Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties, List<Tile> baseList)
     {
         string buildStr = "";
 
@@ -189,7 +189,7 @@ public class Mission : MonoBehaviour
             buildStr += "—Passed— (" + mission_clear_exp + " exp!)\n";
         }
 
-        bool[] successStates = side_objectives_states(pl, el, roundNumber, anyPlayerCasualties);
+        bool[] successStates = side_objectives_states(pl, el, roundNumber, anyPlayerCasualties, baseList);
         if (successStates == null) return buildStr;
 
         for (int i = 0; i < side_objectives_descrs.Length; i++)
@@ -207,10 +207,10 @@ public class Mission : MonoBehaviour
 
         return buildStr;
     }
-    public int get_objectives_exp(Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties)
+    public int get_objectives_exp(Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties, List<Tile> baseList)
     {
         int sum = mission_clear_exp;
-        bool[] successStates = side_objectives_states(pl, el, roundNumber, anyPlayerCasualties);
+        bool[] successStates = side_objectives_states(pl, el, roundNumber, anyPlayerCasualties, baseList);
         for (int i = 0; i < successStates.Length; i++)
         {
             if (successStates[i])

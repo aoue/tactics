@@ -5,10 +5,15 @@ using UnityEngine;
 public class Mission0 : Mission
 {
     //The file for mission0.
-    
+    //tile legend:
+    // 0: empty/snow
+    // 1: light woods
+    // 2: left-right tracks 
+    // 3: heavy woods
+    // 4: defend tile
 
     //mission win/loss conditions
-    public override bool is_mission_won(Unit[] pl, List<Unit> el, Tile[,] grid)
+    public override bool is_mission_won(Unit[] pl, List<Unit> el, Tile[,] grid, int roundNumber, List<Tile> baseList)
     {
         //win if all enemies are defeated.
         if (el.Count == 0) 
@@ -17,7 +22,7 @@ public class Mission0 : Mission
         }
         return false;
     }
-    public override bool is_mission_lost(Unit[] pl, List<Unit> el, Tile[,] grid)
+    public override bool is_mission_lost(Unit[] pl, List<Unit> el, Tile[,] grid, int roundNumber, List<Tile> baseList)
     {
         //defeated if all player units are defeated.
         for (int i = 0; i < pl.Length; i++)
@@ -29,7 +34,7 @@ public class Mission0 : Mission
         }
         return true;
     }
-    public override bool[] side_objectives_states(Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties)
+    public override bool[] side_objectives_states(Unit[] pl, List<Unit> el, int roundNumber, bool anyPlayerCasualties, List<Tile> baseList)
     {
         //returns list of bools, where each bool corresponds to the state of a side objective.
         //each element corresponds to a side objective result.
@@ -53,14 +58,6 @@ public class Mission0 : Mission
         
         return retList;
     }
-
-
-    //tile legend:
-    // 0: empty/snow
-    // 1: light woods
-    // 2: tracks 
-    // 3: heavy woods
-    // 4: defend tile
 
     //map setup
     public override Tile[,] get_layout()

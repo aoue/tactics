@@ -465,7 +465,7 @@ public class CombatGrid : MonoBehaviour
         //gets information from mission to display:
         // -win objective
         // -lose objective
-        briefingWinText.text = "Clear—" + loadedMission.print_objectives(true, true, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties);
+        briefingWinText.text = "Clear—" + loadedMission.print_objectives(true, true, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties, baseList);
         briefingLossText.text = "Loss—" + loadedMission.get_lossDescr();
         briefingDisplay.gameObject.SetActive(true);
         
@@ -560,10 +560,10 @@ public class CombatGrid : MonoBehaviour
         // [i]: mission has got a list of bools it returns, where each bool is the state of whether that side objective is success.
         // (there is a maximum number of side objectives allowed.)
 
-        objectivesSummaryText.text = loadedMission.print_objectives(overState, false, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties);
-        expSummaryText.text = loadedMission.print_objectives_rewards(overState, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties);
+        objectivesSummaryText.text = loadedMission.print_objectives(overState, false, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties, baseList);
+        expSummaryText.text = loadedMission.print_objectives_rewards(overState, playerUnits, enemyUnits, roundNumber, anyPlayerCasualties, baseList);
 
-        expSummaryText.text += "\n\n\n—Total: " + (loadedMission.get_objectives_exp(playerUnits, enemyUnits, roundNumber, anyPlayerCasualties) + Carrier.Instance.get_exp());
+        expSummaryText.text += "\n\n\n—Total: " + (loadedMission.get_objectives_exp(playerUnits, enemyUnits, roundNumber, anyPlayerCasualties, baseList) + Carrier.Instance.get_exp());
 
         uiCanvas.enabled = true;
         missionSummaryObj.gameObject.SetActive(true);
@@ -577,7 +577,7 @@ public class CombatGrid : MonoBehaviour
             Debug.Log("continue pressed; loading overworld");
 
             //load up all the exp from the objectives into the carrier
-            Carrier.Instance.inc_exp(loadedMission.get_objectives_exp(playerUnits, enemyUnits, roundNumber, anyPlayerCasualties));
+            Carrier.Instance.inc_exp(loadedMission.get_objectives_exp(playerUnits, enemyUnits, roundNumber, anyPlayerCasualties, baseList));
 
             StartCoroutine(pause_before_loading_scene(1));
         }
@@ -659,12 +659,12 @@ public class CombatGrid : MonoBehaviour
     public void next_turn()
     {       
         //handle mission over and start (+ their event playing)
-        if (loadedMission.is_mission_won(playerUnits, enemyUnits, myGrid) || playerArrived /*&& allowRoundEvent*/)
+        if (loadedMission.is_mission_won(playerUnits, enemyUnits, myGrid, roundNumber, baseList) || playerArrived /*&& allowRoundEvent*/)
         {   
             StartCoroutine(start_event_after_pause(-2));
             return;
         }
-        else if (loadedMission.is_mission_lost(playerUnits, enemyUnits, myGrid) || enemyArrived /*&& allowRoundEvent*/)
+        else if (loadedMission.is_mission_lost(playerUnits, enemyUnits, myGrid, roundNumber, baseList) || enemyArrived /*&& allowRoundEvent*/)
         {
             StartCoroutine(start_event_after_pause(-3));
             return;

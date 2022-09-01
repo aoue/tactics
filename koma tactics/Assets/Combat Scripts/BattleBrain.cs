@@ -80,7 +80,7 @@ public class BattleBrain
         // -run modify_dmg_dealt() for each of u1's traits
         for (int i = 0; i < u1.get_traitList().Length; i++)
         {
-            if (u1.get_traitList()[i] != null && u1.get_traitList()[i].get_isPassive())
+            if (u1.get_traitList()[i] != null /*&& u1.get_traitList()[i].get_isPassive()*/)
             {
                 dmg = u1.get_traitList()[i].modify_dmg_dealt(dmg, u1, u2, u1_allies);
             }

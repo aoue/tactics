@@ -27,11 +27,10 @@ public class UnitInformer : MonoBehaviour
     //faction display
     // (remember, change that default light purple color. It's just a placeholder.)
     // legend:
-    // 0: name: unknown | main bg: static | stripe colour: grey
-    // 1: name: labradors | main bg: lab flag | stripe colour: ?
-    // 2: name: alsatians | main bg: alsatians flag | stripe colour: ?
+    // 0: name: unknown | stripe colour: grey
+    // 1: name: labradors | stripe colour: ?
+    // 2: name: alsatians | stripe colour: ?
     // 
-    [SerializeField] private Image factionDisplay;
     [SerializeField] private Image factionStripe;
     [SerializeField] private Text factionText;
 
@@ -143,21 +142,20 @@ public class UnitInformer : MonoBehaviour
             {
                 case Faction.UNKNOWN:
                     factionText.text = "U N K N O W N";
-                    factionStripe.color = new Color(1f, 1f, 1f);
+                    factionStripe.color = new Color(109f / 255f, 109f / 255f, 109f / 255f);
                     break;
                 case Faction.LABRADORS:
                     factionText.text = "L A B R A D O R S";
-                    factionStripe.color = new Color(1f, 1f, 1f);
+                    factionStripe.color = new Color(233f / 255f, 202f / 255f, 1f);
                     break;
                 case Faction.ALSATIANS:
                     factionText.text = "A L S A T I A N S";
-                    factionStripe.color = new Color(1f, 1f, 1f);
+                    factionStripe.color = new Color(73f / 255f, 170f / 255f, 1f);
                     break;
                 default:
                     break;
             }
-            factionDisplay.sprite = factionSprites[(int)(u.get_factionAff())];
-            factionDisplay.gameObject.SetActive(true);
+            active_portrait.gameObject.SetActive(true);
 
             //trait-abiltiy window           
             for (int i = 0; i < traitButtons.Length; i++)
@@ -228,7 +226,7 @@ public class UnitInformer : MonoBehaviour
     public void hide()
     {
         gameObject.SetActive(false);
-        factionDisplay.gameObject.SetActive(false);
+        active_portrait.gameObject.SetActive(false);
     }
 
 }
