@@ -17,8 +17,12 @@ public class TileInformer : MonoBehaviour
         // -movement cost
         // -description?
         titleText.text = t.get_tileName();
-        descrText.text = "Movement cost: " + t.get_movementCost() 
-            + ".\n" + (t.get_cover() * 100) 
+
+        if ( t.get_movementCost() < 0 ) descrText.text = "Impassable";
+        else descrText.text = "Movement cost: " + t.get_movementCost();
+
+
+        descrText.text +=".\n" + (t.get_cover() * 100) 
             + "% Cover.\n" + t.get_descr();
 
         if (!gameObject.active) gameObject.SetActive(true);

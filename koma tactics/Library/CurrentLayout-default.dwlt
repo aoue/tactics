@@ -112,10 +112,10 @@ MonoBehaviour:
     y: 30
     width: 2560
     height: 1308
-  m_MinSize: {x: 677, y: 492}
-  m_MaxSize: {x: 18001, y: 14042}
+  m_MinSize: {x: 678, y: 492}
+  m_MaxSize: {x: 18004, y: 14042}
   vertical: 0
-  controlID: 14309
+  controlID: 13739
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -138,9 +138,9 @@ MonoBehaviour:
     width: 1771
     height: 1308
   m_MinSize: {x: 402, y: 492}
-  m_MaxSize: {x: 14001, y: 14042}
+  m_MaxSize: {x: 14003, y: 14042}
   vertical: 1
-  controlID: 14208
+  controlID: 13740
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_MinSize: {x: 402, y: 221}
   m_MaxSize: {x: 8002, y: 4021}
   vertical: 0
-  controlID: 14209
+  controlID: 13741
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -242,10 +242,10 @@ MonoBehaviour:
     y: 885
     width: 1771
     height: 423
-  m_MinSize: {x: 331, y: 271}
-  m_MaxSize: {x: 14001, y: 10021}
+  m_MinSize: {x: 333, y: 271}
+  m_MaxSize: {x: 14003, y: 10021}
   vertical: 0
-  controlID: 14172
+  controlID: 13668
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -447,7 +447,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 3a97ffff9698fffff4c4ffffa0c6ffff76e0ffffd0e0ffffe6e2ffff72f3ffff20f4ffff04faffff60fbffff5c44000064610000b08b0000168c0000b4950000229f00008c9f00007cad000010110100
+      m_ExpandedIDs: c003feff60fbffff7e3a0000c03a0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -509,7 +509,7 @@ MonoBehaviour:
   m_Position:
     m_Target: {x: 654.8935, y: 440.33, z: -1598.6631}
     speed: 2
-    m_Value: {x: 654.8935, y: 440.33, z: -1598.6631}
+    m_Value: {x: 634.5, y: 357, z: 0}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -561,7 +561,7 @@ MonoBehaviour:
   m_Size:
     m_Target: 536.73883
     speed: 2
-    m_Value: 536.73883
+    m_Value: 1.4177446
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -715,20 +715,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Combat Scripts/Traits/bergen
+    - Assets/Combat Scripts/Mission Prefabs
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Combat Scripts/Traits/bergen
+  - Assets/Combat Scripts/Mission Prefabs
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\aaja\Documents\unity games\koma tactics\koma tactics
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: f6ce0000
-    m_LastClickedID: 52982
-    m_ExpandedIDs: 000000007a3e00007c3e00007e3e0000803e0000823e0000843e0000863e0000883e00009a3e000000ca9a3b
+    scrollPos: {x: 0, y: 86}
+    m_SelectedIDs: 643f0000
+    m_LastClickedID: 16228
+    m_ExpandedIDs: 00000000483f00004a3f00004c3f00004e3f0000503f0000523f0000543f0000563f000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -756,7 +756,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000007a3e00007c3e00007e3e0000803e0000823e0000843e0000863e0000883e00009a3e000000ca9a3b
+    m_ExpandedIDs: 00000000483f00004a3f00004c3f00004e3f0000503f0000523f0000543f0000563f000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

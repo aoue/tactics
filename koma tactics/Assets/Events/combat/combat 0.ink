@@ -20,7 +20,7 @@ EXTERNAL slide(x, y) //slide to x, y coord on game map
 VAR label = 0
 
 //before the script begins, labelIndex will be set to start.
-//Then we jump to whatever label corresponds.
+//Then we jump to whatever label corresponds. (index is round number.)
 
 //switch statement:
 {

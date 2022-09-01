@@ -21,14 +21,18 @@ VAR label = 0
 
 //before the script begins, labelIndex will be set to start.
 //Then we jump to whatever label corresponds.
-
+//(the label index is equal to the round the event plays on.)
 //switch statement:
+
 {
 - label == 0: -> mission_begin
+- label == 3: -> reinforce1
+- label == 6: -> reinforce2
+- label == 9: -> reinforce3
+- label == 12: -> reinforce3
 - label == -2: -> mission_end_win
 - label == -3: -> mission_end_loss
 }
-
 
 === mission_begin ===
 ~jump(4, 7)
@@ -37,6 +41,26 @@ VAR label = 0
 ~play_music(0)
 mission 1 dummy.
 Time to fight!
+-> END
+
+=== reinforce1 ===
+~jump(11,5)
+reinforcements 1!
+-> END
+
+=== reinforce2 ===
+~jump(11,5)
+reinforcements 2!
+-> END
+
+=== reinforce3 ===
+~jump(11,5)
+reinforcements 3!
+-> END
+
+=== reinforce4 ===
+~jump(11,5)
+reinforcements 4!
 -> END
 
 === mission_end_win ===

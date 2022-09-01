@@ -51,7 +51,7 @@ MonoBehaviour:
   - {fileID: 7605697864910535891, guid: 5750b01dcd2c8ed409be7605b56e61da, type: 3}
   - {fileID: 6846161010129698190, guid: f0fd82b7c0106cb4eb337076dc934769, type: 3}
   - {fileID: 5281483637158938816, guid: 9e340a6f0e49ecd41932ab5343a75fff, type: 3}
-  - {fileID: 4447180440072323310, guid: f8c165621fe66f54dac515003117b3ff, type: 3}
+  - {fileID: 7559071158257939169, guid: 9a3cc8e7d15dd0f4a971cf1b0de94783, type: 3}
   - {fileID: 8470355861109346430, guid: 3e5a921c2cf75944499b33c256bf30ad, type: 3}
   - {fileID: 311290863175812104, guid: 64b1ee65297495242b3a03f46e4cf150, type: 3}
   defEnemies:
@@ -67,8 +67,8 @@ MonoBehaviour:
   - All allied units survive
   - Capture and hold the base on the left of the river
   objectives_rewards: 1400000014000000
-  script: {fileID: 4900000, guid: e546d5c0ee37fa945867533f30f8f573, type: 3}
-  eventRounds: 
+  script: {fileID: 4900000, guid: 24b5641536d58f24f9abb2e2d536e965, type: 3}
+  eventRounds: 0300000006000000090000000c000000
   musicList:
   - {fileID: 8300000, guid: 3ca75270e3e8af648bbac6b36dee409f, type: 3}
   soundList: []

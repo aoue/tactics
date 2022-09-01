@@ -40,7 +40,7 @@ public class Mission : MonoBehaviour
     [SerializeField] private AudioClip[] musicList;
     [SerializeField] private AudioClip[] soundList;
 
-    //virtuals
+    
     public bool has_event(int roundNumber)
     {
         //returns an int[] where every turn where there should be an event is an element.
@@ -48,6 +48,7 @@ public class Mission : MonoBehaviour
         return false;
     }
 
+    //virtuals
     //mission win/loss conditions
     public virtual bool is_mission_won(Unit[] pl, List<Unit> el, Tile[,] grid, int roundNumber, List<Tile> baseList)
     {

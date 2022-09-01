@@ -111,8 +111,8 @@ public class CombatGrid : MonoBehaviour
         targetHighlightGroup = new List<Tile>();
         active_order = defaultOrder;
         allowRoundEvent = true;
-        roundNumber = 1;
-        roundNumberText.text = "Round 1";
+        roundNumber = 0;
+        roundNumberText.text = "—Start—";
 
         loadedMission = missionList.get_mission(Carrier.Instance.get_nextMissionIndex());
         Carrier.Instance.set_nextPartIndex(loadedMission.get_nextPartIndex());
@@ -495,6 +495,7 @@ public class CombatGrid : MonoBehaviour
     }
     void spawn_reinforcements((Enemy, int, int, int, int)[] reinforcements)
     {
+        Debug.Log("cgrid.spawn_reinforcements() called");
         //deploy enemies too
         for (int i = 0; i < reinforcements.Length; i++)
         {
@@ -523,13 +524,9 @@ public class CombatGrid : MonoBehaviour
                 inst_u.level_up(times_to_level_up);
                 //level the unit up however many times
                 enemyUnits.Add(inst_u);
-            }                        
+            }
         }
         update_ZoC();
-    }
-    void spawn_player_reinforcements()
-    {
-
     }
 
     //Clear/Loss
@@ -622,6 +619,8 @@ public class CombatGrid : MonoBehaviour
     }
     IEnumerator start_event_after_pause(int which)
     {
+        //Debug.Log("cgrid.start_event_after_pause() called with which = " + which);
+
         cam.lock_camera();
         animating = true;
         allowRoundEvent = false;
@@ -634,6 +633,7 @@ public class CombatGrid : MonoBehaviour
         if (reinforcements != null)
         {
             //spawn them.
+
             spawn_reinforcements(reinforcements);
         }
 
@@ -671,7 +671,7 @@ public class CombatGrid : MonoBehaviour
         }
 
         //if it's the start of the mission
-        if (roundNumber == 1 && allowRoundEvent)
+        if (roundNumber == 0 && allowRoundEvent)
         {
             //play start of mission event:         
             cam.lock_camera();
@@ -825,7 +825,7 @@ public class CombatGrid : MonoBehaviour
     public void click_start_round_button()
     {
         //check if there is a start of round event to play:
-        //Debug.Log("clicked start of round button: allowRoundEvent=" + allowRoundEvent + " | roundNumber=" + roundNumber);
+        //Debug.Log("mission.has_event() = " + loadedMission.has_event(roundNumber) + " | roundNumber = " + roundNumber + " | allowRoundEvent = " + allowRoundEvent);
         if (loadedMission.has_event(roundNumber) && allowRoundEvent)
         {
             nextRoundButton.interactable = false;
@@ -1269,8 +1269,6 @@ public class CombatGrid : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        update_ZoC();
         
         yield return new WaitForSeconds(combat_hpBar_linger);
 
@@ -1331,6 +1329,7 @@ public class CombatGrid : MonoBehaviour
         if (anyKills)
         {
             active_ability.on_kill(active_unit, totalDmg);
+            update_ZoC();
         }               
 
         yield return new WaitForSeconds(combat_highlights_linger);

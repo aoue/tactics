@@ -139,37 +139,52 @@ public class Mission1 : Mission
 
         return dep_array;
     }
-    public virtual (Enemy, int, int, int, int)[] get_enemy_reinforcements(int roundNumber)
+    public override (Enemy, int, int, int, int)[] get_enemy_reinforcements(int roundNumber)
     {
         //unit, row, depth into that row, act delay, times to level up
         switch (roundNumber)
         {
-            case 0:
-                break;
-            case 1:
-                //(Enemy, int, int)[] dep_array = {
-                //    (defEnemies[0], 4, 0, 0),
-                //};
-                //return dep_array;
-                break;
-            case 2:
-                break;
             case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
+                (Enemy, int, int, int, int)[] dep_array3 = {
+                    //heavy on the left
+                    (defEnemies[2], 11, 1, 0, 0),
+
+                    //heavy on the right
+                    (defEnemies[2], 11, 7, 0, 0)
+                };
+                return dep_array3;
             case 6:
-                break;
-            case 7:
-                break;
-            case 8:
-                break;
+                (Enemy, int, int, int, int)[] dep_array6 = {
+                    //heavy on the left
+                    (defEnemies[2], 11, 1, 0, 0),
+
+                    //light and medium on the right
+                    (defEnemies[2], 11, 7, 0, 0)
+                };
+                return dep_array6;
             case 9:
-                break;
-            case 10:
-                break;
+                (Enemy, int, int, int, int)[] dep_array9 = {
+                    //medium and light on the left
+                    (defEnemies[0], 11, 0, 0, 0),
+                    (defEnemies[1], 11, 1, 0, 0),
+
+                    //medium, heavy, and light on the right
+                    (defEnemies[1], 11, 7, 0, 0),                    
+                    (defEnemies[2], 11, 8, 0, 0),
+                    (defEnemies[0], 11, 10, 0, 0)
+                };
+                return dep_array9;
+            case 12:
+                (Enemy, int, int, int, int)[] dep_array12 = {
+                    //heavy and heavy on the left
+                    (defEnemies[2], 11, 0, 0, 0),
+                    (defEnemies[2], 11, 1, 0, 0),
+
+                    //heavy and heavy on the right
+                    (defEnemies[2], 11, 8, 0, 0),
+                    (defEnemies[2], 11, 10, 0, 0)
+                };
+                return dep_array12;
             default:
                 break;
         }

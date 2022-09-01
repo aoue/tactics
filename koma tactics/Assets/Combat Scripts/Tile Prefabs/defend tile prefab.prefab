@@ -61,7 +61,7 @@ MonoBehaviour:
   movementCost: 1
   coverReduction: 0
   descr: A place to be defended at all costs.
-  unitBehindActualImage: 1
+  unitBehindActualImage: 0
   highlightLayer: {fileID: 4103689653563796239}
   targetIcon: {fileID: 3482581406422444996}
   zocRenderer: {fileID: 8001033619352896890}
