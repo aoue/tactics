@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5940369093104011468
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5940369093104011506}
+  - component: {fileID: 5940369093104011469}
+  m_Layer: 0
+  m_Name: mission 0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5940369093104011506
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5940369093104011468}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 86.68799, y: 21.881287, z: -348.65665}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5940369093104011469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5940369093104011468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6091654a629131b408245d9b94d706c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  missionTiles:
+  - {fileID: 8614815216704928305, guid: 7ad36552d4a3c3f4bbb9f53cf4d40b0f, type: 3}
+  - {fileID: 5033814340394539930, guid: 8405b815fbea1e141b69d4a6eacc4df1, type: 3}
+  - {fileID: 2730783345535578494, guid: d0ee3dfd2682c174cbca953e82ef4734, type: 3}
+  - {fileID: 8261461106731035461, guid: 2f2a30aa26b99e145aeb79e63de8c14b, type: 3}
+  defEnemies:
+  - {fileID: 9058339554153977831, guid: b657ca90e263fba4fba9f41372472438, type: 3}
+  - {fileID: 4853002422607599292, guid: ff95880ba4be206459e52cc71d2244b5, type: 3}
+  - {fileID: 3682136070609519798, guid: ffdd08a2d4627aa4197f04891caf1194, type: 3}
+  nextPartIndex: 1
+  starting_power: 6
+  win_obj_descr: 3 enemies remain
+  loss_obj_descr: All enemies are defeated
+  mission_clear_exp: 100
+  side_objectives_descrs:
+  - No allied unit is defeated
+  - Complete within 10 rounds
+  objectives_rewards: 0f0000000a000000
+  script: {fileID: 4900000, guid: e546d5c0ee37fa945867533f30f8f573, type: 3}
+  eventRounds: 
+  musicList:
+  - {fileID: 8300000, guid: 3ca75270e3e8af648bbac6b36dee409f, type: 3}
+  soundList: []
