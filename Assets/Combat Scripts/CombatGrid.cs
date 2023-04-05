@@ -12,6 +12,7 @@ public class CombatGrid : MonoBehaviour
 {
     //responsible for instatiating and managing the combat grid and for general combat control.
 
+
     private const float pause_before_event_start = 1f; //the pause/fade duration before starting an event.
     private const float enemy_pause_before_attack = 0.35f; //the seconds the enemy unit will pause with possible origin tiles before attacking.
     private const float enemy_pause_before_movement = 0.35f; //the seconds the enemy unit will pause with highlighted movement range before moving.
@@ -84,6 +85,8 @@ public class CombatGrid : MonoBehaviour
     private bool[] turnPattern; //list of bools representing the turn pattern. True: player's turn, False: enemy turn.
     private int pw; //party power (i.e. the party's global mana pool.)
     private BattleBrain brain;
+    private GridHelper gridHelper;
+
 
     //round event control
     private int roundNumber; //for timing round start events and reinforcements, that kind of thing.
@@ -102,6 +105,7 @@ public class CombatGrid : MonoBehaviour
     {
         playerUnits = new Unit[8];
         brain = new BattleBrain();
+        gridHelper = new GridHelper();
         baseList = new List<Tile>();
         zocTiles = new List<Tile>();
         visited = new HashSet<Tile>();
@@ -354,7 +358,7 @@ public class CombatGrid : MonoBehaviour
             for(int i = u.x - u.get_controlRange(); i < u.x + u.get_controlRange() + 1; i++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
-                if ( within_border(i, u.y) )
+                if (gridHelper.within_border(i, u.y, map_x_border, map_y_border))
                 {
                     myGrid[i, u.y].player_controlled = true;
                     zocTiles.Add(myGrid[i, u.y]);
@@ -364,7 +368,7 @@ public class CombatGrid : MonoBehaviour
             for (int j = u.y - u.get_controlRange(); j < u.y + u.get_controlRange() + 1; j++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
-                if (within_border(u.x, j))
+                if (gridHelper.within_border(u.x, j, map_x_border, map_y_border))
                 {
                     myGrid[u.x, j].player_controlled = true;
                     zocTiles.Add(myGrid[u.x, j]);
@@ -379,7 +383,7 @@ public class CombatGrid : MonoBehaviour
             for (int i = u.x - u.get_controlRange(); i < u.x + u.get_controlRange() + 1; i++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
-                if (within_border(i, u.y))
+                if (gridHelper.within_border(i, u.y, map_x_border, map_y_border))
                 {
                     myGrid[i, u.y].enemy_controlled = true;
                     zocTiles.Add(myGrid[i, u.y]);
@@ -389,7 +393,7 @@ public class CombatGrid : MonoBehaviour
             for (int j = u.y - u.get_controlRange(); j < u.y + u.get_controlRange() + 1; j++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
-                if (within_border(u.x, j))
+                if (gridHelper.within_border(u.x, j, map_x_border, map_y_border))
                 {
                     myGrid[u.x, j].enemy_controlled = true;
                     zocTiles.Add(myGrid[u.x, j]);
@@ -987,7 +991,7 @@ public class CombatGrid : MonoBehaviour
         {
             if (!t.isValid) continue;
             //find position of closest player unit.
-            int score = chosenUnit.score_move(closestPlayerTileToTile(t), t, e_tilesAddedToZoC(chosenUnit.x, chosenUnit.y, chosenUnit), myGrid, visited);
+            int score = chosenUnit.score_move(closestPlayerTileToTile(t), t, e_tilesAddedToZoC(chosenUnit.x, chosenUnit.y, chosenUnit), myGrid, visited, gridHelper);
             //Debug.Log("scoring dest: " + t.x + ", " + t.y + " | score = " + score);
 
             if (runningMax == -1)
@@ -1129,7 +1133,7 @@ public class CombatGrid : MonoBehaviour
         for (int i = x - u.get_controlRange(); i < x + u.get_controlRange() + 1; i++)
         {
             //if the tile is on the grid, set tile.playerControlled to true.
-            if (within_border(i, u.y))
+            if (gridHelper.within_border(i, u.y, map_x_border, map_y_border))
             {
                 score += 1;
             }
@@ -1138,7 +1142,7 @@ public class CombatGrid : MonoBehaviour
         for (int j = y - u.get_controlRange(); j < y + u.get_controlRange() + 1; j++)
         {
             //if the tile is on the grid, set tile.playerControlled to true.
-            if (within_border(x, j))
+            if (gridHelper.within_border(x, j, map_x_border, map_y_border))
             {
                 score += 1;
             }
@@ -1557,7 +1561,7 @@ public class CombatGrid : MonoBehaviour
                 //visited: all tiles you can choose to be the origin of the attack
                 //targetHighlightGroup: all tiles that will be hit if you choose to attack for a given origin
 
-                List<Unit> affectedUnits = tileList_to_targetList(generate_tileList(active_ability, x_pos, y_pos)); //used to damage/heal all affected units
+                List<Unit> affectedUnits = tileList_to_targetList(gridHelper.generate_targetList(active_ability, myGrid, x_pos, y_pos, active_unit.x, active_unit.y, visited)); //used to damage/heal all affected units
                 clear_highlights();
 
                 animating = true;
@@ -1634,7 +1638,7 @@ public class CombatGrid : MonoBehaviour
         {
             //gather all tiles based on active_ability and position
             //and highlight them
-            targetHighlightGroup = generate_tileList(ability, x_pos, y_pos);
+            targetHighlightGroup = gridHelper.generate_targetList(ability, myGrid, x_pos, y_pos, active_unit.x, active_unit.y, visited);
 
             foreach (Tile t in targetHighlightGroup)
             {
@@ -1646,101 +1650,10 @@ public class CombatGrid : MonoBehaviour
     }
     void highlight_attack(Trait t)
     {
-        //called when the game enters select target mode.
-        //highlights the tiles that are possible targets based on the ability.
-        //t, in conjunction with active player's coords, has all the information needed.
+        // use gridHelper's get_all_possible_attack_origins()
+        // set visited = to the result of that.
 
-        //for a text description of the targeting types, see the legend in Trait.cs
-        switch (t.get_targetingType())
-        {
-            case TargetingType.LINE:
-                //to left
-                for (int i = active_unit.x - 1; i > active_unit.x - t.get_range() - 1; i--)
-                {
-                    if (within_border(i, active_unit.y))
-                    {
-                        //if the tile is valid, then add to list you can hit
-                        if (Math.Abs(active_unit.x - i) >= t.get_min_range())
-                        {
-                            visited.Add(myGrid[i, active_unit.y]);
-                        }
-                        //stop exploring if the tile blocks attacks, though.
-                        if (!t.get_ignores_blocking_terrain() && myGrid[i, active_unit.y].get_blocksAttacks())
-                        {
-                            break;
-                        }
-                    }
-                }
-                //to right
-                for (int i = active_unit.x + 1; i < active_unit.x + t.get_range() + 1; i++)
-                {
-                    if (within_border(i, active_unit.y))
-                    {
-                        //if the tile is valid, then add to list you can hit
-                        if (Math.Abs(active_unit.x - i) >= t.get_min_range())
-                        {
-                            visited.Add(myGrid[i, active_unit.y]);
-                        }
-                        //stop exploring if the tile blocks attacks, though.
-                        if (!t.get_ignores_blocking_terrain() && myGrid[i, active_unit.y].get_blocksAttacks())
-                        {
-                            break;
-                        }
-                    }
-                }
-                //to top
-                for (int j = active_unit.y + 1; j < active_unit.y + t.get_range() + 1; j++)
-                {
-                    if (within_border(active_unit.x, j))
-                    {
-                        if (Math.Abs(active_unit.y - j) >= t.get_min_range())
-                        {
-                            visited.Add(myGrid[active_unit.x, j]);
-                        }
-                        if (!t.get_ignores_blocking_terrain() && myGrid[active_unit.x, j].get_blocksAttacks())
-                        {
-                            break;
-                        }
-                    }
-                }
-                //to bottom
-                for (int j = active_unit.y - 1; j > active_unit.y - t.get_range() - 1; j--)
-                {
-                    if (within_border(active_unit.x, j))
-                    {
-                        if (Math.Abs(active_unit.y - j) >= t.get_min_range())
-                        {
-                            visited.Add(myGrid[active_unit.x, j]);
-                        }
-                        if (!t.get_ignores_blocking_terrain() && myGrid[active_unit.x, j].get_blocksAttacks())
-                        {
-                            break;
-                        }
-                    }
-                }
-                break;
-            case TargetingType.SQUARE:               
-                for (int i = active_unit.x - 1; i < active_unit.x + 1 + 1; i++)
-                {
-                    for (int j = active_unit.y - 1; j < active_unit.y + 1 + 1; j++)
-                    {
-                        //if the tile is on the grid, and is not the unit's tile.
-                        if (within_border(i, j) && !(i == active_unit.x && j == active_unit.y) && Math.Abs(active_unit.x - i) + Math.Abs(active_unit.y - j) >= t.get_min_range())
-                        {
-                            visited.Add(myGrid[i, j]);
-                        }
-                    }
-                }
-                break;
-            case TargetingType.RADIUS:
-                //borrow dfs code.
-                atk_dfs(visited, myGrid[active_unit.x, active_unit.y], t.get_range(), t.get_min_range(), true);
-                visited.Remove(myGrid[active_unit.x, active_unit.y]);
-                break;
-            case TargetingType.SELF:
-                visited.Add(myGrid[active_unit.x, active_unit.y]);
-                break;
-        }
+        visited = gridHelper.get_all_possible_attack_origins(t, myGrid, myGrid[active_unit.x, active_unit.y]);
         
         foreach (Tile t2 in visited)
         {
@@ -1816,7 +1729,7 @@ public class CombatGrid : MonoBehaviour
                 if (Math.Abs(i) + Math.Abs(j) != 1) continue;
 
                 //if on the map
-                if (within_border(start.x + i, start.y + j))
+                if (gridHelper.within_border(start.x + i, start.y + j, map_x_border, map_y_border))
                 {
                     if (myGrid[start.x + i, start.y + j].path == null) myGrid[start.x + i, start.y + j].path = new List<Tile>();
                     //overwrite tile's path IF: 
@@ -1883,39 +1796,6 @@ public class CombatGrid : MonoBehaviour
             }
 
         }
-    }
-    void atk_dfs(HashSet<Tile> v, Tile start, int rangeLeft, int min_range, bool originTile)
-    {
-        //only add if allowed by minimum range
-        //i.e. if distance between the tiles of myGrid[active_unit.x, active_unit.y] and start is >= min_range
-        if ( Math.Abs(active_unit.x - start.x) + Math.Abs(active_unit.y - start.y) >= min_range )
-        {
-            v.Add(start);
-        }
-
-        if (!originTile && !active_ability.get_ignores_blocking_terrain() && start.get_blocksAttacks()) return;
-
-        if (rangeLeft == 0) return;
-
-        List<Tile> adjacentTiles = new List<Tile>();
-        //add tiles based on coordinates, as long as they are not out of bounds.
-
-        if (within_border(start.x + 1, start.y)) adjacentTiles.Add(myGrid[start.x + 1, start.y]);
-        if (within_border(start.x - 1, start.y)) adjacentTiles.Add(myGrid[start.x - 1, start.y]);
-        if (within_border(start.x, start.y + 1)) adjacentTiles.Add(myGrid[start.x, start.y + 1]);
-        if (within_border(start.x, start.y - 1)) adjacentTiles.Add(myGrid[start.x, start.y - 1]);
-
-        foreach (Tile next in adjacentTiles)
-        {           
-            atk_dfs(v, next, rangeLeft - 1, min_range, false);           
-        }
-    }
-    bool within_border(int x, int y)
-    {
-        //dfs helper
-        //returns true if the coords given are inside the map border. False otherwise.
-        if (x < map_x_border && x >= 0 && y < map_y_border && y >= 0) return true;
-        return false;
     }
     void clear_highlights()
     {
@@ -2005,81 +1885,5 @@ public class CombatGrid : MonoBehaviour
         }
         return targetList;
     }
-    List<Tile> generate_tileList(Trait t, int x_click, int y_click)
-    {
-        //the player has decided on what tile they want to attack, its coordinates are (x_click, y_click)
-        //Now, based on the trait's AoEType, we do that.
-        //return a list of tiles, which will all be hit.
 
-        //for further reading on each of the aoe types, see Trait.cs
-
-        List<Tile> targetList = new List<Tile>();
-
-        switch (t.get_AoEType())
-        {
-            case AoEType.SINGLE:               
-                targetList.Add(myGrid[x_click, y_click]);
-                break;
-            case AoEType.ALL_BETWEEN:
-                //first, we need to determine if the line is vertical or horizontal.
-                if (y_click == active_unit.y)
-                {
-                    //then the line is horizontal.
-                    //next, the line could be to the right or to the left.
-                    if (x_click > active_unit.x)
-                    {
-                        for (int i = active_unit.x + 1; i < x_click + 1; i++)
-                        {
-                            targetList.Add(myGrid[i, active_unit.y]);
-                        }
-                    }              
-                    else
-                    {
-                        for (int i = x_click; i < active_unit.x; i++)
-                        {
-                            targetList.Add(myGrid[i, active_unit.y]);
-                        }
-                    }
-                }
-                else
-                {
-                    //otherwise, the line must be vertical.
-                    //next, the line could be to the top or to the bottom.
-                    //to the top.
-                    if (y_click > active_unit.y)
-                    {
-                        for (int j = active_unit.y + 1; j < y_click + 1; j++)
-                        {
-                            targetList.Add(myGrid[active_unit.x, j]);
-                        }
-                    }                                          
-                    else
-                    {
-                        for (int j = y_click; j < active_unit.y; j++)
-                        {
-                            targetList.Add(myGrid[active_unit.x, j]);
-                        }                            
-                    }
-                        
-                    
-                }
-                break;
-            case AoEType.ALL:
-                foreach (Tile t2 in visited)
-                {
-                    targetList.Add(myGrid[t2.x, t2.y]);
-                }
-                break;
-            case AoEType.ADJACENT_FOUR:
-                // this one hits the target tile plus the four tiles next to it.
-                targetList.Add(myGrid[x_click, y_click]);
-                targetList.Add(myGrid[x_click - 1, y_click]);
-                targetList.Add(myGrid[x_click + 1, y_click]);
-                targetList.Add(myGrid[x_click, y_click - 1]);
-                targetList.Add(myGrid[x_click, y_click + 1]);
-                break;
-        }
-
-        return targetList;
-    }
 }
