@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Unit party boxes
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Machine Overlay
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Event Layer
+    uniqueID: 1608436981
+    locked: 0
+  - name: Unit Layer
+    uniqueID: 3814925201
+    locked: 0
+  - name: Background Layer
+    uniqueID: 461523099
+    locked: 0
+  - name: Characters Outside Layer
+    uniqueID: 3458429775
+    locked: 0
+  - name: Weather Layer
+    uniqueID: 259154023
+    locked: 0
+  - name: Overlay Layer
+    uniqueID: 4275494219
+    locked: 0
+  - name: Characters Inside Layer
+    uniqueID: 89784681
+    locked: 0
+  - name: Dialogue Layer
+    uniqueID: 3871595195
+    locked: 0

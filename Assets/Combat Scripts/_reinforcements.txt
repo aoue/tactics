@@ -1,0 +1,11 @@
+To create reinforcements, follow this process:
+
+add the turn in the mission prefab 'event rounds' in the editor.
+
+add a label to the mission ink file with the same turn as the entry in 'event rounds'
+
+create the reinforcement arrays in the functions in the mission script. same turn number as before.
+
+note:
+if they're terribly important, then make sure to put them in some spot where there cannot be another unit on their tile
+by the time they spawn. Because they cannot spawn if a unit is already on that tile.
