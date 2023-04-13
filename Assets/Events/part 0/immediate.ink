@@ -35,6 +35,28 @@ EXTERNAL inc_stat(unit_id, stat_id, val) //increases the stat of a unit by val.
 //Remember to show the first bg with an imm_bg() call.
 //Calling inside/outside with wait=-1 also at start. Otherwise, give it any other argument.
 
+/*
+Here's how you do an example choice stuff:
+-> example_choices
+=== example_choices ===
+lalala, back at the top of example choices.
+* [Choice 1] -> label1
+* [Choice 2] -> label2
+* [Choice 3] -> label3
+=== label1 ===
+you clicked choice 1.
+-> done_choices
+=== label2 ===
+you clicked choice 2.
+-> done_choices
+=== label3 ===
+you clicked choice 3.
+-> done_choices
+=== done_choices ===
+And now we are in done_choices, continuing as normal.
+Let's end.
+->END
+*/
 
 //temporary: for testing mission 1 directly.
 
@@ -52,8 +74,8 @@ EXTERNAL inc_stat(unit_id, stat_id, val) //increases the stat of a unit by val.
 
 ~show(3, 000)
 ~show(4, 100)
-Friday on the left and Anse on the right.
-> here's continuation normal mode.
+
+
 
 ~v_wiggle(3, 0.1, 1)
 //vertical wiggle or nod, yep.
