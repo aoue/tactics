@@ -12,11 +12,10 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     //is the one to try to validate the event.
     [SerializeField] private PortraitLibrary pLib;
+    [SerializeField] private GameObject combatIcon;
     [SerializeField] private Button beginButton;
     [SerializeField] private Image[] attachedFrames;
-    [SerializeField] private Text attachedTitleText;
     [SerializeField] private TextAsset ev;
-    [SerializeField] private string eventTitle;
     [SerializeField] private eventType type;
     
     //progression
@@ -27,36 +26,37 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [SerializeField] private int partLoadIndex; // if is a RED type event, load this part index on click. Otherwise, ignore it.
     [SerializeField] private int combatLoadIndex; // if is a RED_COMBAT type event, load this mission index on click. Otherwise, ignore it.
 
+    private bool completed; // starts false. Becomes true once event has been run. Must be false for event to validate.
 
     //RUNNING OR HIDING EVENT
     public void setup_event()
     {
         //called if the event passes validation.
 
-        // set the event title text
-        attachedTitleText.text = eventTitle;
-
         // set the colour and visual effects accompanying of the event.
-        /*
         Image frame = gameObject.GetComponent<Image>();
         switch(type)
         {
             case eventType.RED_COMBAT:
-                frame.color = Color.red;
+                frame.color = new Color(255f / 255f, 102f / 255f, 102f/ 255f);
+                combatIcon.SetActive(true);
                 break;
             case eventType.RED:
-                frame.color = Color.red;
+                frame.color = new Color(255f / 255f, 102f / 255f, 102f / 255f);
+                combatIcon.SetActive(false);
                 break;
             case eventType.BLUE:
-                frame.color = Color.blue;
+                frame.color = new Color(102 / 255f, 102f / 255f, 255f / 255f);
+                combatIcon.SetActive(false);
                 break;
             case eventType.GREEN:
-                frame.color = Color.green;
+                frame.color = new Color(102f / 255f, 255f / 255f, 102f / 255f);
+                combatIcon.SetActive(false);
                 break;
             default:
                 break;
         }
-        */
+        
 
         // fill the attached character portrait slots
         // while less than length, turn on slot and fill with character image
@@ -106,13 +106,11 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         return dayProgress + incProgression;
     }
-    public bool validate_progression(int overworldProgression)
+    public bool validate(int overworldProgression)
     {
-        return overworldProgression >= minProgressionToEnable;
+        return !completed && overworldProgression >= minProgressionToEnable;
     }
 
-    
-    
     //HOVERING
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -124,8 +122,8 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     }
 
     //GETTERS
+    public void set_completed() { completed = true; }
     public TextAsset get_story() { return ev; }
-    public string get_eventTitle() { return eventTitle; }
 
     
 }

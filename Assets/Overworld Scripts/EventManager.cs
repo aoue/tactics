@@ -477,8 +477,9 @@ public class EventManager : MonoBehaviour
         if (heldEv != null)
         {
             overworld.set_progression(heldEv.modify_day_progression(overworld.get_progression()));
+            heldEv.set_completed();
         }
-            
+        
         //start a fade
         fader.fade_from_black_cheat();
         eventObjects.SetActive(false);
@@ -732,6 +733,7 @@ public class EventManager : MonoBehaviour
     }
     IEnumerator trigger_camera_shake(int intensity, float duration)
     {
+        Debug.Log("EventManager.trigger_camera_shake() called.");
         //save initial position.
         Vector3 initial_position = eventObjects.transform.localPosition;
 

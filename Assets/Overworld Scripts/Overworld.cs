@@ -21,9 +21,6 @@ public class Overworld : MonoBehaviour
     [SerializeField] private BackgroundManager overworldBackgrounds;
     [SerializeField] private Part[] parts; //all their children are event holders.
     
-
-    //part display
-
     //day logic
     private int currentPartIndex;
     private int dayProgression;
@@ -69,7 +66,7 @@ public class Overworld : MonoBehaviour
         // -hide it
         foreach (EventHolder eh in parts[currentPartIndex].get_events())
         {          
-            if (eh.validate_progression(dayProgression))
+            if (eh.validate(dayProgression))
             {
                 //Debug.Log("event validated sir!");
                 eh.setup_event();
@@ -98,8 +95,7 @@ public class Overworld : MonoBehaviour
     {
         //load a normal event
         //Debug.Log("loading event: " + ev.get_eventTitle());
-        evMan.begin_event(ev);
-        
+        evMan.begin_event(ev);        
     }
     public void load_combat(int id)
     {

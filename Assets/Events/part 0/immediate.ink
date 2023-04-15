@@ -1,6 +1,11 @@
+EXTERNAL stop_music()
+EXTERNAL play_music(id) //plays track, looping
+EXTERNAL play_sound(id) //plays sound, once.
+
 EXTERNAL imm_bg(id) //sets background to corresponding element from BackgroundManager without fade. Use for first bg.
 EXTERNAL bg(id) //sets background to corresponding element from BackgroundManager
 EXTERNAL overlay(id) //sets overlay to corresponding element from BackgroundManager
+
 EXTERNAL snow(strength) //turns weather on or off, and sets the particle count*5. -1: off, otherwise, creates strength*12 particles. Also turns off rain.
 EXTERNAL rain(strength) //turns weather on or off, and sets the particle count*5. -1: off, otherwise, Needs higher strength than snow. Also turns off snow. 
 EXTERNAL wind(strength) //turns wind on or off. -1 to turn off, anything else to turn on.
@@ -23,9 +28,7 @@ EXTERNAL h_wiggle(whichSlot, power, repeats) //causes the character portrait in 
 EXTERNAL msg_popup(name) //causes a message popup to slide in, then fade out. Displays something like: 'Message request from [name]'
 EXTERNAL msg_popup_hide() //hides it.
 
-EXTERNAL stop_music()
-EXTERNAL play_music(id) //plays track, looping
-EXTERNAL play_sound(id) //plays sound, once.
+
 
 EXTERNAL unit_state(unit_id, val) //sets the availability of units in the level tree. 0: fully, 1: visible but not clickable, 2: not visible or clickable
 EXTERNAL inc_stat(unit_id, stat_id, val) //increases the stat of a unit by val.
@@ -68,14 +71,12 @@ Let's end.
 ~inc_stat(0, 0, 50)
 ~inc_stat(0, 3, 0.05)
 
+
 ~play_music(0)
 ~imm_bg(3)
 ~outside(0)
-
 ~show(3, 000)
-~show(4, 100)
-
-
+~show(4, 200)
 
 ~v_wiggle(3, 0.1, 1)
 //vertical wiggle or nod, yep.

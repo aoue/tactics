@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 6737545691587544314}
   - component: {fileID: 1366140402691533754}
   m_Layer: 0
-  m_Name: Portrait Set 2 Bonelord
+  m_Name: Portrait Set 2 Yvette
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -293,10 +293,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   full:
-  - {fileID: 21300000, guid: a3bf414e453a95649894e7f642eab344, type: 3}
-  - {fileID: 21300000, guid: e6db610941c7bee428292c799eef2c6b, type: 3}
-  - {fileID: 21300000, guid: 5db0a45c51a2c304c897980e688e9326, type: 3}
+  - {fileID: 21300000, guid: a4776e77a87b55342a43e07142838545, type: 3}
   box:
   - {fileID: 21300000, guid: 6ca3d57a09503c4478a970b69a050172, type: 3}
-  - {fileID: 21300000, guid: 7f0c534ea0c92fe4682e3dbe6e38ed16, type: 3}
-  - {fileID: 21300000, guid: 9f5dac6b3a5f779458093b8f1f54da1a, type: 3}
