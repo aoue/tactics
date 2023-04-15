@@ -5,94 +5,70 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Ink.Runtime;
 
-public enum eventType { NONE, HEART, BRO, MISSION};
+public enum eventType { RED_COMBAT, RED, BLUE, GREEN };
 public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    //holds an event, shows up on the overworld.
+    // this holds info and starts the event.
 
-    //changes image depending on colour.
     //is the one to try to validate the event.
-
+    [SerializeField] private PortraitLibrary pLib;
+    [SerializeField] private Button beginButton;
+    [SerializeField] private Image[] attachedFrames;
+    [SerializeField] private Text attachedTitleText;
     [SerializeField] private TextAsset ev;
     [SerializeField] private string eventTitle;
-    [SerializeField] private string eventDescr;
-
-    //events can be flagged in three ways:
     [SerializeField] private eventType type;
-    [SerializeField] private GameObject dangerIcon; //an exclamation mark; danger icon. This means the event will lock all other open events.
-    [SerializeField] private GameObject heartIcon; //a heart; means the event has to do with love or something, man, idk.
-    [SerializeField] private GameObject frienshipIcon; //a bro icon; means the event has to do with building friendship.
-
+    
     //progression
-    [SerializeField] private int minProgressionToEnable;
-    [SerializeField] private bool addToProg; //if true, then when event is over, add progMod to partProgression
-    [SerializeField] private bool setProg; //if true, then when event is over, set partProgression to progMod
-    [SerializeField] private int progMod;
+    [SerializeField] private int minProgressionToEnable; // the minimum value of progression needed for the event to validate.
+    [SerializeField] private int incProgression; // if true, then add +1 to part's progression.
+    [SerializeField] private int[] attachedCharacters; // ids of box images shown in the attached image slots.
 
-    //VIRTUALS - checking and modifying states
-    public virtual void post_event()
-    {
-        //Note: modifying day progression is handled outside of this.
+    [SerializeField] private int partLoadIndex; // if is a RED type event, load this part index on click. Otherwise, ignore it.
+    [SerializeField] private int combatLoadIndex; // if is a RED_COMBAT type event, load this mission index on click. Otherwise, ignore it.
 
-        //do whatever you want.
-    }
-    public virtual bool validate_event()
-    {
-        //Note: progression validation is handled outside of this.
-
-        //overwrite to check any requirements you want.
-        //things like:
-        // -char rels, choices made, etc.
-
-        //true means the event will be enabled and viewable.
-        //false means it won't be.
-        return true;
-    }
-
-    public int modify_day_progression(int dayProgress)
-    {
-        if (addToProg) return dayProgress + progMod;
-        if (setProg) return progMod;
-        return dayProgress;
-    }
-    public bool validate_progression(int overworldProgression)
-    {
-        return overworldProgression >= minProgressionToEnable;
-    }
-    public virtual void begin_event()
-    {
-        //when the button is clicked. 
-
-        //disable input
-        gameObject.GetComponent<Button>().interactable = false;
-
-        //Start the event.
-        gameObject.transform.parent.GetComponent<Part>().pass_event_to_overworld(this);
-
-        //hide yourself
-        gameObject.SetActive(false);
-    }
 
     //RUNNING OR HIDING EVENT
     public void setup_event()
     {
         //called if the event passes validation.
 
-        //check the danger/heart/friendship setting and enable whichever it calls for,
-        //or none.
-        switch (type)
+        // set the event title text
+        attachedTitleText.text = eventTitle;
+
+        // set the colour and visual effects accompanying of the event.
+        /*
+        Image frame = gameObject.GetComponent<Image>();
+        switch(type)
         {
-            case eventType.BRO:
-                frienshipIcon.gameObject.SetActive(true);
+            case eventType.RED_COMBAT:
+                frame.color = Color.red;
                 break;
-            case eventType.HEART:
-                heartIcon.gameObject.SetActive(true);
+            case eventType.RED:
+                frame.color = Color.red;
                 break;
-            case eventType.MISSION:
-                dangerIcon.gameObject.SetActive(true);
+            case eventType.BLUE:
+                frame.color = Color.blue;
+                break;
+            case eventType.GREEN:
+                frame.color = Color.green;
                 break;
             default:
                 break;
+        }
+        */
+
+        // fill the attached character portrait slots
+        // while less than length, turn on slot and fill with character image
+        for(int i = 0; i < attachedCharacters.Length; i++)
+        {
+            attachedFrames[i].sprite = pLib.retrieve_boxp(attachedCharacters[i]);
+            attachedFrames[i].gameObject.SetActive(true);
+        }
+        // while greater or equal to length, hide slot
+        for(int i = attachedCharacters.Length; i < 4; i++)
+        {
+            attachedFrames[i].gameObject.SetActive(false);
         }
         gameObject.SetActive(true);
     }
@@ -101,6 +77,41 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         //called if the event fails to validate.
         gameObject.SetActive(false);
     }
+
+    public virtual void begin_event()
+    {
+        // called when the event button is clicked. 
+        beginButton.interactable = false;
+
+        // not only that, but we need to disable all buttons of all events, right?
+
+        switch(type)
+        {
+            case eventType.RED_COMBAT:
+                // load combat mission
+                gameObject.transform.parent.GetComponent<Part>().pass_combat_to_overworld(combatLoadIndex);
+                break;
+            case eventType.RED:
+                // load new part
+                gameObject.transform.parent.GetComponent<Part>().pass_part_to_overworld(partLoadIndex);
+                break;
+            default:
+                // play event as normal
+                gameObject.transform.parent.GetComponent<Part>().pass_event_to_overworld(this);
+                break;
+        }
+        
+    }
+    public int modify_day_progression(int dayProgress)
+    {
+        return dayProgress + incProgression;
+    }
+    public bool validate_progression(int overworldProgression)
+    {
+        return overworldProgression >= minProgressionToEnable;
+    }
+
+    
     
     //HOVERING
     public void OnPointerEnter(PointerEventData eventData)
@@ -115,7 +126,6 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     //GETTERS
     public TextAsset get_story() { return ev; }
     public string get_eventTitle() { return eventTitle; }
-    public string get_eventDescr() { return eventDescr; }
 
     
 }

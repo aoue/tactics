@@ -69,7 +69,7 @@ public class Overworld : MonoBehaviour
         // -hide it
         foreach (EventHolder eh in parts[currentPartIndex].get_events())
         {          
-            if (eh.validate_progression(dayProgression) && eh.validate_event())
+            if (eh.validate_progression(dayProgression))
             {
                 //Debug.Log("event validated sir!");
                 eh.setup_event();

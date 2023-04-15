@@ -476,7 +476,6 @@ public class EventManager : MonoBehaviour
         //do post event stuff
         if (heldEv != null)
         {
-            heldEv.post_event();
             overworld.set_progression(heldEv.modify_day_progression(overworld.get_progression()));
         }
             
