@@ -11,15 +11,11 @@ public class EventManager : MonoBehaviour
 {
     [SerializeField] private Overworld overworld; //link back to the boss.
     [SerializeField] private OverworldAudio audio;
-
     [SerializeField] private FadeManager fader;
-
-    [SerializeField] private BackgroundManager allEventBackgrounds; //different background manager from the overworld background manager, but same class.
     [SerializeField] private PortraitLibrary pLibrary;
     [SerializeField] private ParticleSystem snowSystem;
     [SerializeField] private ParticleSystem rainSystem;
     [SerializeField] private ParticleSystem windSystem;
-    
     [SerializeField] private Canvas characterCanvas; //need it to adjust layer for weather, overlay.
 
     //dialogue canvas members:
@@ -40,6 +36,8 @@ public class EventManager : MonoBehaviour
 
     //[SerializeField] private Material defaultMaterial;
     [SerializeField] private Material holoMaterial;
+    [SerializeField] private Font defaultFont;
+    [SerializeField] private Font robotFont;
 
     //dialogue box hider
     private bool hideAcceptsInput = true; //when true, you can toggle hide. false when transforming.
@@ -532,8 +530,13 @@ public class EventManager : MonoBehaviour
         {
             this.play_sound(id);
         });
+        
 
         //visuals
+         script.BindExternalFunction("font", (int state) => 
+        {
+            this.change_font(state);
+        });
         script.BindExternalFunction("inside", (int wait) => 
         {
             this.inside(wait);
@@ -720,6 +723,11 @@ public class EventManager : MonoBehaviour
             centeredText.transform.parent.gameObject.SetActive(false);
             NormalDialogueBox.SetActive(true);
         }
+    }
+    void change_font(int state)
+    {
+        if (state == -1) sentenceText.font = defaultFont;
+        else sentenceText.font = robotFont;
     }
 
     //visual effects

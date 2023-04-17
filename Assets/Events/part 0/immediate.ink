@@ -12,6 +12,7 @@ EXTERNAL wind(strength) //turns wind on or off. -1 to turn off, anything else to
 EXTERNAL shake(intensity, duration) //Both parameters are ints. Don't be shy with intensity. 20 is moderate, 50 is heavy. Duration is in seconds.
 EXTERNAL inside(wait) //reorders characters so that they appear before overlay and weather. Enter 0 at start, or 1 if switching with a bg call.
 EXTERNAL outside(wait) //reorders characters so that they appear behind overlay and weather. Enter 0 at start, or 1 if switching with a bg call.
+EXTERNAL font(state) //switches to robot font. For sentence text only. '-1' to turn off, anything else to turn on.
 
 EXTERNAL center(state) //1: turns on. 0: turns off
 EXTERNAL n(name) //sets name text, or call with empty string to hide namebox.
@@ -88,7 +89,16 @@ I'm talking a little bit.
 
 ~n("")
 ~p(-1)
-end of test.
+Suddenly a voice is heard from a speaker overhead.
+
+~n("Overhead Speaker")
+~font(1)
+Welcome to the Aventine. Please enjoy your stay.
+
+~n("")
+~font(-1)
+...What a way to ruin the mood.
+
 ->END
 
 ~c("red")
