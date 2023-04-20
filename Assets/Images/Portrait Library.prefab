@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5038451121838422275}
   - component: {fileID: 2028728046881200415}
   m_Layer: 0
-  m_Name: Portrait Set 0 Friday
+  m_Name: Portrait Set 1 Friday
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7033591546379476243}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2028728046881200415
 MonoBehaviour:
@@ -81,7 +81,7 @@ GameObject:
   - component: {fileID: 2344004602868704369}
   - component: {fileID: 4211939257637089958}
   m_Layer: 0
-  m_Name: Portrait Set 3 Muller
+  m_Name: Portrait Set 4 Muller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -100,7 +100,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7033591546379476243}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4211939257637089958
 MonoBehaviour:
@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 5719301447061488869}
   - component: {fileID: 1381221085307841148}
   m_Layer: 0
-  m_Name: Portrait Set 1 Mc
+  m_Name: Portrait Set 2 Mc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -147,7 +147,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7033591546379476243}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1381221085307841148
 MonoBehaviour:
@@ -187,6 +187,52 @@ MonoBehaviour:
   - {fileID: 21300000, guid: b9eeb8d7308be0b4eba8c18e7c525f87, type: 3}
   - {fileID: 21300000, guid: 72087e266abd569429c237d97981ef33, type: 3}
   - {fileID: 21300000, guid: f07c552caf5cda84890ed981d58b2494, type: 3}
+--- !u!1 &7012088986450085904
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5140532185723163820}
+  - component: {fileID: 6429043377519902690}
+  m_Layer: 0
+  m_Name: Portrait Set 0 Misc
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5140532185723163820
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7012088986450085904}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7033591546379476243}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6429043377519902690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7012088986450085904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3921435ad0ef3c24ebad1a4e0cb3472d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  full: []
+  box: []
 --- !u!1 &7033591546379476241
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,10 +258,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7033591546379476241}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 481.8007, y: 229.8295, z: -940.2353}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5140532185723163820}
   - {fileID: 5038451121838422275}
   - {fileID: 5719301447061488869}
   - {fileID: 6737545691587544314}
@@ -244,6 +291,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ec14bb197c4279240a461af3c6957002, type: 3}
   frameCGs: []
   portraitSets:
+  - {fileID: 6429043377519902690}
   - {fileID: 2028728046881200415}
   - {fileID: 1381221085307841148}
   - {fileID: 1366140402691533754}
@@ -259,7 +307,7 @@ GameObject:
   - component: {fileID: 6737545691587544314}
   - component: {fileID: 1366140402691533754}
   m_Layer: 0
-  m_Name: Portrait Set 2 Yvette
+  m_Name: Portrait Set 3 Yvette
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -278,7 +326,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7033591546379476243}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1366140402691533754
 MonoBehaviour:

@@ -57,12 +57,11 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
                 break;
         }
         
-
         // fill the attached character portrait slots
         // while less than length, turn on slot and fill with character image
         for(int i = 0; i < attachedCharacters.Length; i++)
         {
-            attachedFrames[i].sprite = pLib.retrieve_boxp(attachedCharacters[i]);
+            attachedFrames[i].transform.GetChild(0).gameObject.GetComponent<Image>().sprite = pLib.retrieve_boxp(attachedCharacters[i]);
             attachedFrames[i].gameObject.SetActive(true);
         }
         // while greater or equal to length, hide slot

@@ -59,7 +59,7 @@ public class CombatDialoguer : MonoBehaviour
         link_external_functions();
 
         //set portrait, cgframe to 0. (not name, there must always be a name in this dialogues.)
-        portrait.gameObject.SetActive(false);
+        portrait.gameObject.SetActive(true);
         cgFrame.gameObject.SetActive(false);
 
         dialoguerCanvas.enabled = true;
@@ -176,7 +176,6 @@ public class CombatDialoguer : MonoBehaviour
     {
         //sets the single portrait slot to the corresponding image.
         //-1 to hide.
-
         if (which == -1)
         {
             portrait.enabled = false;

@@ -266,9 +266,9 @@ public class EventManager : MonoBehaviour
     IEnumerator TypeSentence(string sentence)
     {
         canProceedArrow.SetActive(false);
-        while (effectsOver == false)
+        while (!effectsOver)
         {
-            yield return new WaitForSeconds(1f);
+            yield return null;
         }
         
         if (isCentered)
@@ -798,7 +798,6 @@ public class EventManager : MonoBehaviour
     void imm_bg(int id)
     {
         // sets the bg immediately.
-
         if (skipOn == false) 
         {
             fader.fade_to_black(); //automatic fading behaviour

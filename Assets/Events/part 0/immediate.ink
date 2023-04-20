@@ -76,16 +76,18 @@ Let's end.
 ~play_music(0)
 ~imm_bg(3)
 ~outside(0)
-~show(3, 000)
-~show(4, 200)
-
+~show(3, 100)
+~show(4, 300)
 ~v_wiggle(3, 0.1, 1)
 //vertical wiggle or nod, yep.
 
 ~n("Friday")
-~p(000)
+~p(100)
 I'm talking a little bit.
 > I hope that no extra set of quotation marks was added.
+
+~bg(2)
+Let's try swtiching bg,.
 
 ~n("")
 ~p(-1)

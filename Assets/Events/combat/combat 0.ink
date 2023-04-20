@@ -37,7 +37,7 @@ VAR label = 0
 
 //~cg(0)
 ~n("Voice")
-~p(000)
+~p(100)
 Testy test.
 
 ~n("")
