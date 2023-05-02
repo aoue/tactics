@@ -58,6 +58,8 @@ public class EventManager : MonoBehaviour
     private bool isCentered = false; //determines whether to use sentenceText or use centeredText in typeSentence().
 
     [SerializeField] private GameObject settingsView; //lets player adjust vn settings, like text speed.
+    [SerializeField] private Slider programGraphic;
+    [SerializeField] private Text programGraphicText;
 
     private string currentSpeakerName; //used for pushing entries in history.
     [SerializeField] private GameObject HistoryPort; //master gameobject for the history interface.
@@ -307,7 +309,6 @@ public class EventManager : MonoBehaviour
                 }               
             }
             centeredText.text += "\n";
-
         }
         else
         {
@@ -359,6 +360,7 @@ public class EventManager : MonoBehaviour
             }
 
         }
+        if (!skipOn) audio.play_typingSound();
         yield return new WaitForSeconds(0.05f);
         
         if (autoOn == true && skipOn == false)
@@ -448,8 +450,7 @@ public class EventManager : MonoBehaviour
                 StartCoroutine(TypeSentence(sentence));
             }
             else
-            {
-                audio.play_typingSound();
+            {            
                 DisplayNextSentence();
             }
         }
@@ -621,6 +622,10 @@ public class EventManager : MonoBehaviour
         script.BindExternalFunction("msg_popup", (string name) =>
         {
             this.msg_popup(name);
+        });
+        script.BindExternalFunction("program", (string name, float duration) =>
+        {
+            this.run_program(name, duration);
         });
 
         //game (e.g. rel increased, set flag, etc.)
@@ -949,6 +954,45 @@ public class EventManager : MonoBehaviour
         //coroutine:
         StartCoroutine(msg_popup_control());
     }
+    void run_program(string name, float duration)
+    {
+        // what does this do?
+        // display program progress bar
+        //  -program name above bar
+        //  -slide bar that goes from left to right
+        //  -hold while this is going on.
+        if (skipOn) return;
+        effectsOver = false;
+        programGraphic.gameObject.SetActive(true);
+        programGraphicText.text = name + "()";
+        programGraphic.value = 0f;
+        StartCoroutine(programSlide(duration));
+    }
+    IEnumerator programSlide(float duration)
+    {
+        yield return null;
+        // increase value of programGraphic over time
+        // at end, pause.
+        // then hide.
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            // so we have 100 units
+            // and we have to get our value to 100 over duration seconds
+            // e.g. over 5 seconds, it should increase by 20 units every sec
+            elapsedTime += Time.deltaTime;
+            programGraphic.value = 100f * elapsedTime / duration;
+
+            yield return null;
+        }
+
+        // then let game continue.
+        yield return new WaitForSeconds(0.5f);
+        effectsOver = true;
+        programGraphic.gameObject.SetActive(false);
+    }
+
+
     IEnumerator msg_popup_control()
     {
         //slide in over time

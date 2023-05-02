@@ -6,22 +6,7 @@ using System.Linq;
 
 public class Mission : MonoBehaviour
 {
-    //mission objective notes.
-    //victory:
-    // -defeat all units in boss list
-    // -move unit to tile
-    // -survive turns
-    // -reach certain PW
-    // -kill x enemies (where x < total number of enemies)
-    //defeat:
-    // -unit killed (e.g. the train)
-    // -all units killed
-    // -turns pass
-    // -enemy unit reaches tile
-
-    //tiles
     [SerializeField] protected Tile[] missionTiles;
-    //enemy auto-deployed units types (prafabs)
     [SerializeField] protected Enemy[] defEnemies;
 
     //mission settings
@@ -33,7 +18,6 @@ public class Mission : MonoBehaviour
     [SerializeField] private int starting_power;
     [SerializeField] private string win_obj_descr;
     [SerializeField] private string loss_obj_descr;
-    [SerializeField] private int mission_clear_exp; //the exp given for completing the mission.
     [SerializeField] private string[] side_objectives_descrs; //descriptions for each side objective. parallel.
     [SerializeField] private int[] objectives_rewards; //exp reward for each objective accomplished. main is 0, 1+ is side.
 
@@ -42,7 +26,6 @@ public class Mission : MonoBehaviour
     [SerializeField] private AudioClip[] musicList;
     [SerializeField] private AudioClip[] soundList;
 
-    
     public bool has_event(int roundNumber)
     {
         //returns an int[] where every turn where there should be an event is an element.

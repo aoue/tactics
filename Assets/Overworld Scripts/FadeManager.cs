@@ -87,7 +87,7 @@ public class FadeManager : MonoBehaviour
         Color objectColor = blackOutSquare.GetComponent<Image>().color;
         float fadeAmount;
         if (fadeToBlack == true)
-        {
+        {         
             while ( blackOutSquare.GetComponent<Image>().color.a < 1)
             {
                 fadeAmount = objectColor.a + (convert_time_arg(fadeSpeed) * Time.deltaTime);

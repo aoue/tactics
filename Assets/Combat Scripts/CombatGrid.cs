@@ -10,8 +10,7 @@ using UnityEngine.SceneManagement;
 enum State { SELECT_UNIT, SELECT_MOVEMENT, SELECT_TARGET, ENEMY, BETWEEN_ROUNDS };
 public class CombatGrid : MonoBehaviour
 {
-    //responsible for instatiating and managing the combat grid and for general combat control.
-
+    //responsible for instantiating and managing the combat grid, and for general combat control.
 
     private const float pause_before_event_start = 1f; //the pause/fade duration before starting an event.
     private const float enemy_pause_before_attack = 0.35f; //the seconds the enemy unit will pause with possible origin tiles before attacking.
@@ -87,7 +86,6 @@ public class CombatGrid : MonoBehaviour
     private BattleBrain brain;
     private GridHelper gridHelper;
 
-
     //round event control
     private int roundNumber; //for timing round start events and reinforcements, that kind of thing.
     private bool allowRoundEvent; //for timing round start events and reinforcements, that kind of thing.
@@ -131,6 +129,7 @@ public class CombatGrid : MonoBehaviour
         update_ZoC();
 
         fader.fade_from_black_cheat(2f);
+        //Debug.Log("fader called");
         next_turn();
     }
     void Update()
@@ -163,6 +162,7 @@ public class CombatGrid : MonoBehaviour
                     myGrid[active_unit.x, active_unit.y].set_ownerShip(pastBaseState);
                     active_unit.x = past_active_unit_x;
                     active_unit.y = past_active_unit_y;
+                    active_unit.set_hasMoved(false);
                     myGrid[active_unit.x, active_unit.y].place_unit(active_unit);
 
                     //change unit pos graphically
@@ -176,7 +176,7 @@ public class CombatGrid : MonoBehaviour
                         movementHighlightTile.hide_target_icon();
                         movementHighlightTile = null;
                     }
-                    
+
                     //reset ZoC, too, of course
                     update_ZoC();
 
@@ -249,24 +249,28 @@ public class CombatGrid : MonoBehaviour
         map_y_border = m.get_layout_y_dim();
 
         //for every tile in the layout
+        Tile[,] layout = m.get_layout();
         for (int i = 0; i < m.get_layout_x_dim(); i++)
         {
             for (int j = 0; j < m.get_layout_y_dim(); j++)
             {
-                //instantiate the tile in a position based on i and j.
-                //Vector3 instPos = new Vector3(2 * transform_x(i), 2 * transform_y(j), 0f);
-                Vector3 instPos = get_pos_from_coords(i, j);
-                
-                Tile newObj = Instantiate(m.get_layout()[i, j], instPos, transform.rotation, transform);
-                newObj.set_coords(i, j);
-
-                myGrid[i, j] = newObj;
-
-                if (newObj is BaseTile)
+                if (layout[i, j] != null)
                 {
-                    //Debug.Log("adding tile to baselist");
-                    baseList.Add(newObj);
+                    //instantiate the tile in a position based on i and j.
+                    Vector3 instPos = get_pos_from_coords(i, j);    
+                    Tile newObj = Instantiate(layout[i, j], instPos, transform.rotation, transform);
+                    newObj.set_coords(i, j);
+                    myGrid[i, j] = newObj;
+                    if (newObj is BaseTile)
+                    {
+                        baseList.Add(newObj);
+                    }
                 }
+                else
+                {
+                    myGrid[i, j] = null;
+                }
+                
             }
         }
     }
@@ -333,7 +337,6 @@ public class CombatGrid : MonoBehaviour
             inst_u.y = y_pos;
             enemyUnits.Add(inst_u);
         }
-
     }
     void update_ZoC()
     {
@@ -358,7 +361,7 @@ public class CombatGrid : MonoBehaviour
             for(int i = u.x - u.get_controlRange(); i < u.x + u.get_controlRange() + 1; i++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
-                if (gridHelper.within_border(i, u.y, map_x_border, map_y_border))
+                if (gridHelper.within_border(i, u.y, map_x_border, map_y_border) && myGrid[i, u.y] != null)
                 {
                     myGrid[i, u.y].player_controlled = true;
                     zocTiles.Add(myGrid[i, u.y]);
@@ -368,7 +371,7 @@ public class CombatGrid : MonoBehaviour
             for (int j = u.y - u.get_controlRange(); j < u.y + u.get_controlRange() + 1; j++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
-                if (gridHelper.within_border(u.x, j, map_x_border, map_y_border))
+                if (gridHelper.within_border(u.x, j, map_x_border, map_y_border) && myGrid[u.x, j] != null)
                 {
                     myGrid[u.x, j].player_controlled = true;
                     zocTiles.Add(myGrid[u.x, j]);
@@ -1476,9 +1479,9 @@ public class CombatGrid : MonoBehaviour
         //(but only if you're hovering over the active unit)
         if (gameState == State.SELECT_TARGET && active_unit == uInformer.get_heldUnit())
         {
-            if (active_unit.get_traitList()[which] != null)
+            if (active_unit.get_traitList()[which] != null ) // && uInformer.is_traitButton_interactable(which))
             {
-                if (active_unit.get_traitList()[which].get_isPassive() || active_unit.get_traitList()[which].get_pwCost() > pw)
+                if (active_unit.get_traitList()[which].get_isPassive() || active_unit.get_traitList()[which].get_pwCost() > pw || !uInformer.is_traitButton_interactable(which) )
                 {
                     //hide highlights
                     clear_highlights();
@@ -1534,10 +1537,14 @@ public class CombatGrid : MonoBehaviour
                 //move unit to this tile
                 past_active_unit_x = active_unit.x;
                 past_active_unit_y = active_unit.y;
-                myGrid[active_unit.x, active_unit.y].remove_unit();
-                myGrid[active_unit.x, active_unit.y].hide_target_icon();
 
+                myGrid[active_unit.x, active_unit.y].remove_unit();
                 myGrid[x_pos, y_pos].place_unit(active_unit);
+
+                //set the state of unit hasMoved
+                if (active_unit.x == x_pos && active_unit.y == y_pos) active_unit.set_hasMoved(false);
+                else active_unit.set_hasMoved(true);
+
                 active_unit.x = x_pos;
                 active_unit.y = y_pos;
 
@@ -1727,9 +1734,9 @@ public class CombatGrid : MonoBehaviour
             {
                 //reject all non-adjacent tiles.
                 if (Math.Abs(i) + Math.Abs(j) != 1) continue;
-
-                //if on the map
-                if (gridHelper.within_border(start.x + i, start.y + j, map_x_border, map_y_border))
+                
+                //if on the map and not null
+                if (gridHelper.within_border(start.x + i, start.y + j, map_x_border, map_y_border) && myGrid[start.x + i, start.y + j] != null)
                 {
                     if (myGrid[start.x + i, start.y + j].path == null) myGrid[start.x + i, start.y + j].path = new List<Tile>();
                     //overwrite tile's path IF: 

@@ -237,25 +237,25 @@ MonoBehaviour:
   hpBar: {fileID: 6669561845419999469}
   brkBar: {fileID: 7258099661184774020}
   box_portrait: {fileID: 21300000, guid: ead2d8a8f484318459eff3ac50bcc750, type: 3}
-  active_portrait: {fileID: 21300000, guid: 628998b05b1e956428f6c304905ffdce, type: 3}
+  active_portrait: {fileID: 21300000, guid: f390f19719259204aad3a44968f529ae, type: 3}
   unitName: Friday
   level: 1
   exp: 0
   aff: 0
-  movement: 3
-  hpMax: 100
-  brkMax: 60
-  controlRangeBase: 2
-  phys_atk: 30
+  movement: 4
+  hpMax: 90
+  brkMax: 50
+  controlRangeBase: 1
+  phys_atk: 40
   phys_def: 1
-  magic_atk: 30
+  magic_atk: 5
   magic_def: 1
   unitOrder: {fileID: 2497933080290425583, guid: ecf60bb980dfc9c469a20450586f18a3,
     type: 3}
   traitList:
-  - {fileID: 4139798574039622529, guid: ac170af480b24354890d79b268462a91, type: 3}
+  - {fileID: 1267856805505375128, guid: 3a1394e4711069f4584c9607e563775b, type: 3}
   - {fileID: 1796712658798580623, guid: a351b471ca9b0364a944e1077dd77037, type: 3}
-  - {fileID: 3383838707312850849, guid: d3ae52e8c8bb8394183cccb94da21c95, type: 3}
+  - {fileID: 9032095339413136354, guid: f633a6b5dc408614493de9224d423156, type: 3}
   - {fileID: 0}
   - {fileID: 0}
 --- !u!212 &6669561844638855849
@@ -299,12 +299,12 @@ SpriteRenderer:
   m_SortingLayerID: -480042095
   m_SortingLayer: 2
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 3a7bc733bbd919e44b7c6aeab5e444ab, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7647957dbff50b143bb8476262b1d07c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.07, y: 1.6}
+  m_Size: {x: 1.07, y: 1.61}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

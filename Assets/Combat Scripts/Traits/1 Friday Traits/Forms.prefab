@@ -49,6 +49,7 @@ MonoBehaviour:
   descr: '[descr]'
   unitType: 0
   isPassive: 0
+  mustSetup: 0
   targeting: 0
   aoe: 0
   ignores_blocking_terrain: 0
@@ -57,7 +58,7 @@ MonoBehaviour:
   min_dmg_range: 0.5
   max_dmg_range: 0.6
   brkMult: 2
-  pwCost: 1
+  pwCost: 0
   usesPhysAttack: 1
   usesPhysDefense: 1
   isHeal: 0

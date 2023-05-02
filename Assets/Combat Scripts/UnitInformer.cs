@@ -29,6 +29,8 @@ public class UnitInformer : MonoBehaviour
     [SerializeField] private Button[] traitButtons; //four buttons.
     [SerializeField] private Button passButton; 
 
+
+
     private Unit heldUnit; //the locked unit.
     public void set_heldUnit(Unit u)
     {
@@ -36,6 +38,14 @@ public class UnitInformer : MonoBehaviour
     }
     public Unit get_heldUnit() { return heldUnit; }
    
+    public bool is_traitButton_interactable(int which)
+    {
+        if (traitButtons[which].interactable == true )
+        {
+            return true;
+        }
+        return false;
+    }
     public void set_pass(bool s)
     {
         if (s)
@@ -118,7 +128,7 @@ public class UnitInformer : MonoBehaviour
                 if (u.get_traitList()[i] != null)
                 {
                     //Debug.Log("uinformer.fill() trait " + i + " pw =  " + pw + " pwCost = " + u.get_traitList()[i].get_pwCost());
-                    if ( !allowButtonsInteractable || u.get_traitList()[i].get_isPassive() || u.get_traitList()[i].get_pwCost() > pw )
+                    if ( !allowButtonsInteractable || u.get_traitList()[i].get_isPassive() || u.get_traitList()[i].get_pwCost() > pw || (u.get_traitList()[i].get_mustSetup() && u.get_hasMoved()) )
                     {
                         traitButtons[i].interactable = false;
                     }

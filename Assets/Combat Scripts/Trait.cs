@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum AoEType { SINGLE, ALL_BETWEEN, ALL, ADJACENT_FOUR }
 public enum TargetingType { LINE, SQUARE, RADIUS, SELF }
-public enum UnitType { NOTHING, CREATURE }
+public enum UnitType { NOTHING, SCARECROW, HAUNT }
 public class Trait : MonoBehaviour
 {
     //passive and abilities.
@@ -45,6 +45,7 @@ public class Trait : MonoBehaviour
     [SerializeField] private string descr; //a 1-line (at the most) descr of the trait.
     [SerializeField] private UnitType unitType; //adds this unit type to the player unit.
     [SerializeField] private bool isPassive; //if true, the trait cannot be used as a move to target enemies. If false, it can.
+    [SerializeField] private bool mustSetup; //if true, the trait cannot be used if the unit has moved this activation.
 
     //active stuff
     [SerializeField] private TargetingType targeting; //determines how tiles are validated for targeting.
@@ -77,7 +78,7 @@ public class Trait : MonoBehaviour
         //the totalDmg is all the damage the unit dealt, in case it hit multiple targets.
     }
 
-    //for strictly passive traits 
+    //for traits with additionnal effects
     public virtual void on_own_death(Unit self)
     {
         //examples:
@@ -125,8 +126,7 @@ public class Trait : MonoBehaviour
 
         return t.get_movementCost();
     }
-
-    
+ 
     public string get_traitDescr()
     {
         //generate the string based on move information.
@@ -162,16 +162,18 @@ public class Trait : MonoBehaviour
         }
         else
         {
-            buildStr += "Attack — ";
+            buildStr += "Active — ";
 
-            if (isHeal) buildStr += " Support";
-            else buildStr += " Offense";
+            if (isHeal) buildStr += " Support Ability";
+            else buildStr += " Attack Ability";
 
             if (usesPhysAttack) buildStr += "| Phys Atk vs. ";           
             else buildStr += "| EAC Atk vs. ";
             
             if (usesPhysDefense) buildStr += " Phys Def";
             else buildStr += " EAC Def";
+
+            if (mustSetup) buildStr += "(Setup Required) | ";
 
             string powerStr = get_min_dmg_range() + "-" + get_max_dmg_range();
             buildStr += "\n" + powerStr + "x Force | " + pwCost + " cost.";
@@ -186,6 +188,7 @@ public class Trait : MonoBehaviour
 
     public AudioClip get_traitSound() { return traitSound; }
     public string get_traitName() { return traitName; }
+    public bool get_mustSetup() {return mustSetup;}
     public bool get_isPassive() { return isPassive; }
     public TargetingType get_targetingType() { return targeting; }
     public AoEType get_AoEType() { return aoe; }

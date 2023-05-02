@@ -27,10 +27,10 @@ public class GridHelper
 
         List<Tile> adjacentTiles = new List<Tile>();
         //add tiles based on coordinates, as long as they are not out of bounds.
-        if (within_border(start.x + 1, start.y, map_x_border, map_y_border)) adjacentTiles.Add(myGrid[start.x + 1, start.y]);
-        if (within_border(start.x - 1, start.y, map_x_border, map_y_border)) adjacentTiles.Add(myGrid[start.x - 1, start.y]);
-        if (within_border(start.x, start.y + 1, map_x_border, map_y_border)) adjacentTiles.Add(myGrid[start.x, start.y + 1]);
-        if (within_border(start.x, start.y - 1, map_x_border, map_y_border)) adjacentTiles.Add(myGrid[start.x, start.y - 1]);
+        if (within_border(start.x + 1, start.y, map_x_border, map_y_border) && myGrid[start.x + 1, start.y] != null) adjacentTiles.Add(myGrid[start.x + 1, start.y]);
+        if (within_border(start.x - 1, start.y, map_x_border, map_y_border) && myGrid[start.x - 1, start.y] != null) adjacentTiles.Add(myGrid[start.x - 1, start.y]);
+        if (within_border(start.x, start.y + 1, map_x_border, map_y_border) && myGrid[start.x, start.y + 1] != null) adjacentTiles.Add(myGrid[start.x, start.y + 1]);
+        if (within_border(start.x, start.y - 1, map_x_border, map_y_border) && myGrid[start.x, start.y - 1] != null) adjacentTiles.Add(myGrid[start.x, start.y - 1]);
 
         foreach (Tile next in adjacentTiles)
         {
@@ -59,7 +59,7 @@ public class GridHelper
                 //to left
                 for (int i = dest.x - 1; i > dest.x - t.get_range() - 1; i--)
                 {
-                    if (within_border(i, dest.y, map_x_border, map_y_border))
+                    if (within_border(i, dest.y, map_x_border, map_y_border) && myGrid[i, dest.y] != null)
                     {
                         //if the tile is valid, then add to list you can hit
                         if (Math.Abs(dest.x - i) >= t.get_min_range())
@@ -71,12 +71,12 @@ public class GridHelper
                         {
                             break;
                         }
-                    }
+                    } else break;
                 }
                 //to right
                 for (int i = dest.x + 1; i < dest.x + t.get_range() + 1; i++)
                 {
-                    if (within_border(i, dest.y, map_x_border, map_y_border))
+                    if (within_border(i, dest.y, map_x_border, map_y_border) && myGrid[i, dest.y] != null)
                     {
                         //if the tile is valid, then add to list you can hit
                         if (Math.Abs(dest.x - i) >= t.get_min_range())
@@ -88,12 +88,12 @@ public class GridHelper
                         {
                             break;
                         }
-                    }
+                    } else break;
                 }
                 //to top
                 for (int j = dest.y + 1; j < dest.y + t.get_range() + 1; j++)
                 {
-                    if (within_border(dest.x, j, map_x_border, map_y_border))
+                    if (within_border(dest.x, j, map_x_border, map_y_border) && myGrid[dest.x, j] != null)
                     {
                         if (Math.Abs(dest.y - j) >= t.get_min_range())
                         {
@@ -103,12 +103,12 @@ public class GridHelper
                         {
                             break;
                         }
-                    }
+                    } else break;
                 }
                 //to bottom
                 for (int j = dest.y - 1; j > dest.y - t.get_range() - 1; j--)
                 {
-                    if (within_border(dest.x, j, map_x_border, map_y_border))
+                    if (within_border(dest.x, j, map_x_border, map_y_border) && myGrid[dest.x, j] != null)
                     {
                         if (Math.Abs(dest.y - j) >= t.get_min_range())
                         {
@@ -118,7 +118,7 @@ public class GridHelper
                         {
                             break;
                         }
-                    }
+                    } else break;
                 }
                 break;
             case TargetingType.SQUARE:
@@ -127,7 +127,7 @@ public class GridHelper
                     for (int j = dest.y - 1; j < dest.y + 1 + 1; j++)
                     {
                         //if the tile is on the grid, and is not the unit's tile.
-                        if (within_border(i, j, map_x_border, map_y_border) && !(i == dest.x && j == dest.y) && Math.Abs(dest.x - i) + Math.Abs(dest.y - j) >= t.get_min_range())
+                        if (myGrid[i, j] != null && within_border(i, j, map_x_border, map_y_border) && !(i == dest.x && j == dest.y) && Math.Abs(dest.x - i) + Math.Abs(dest.y - j) >= t.get_min_range())
                         {
                             origins.Add(myGrid[i, j]);
                         }

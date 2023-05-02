@@ -7,7 +7,7 @@ public class PowerConservationOrder : Order
     //+1 PW at the end of each unit's turn.
     public override int order_power_cost(int cost)
     {
-        return cost - 1;
+        return cost - 2;
     }
 
 }

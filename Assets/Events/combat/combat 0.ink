@@ -30,7 +30,6 @@ VAR label = 0
 - label == -3: -> mission_end_loss
 }
 
-
 === mission_begin ===
 ~play_music(0)
 ~jump(3, 5)

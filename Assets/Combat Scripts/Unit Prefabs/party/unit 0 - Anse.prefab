@@ -326,25 +326,25 @@ MonoBehaviour:
   hpBar: {fileID: 1308758430853295776}
   brkBar: {fileID: 986779691955203519}
   box_portrait: {fileID: 21300000, guid: 3684652f0e1856b4096f4ddbddbb218c, type: 3}
-  active_portrait: {fileID: 21300000, guid: f4abb8baddfcd274d920ad1a206a13f9, type: 3}
+  active_portrait: {fileID: 21300000, guid: f78998f9cfb398c4ebe678af28434991, type: 3}
   unitName: Anse
   level: 1
   exp: 0
   aff: 1
   movement: 3
-  hpMax: 90
+  hpMax: 100
   brkMax: 55
   controlRangeBase: 1
-  phys_atk: 15
-  phys_def: 1
-  magic_atk: 40
-  magic_def: 0.9
+  phys_atk: 30
+  phys_def: 0.95
+  magic_atk: 30
+  magic_def: 1
   unitOrder: {fileID: 6773564134839013533, guid: 811d92a95922178449a6c964f02d0d96,
     type: 3}
   traitList:
-  - {fileID: 1514816783439735546, guid: b906e87c98bab3145a4aa197459f39dd, type: 3}
-  - {fileID: 2219066256849385555, guid: e219275f3af1b19469693cf7e48f6994, type: 3}
-  - {fileID: 0}
+  - {fileID: 5915920842256053762, guid: 0cb44a7af0acfbd4da5f9ee98a4f1224, type: 3}
+  - {fileID: 4139798574039622529, guid: ac170af480b24354890d79b268462a91, type: 3}
+  - {fileID: 4504385311543521236, guid: da3da7d8709928c4dba9702ef7c02b23, type: 3}
   - {fileID: 0}
   - {fileID: 0}
 --- !u!212 &3091262671685752837
@@ -388,12 +388,12 @@ SpriteRenderer:
   m_SortingLayerID: -480042095
   m_SortingLayer: 2
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 7b8d53d2d0066454881d9a17ef52e82d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1d5f65a51e3cb8142b11e9842a13890c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.9, y: 1.6}
+  m_Size: {x: 0.79, y: 1.6}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -534,6 +534,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1308758430853295776}
+  - component: {fileID: 8345099856363232567}
   m_Layer: 0
   m_Name: hp bar
   m_TagString: Untagged
@@ -562,6 +563,14 @@ RectTransform:
   m_AnchoredPosition: {x: -0.5, y: -0.72}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &8345099856363232567
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6935387914252425724}
+  m_CullTransparentMesh: 1
 --- !u!1 &8512174747632356224
 GameObject:
   m_ObjectHideFlags: 0

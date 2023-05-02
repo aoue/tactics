@@ -28,8 +28,7 @@ EXTERNAL v_wiggle(whichSlot, power, repeats) //causes the character portrait in 
 EXTERNAL h_wiggle(whichSlot, power, repeats) //causes the character portrait in the specified slot to wiggle horizontally. Moves power percentage. Repeats x times.
 EXTERNAL msg_popup(name) //causes a message popup to slide in, then fade out. Displays something like: 'Message request from [name]'
 EXTERNAL msg_popup_hide() //hides it.
-
-
+EXTERNAL program(name, duration) // runs program popup. Name is text displayed above bar. Duration is in seconds.
 
 EXTERNAL unit_state(unit_id, val) //sets the availability of units in the level tree. 0: fully, 1: visible but not clickable, 2: not visible or clickable
 EXTERNAL inc_stat(unit_id, stat_id, val) //increases the stat of a unit by val.
@@ -84,7 +83,12 @@ Let's end.
 ~n("Friday")
 ~p(100)
 I'm talking a little bit.
-> I hope that no extra set of quotation marks was added.
+
+~n("")
+~p(-1)
+Okay, end now.
+
+-> END
 
 ~bg(2)
 Let's try swtiching bg,.

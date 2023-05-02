@@ -38,6 +38,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private double magic_def;
 
     //state
+    private bool hasMoved; //true if the unit has moved (like, over tiles) this turn, false otherwise.
     private bool isDead;
     private bool isBroken;
     private bool lockHpSlider; //stops hp sliders from going back and forth.
@@ -100,6 +101,7 @@ public class Unit : MonoBehaviour
     public void refresh()
     {
         //called at the start of a round.
+        hasMoved = false;
         ap = 1;
         if (brk == 0)
         {
@@ -110,6 +112,10 @@ public class Unit : MonoBehaviour
             unlock_sliders();
         }
         unitSprite.color = new Color(1f, 1f, 1f);
+    }
+    public void set_hasMoved(bool value)
+    {
+        hasMoved = value;
     }
     public void take_dmg(int dmg, float brkMultiplier)
     {
@@ -224,11 +230,13 @@ public class Unit : MonoBehaviour
     public double get_physd() { return phys_def; }
     public int get_maga() { return magic_atk; }
     public double get_magd() { return magic_def; }
+    public bool get_hasMoved() {return hasMoved; }
     public bool get_isDead() { return isDead; }
     public bool get_isBroken() { return isBroken; }
     public Trait[] get_traitList() { return traitList; }
     public Order get_unitOrder() { return unitOrder; }
     public moveLearnState[] get_learnedList() { return learnedList; }
+    public List<UnitType> get_unitTypes() { return unitTypes; }
 
     //setters, for leveling up
     public void set_exp(int x) { exp = x; }
