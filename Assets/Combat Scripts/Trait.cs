@@ -116,6 +116,10 @@ public class Trait : MonoBehaviour
 
         return heal;
     }
+    public virtual int modify_movement_atStart(int move, Unit self, Unit[] self_allies, Unit[] targets)
+    {
+        return move;
+    }
     public virtual int modify_movementCost(Tile t)
     {
         //e.g. check tile type.

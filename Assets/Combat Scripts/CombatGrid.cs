@@ -1683,16 +1683,29 @@ public class CombatGrid : MonoBehaviour
         myGrid[u.x, u.y].isValid = true;
         List<Tile> tempPath = new List<Tile>();
 
+        int unitMovement = u.get_movement();
         if (isPlayer)
         {
-            dfs(visited, myGrid[u.x, u.y], active_order.order_movement(u.get_movement()), isPlayer, u, tempPath);
+            unitMovement = active_order.order_movement(unitMovement);
+            for (int i = 0; i < u.get_traitList().Length; i++)
+            {
+                if (u.get_traitList()[i] != null)
+                {
+                    unitMovement = u.get_traitList()[i].modify_movement_atStart(unitMovement, u, playerUnits, enemyUnits.ToArray());
+                }
+            }
         }
         else
-        {
-            dfs(visited, myGrid[u.x, u.y], u.get_movement(), isPlayer, u, tempPath);
+        {       
+            for (int i = 0; i < u.get_traitList().Length; i++)
+            {
+                if (u.get_traitList()[i] != null)
+                {
+                    unitMovement = u.get_traitList()[i].modify_movement_atStart(unitMovement, u, enemyUnits.ToArray(), playerUnits);
+                }
+            } 
         }
-
-        
+        dfs(visited, myGrid[u.x, u.y], unitMovement, isPlayer, u, tempPath);
 
         //now, visited is comprised of all the reachable tiles.
         //for each of them, highlight the tile by changing the colour to blue.
@@ -1784,11 +1797,7 @@ public class CombatGrid : MonoBehaviour
             if (mvCost > 0 && ((u.get_aff() == 2 && moveLeft >= mvCost) || ( u.get_aff() <= 1 && mvCost > 0))) 
             {
                 //if tile is in the opponent's ZoC, then it costs all remaining movement.
-                if (isPlayer && next.enemy_controlled)
-                {
-                    dfs(v, next, 0, isPlayer, u, pathTaken);
-                }
-                else if (!isPlayer && next.player_controlled)
+                if ((isPlayer && next.enemy_controlled) || (!isPlayer && next.player_controlled))
                 {
                     dfs(v, next, 0, isPlayer, u, pathTaken);
                 }
@@ -1796,9 +1805,6 @@ public class CombatGrid : MonoBehaviour
                 {
                     dfs(v, next, moveLeft - mvCost, isPlayer, u, pathTaken);
                 }
-
-                //hmm... maybe instead of just removing the latest element, we need to remove as many elements as it went deep.
-                //No: each one gets removed in turn.
                 pathTaken.RemoveAt(pathTaken.Count - 1);
             }
 

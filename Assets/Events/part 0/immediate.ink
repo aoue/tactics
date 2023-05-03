@@ -68,8 +68,8 @@ Let's end.
 ~unit_state(2, 2)
 //note: you will be setting all of the unit states here, too.
 
-~inc_stat(0, 0, 50)
-~inc_stat(0, 3, 0.05)
+//~inc_stat(0, 0, 50)
+//~inc_stat(0, 3, 0.05)
 
 
 ~play_music(0)

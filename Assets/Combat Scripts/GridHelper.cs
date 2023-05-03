@@ -170,14 +170,14 @@ public class GridHelper
                     {
                         for (int i = x_unit + 1; i < x_click + 1; i++)
                         {
-                            targetList.Add(myGrid[i, y_unit]);
+                            if (myGrid[i, y_unit] != null) targetList.Add(myGrid[i, y_unit]);
                         }
                     }
                     else
                     {
                         for (int i = x_click; i < x_unit; i++)
                         {
-                            targetList.Add(myGrid[i, y_unit]);
+                            if (myGrid[i, y_unit] != null) targetList.Add(myGrid[i, y_unit]);
                         }
                     }
                 }
@@ -190,14 +190,14 @@ public class GridHelper
                     {
                         for (int j = y_unit + 1; j < y_click + 1; j++)
                         {
-                            targetList.Add(myGrid[x_unit, j]);
+                            if (myGrid[x_unit, j] != null) targetList.Add(myGrid[x_unit, j]);
                         }
                     }
                     else
                     {
                         for (int j = y_click; j < y_unit; j++)
                         {
-                            targetList.Add(myGrid[x_unit, j]);
+                            if (myGrid[x_unit, j] != null) targetList.Add(myGrid[x_unit, j]);
                         }
                     }
                 }
@@ -205,17 +205,17 @@ public class GridHelper
             case AoEType.ALL:
                 foreach (Tile t2 in visited)
                 {
-                    targetList.Add(myGrid[t2.x, t2.y]);
+                    if (t2 != null) targetList.Add(myGrid[t2.x, t2.y]);
                 }
                 break;
             case AoEType.ADJACENT_FOUR:
                 // this one hits the target tile plus the four tiles next to it.
                 // (Have to check that each tile is within the map borders here)
-                if (within_border(x_click, y_click, map_x_border, map_y_border)) targetList.Add(myGrid[x_click, y_click]);
-                if (within_border(x_click - 1, y_click, map_x_border, map_y_border)) targetList.Add(myGrid[x_click - 1, y_click]);
-                if (within_border(x_click + 1, y_click, map_x_border, map_y_border)) targetList.Add(myGrid[x_click + 1, y_click]);
-                if (within_border(x_click, y_click - 1, map_x_border, map_y_border)) targetList.Add(myGrid[x_click, y_click - 1]);
-                if (within_border(x_click, y_click + 1, map_x_border, map_y_border)) targetList.Add(myGrid[x_click, y_click + 1]);
+                if (within_border(x_click, y_click, map_x_border, map_y_border) && myGrid[x_click, y_click] != null) targetList.Add(myGrid[x_click, y_click]);
+                if (within_border(x_click - 1, y_click, map_x_border, map_y_border) && myGrid[x_click - 1, y_click] != null) targetList.Add(myGrid[x_click - 1, y_click]);
+                if (within_border(x_click + 1, y_click, map_x_border, map_y_border) && myGrid[x_click + 1, y_click] != null) targetList.Add(myGrid[x_click + 1, y_click]);
+                if (within_border(x_click, y_click - 1, map_x_border, map_y_border) && myGrid[x_click, y_click - 1] != null) targetList.Add(myGrid[x_click, y_click - 1]);
+                if (within_border(x_click, y_click + 1, map_x_border, map_y_border) && myGrid[x_click, y_click + 1] != null) targetList.Add(myGrid[x_click, y_click + 1]);
                 break;
         }
 

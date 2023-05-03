@@ -244,9 +244,9 @@ public class Enemy : Unit
 
                 break;
             case AI.REGULAR:
-
                 foreach (Tile targetTile in targetList)
                 {
+                    if (targetTile == null) Debug.Log("ttarget tile is null.");
                     if (targetTile.occupied())
                     {
                         if (targetTile.get_heldUnit().get_isAlly())

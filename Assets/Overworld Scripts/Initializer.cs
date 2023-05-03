@@ -32,6 +32,7 @@ public class Initializer : MonoBehaviour
         u.set_maga(30);
         u.set_magd(1.0);
         u.set_exp(0);
+        /*
         u.init_learnList();
         for(int i = 0; i < u.get_traitList().Length; i++)
         {
@@ -43,6 +44,7 @@ public class Initializer : MonoBehaviour
         {
             u.get_learnedList()[i] = moveLearnState.UNKNOWN;
         }
+        */
     }
 
     void reset_friday()

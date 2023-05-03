@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6016042035377694838
+--- !u!1 &7099348790061460498
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,58 +8,58 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6016042035377694839}
-  - component: {fileID: 6016042035377694836}
+  - component: {fileID: 4408856939449294673}
+  - component: {fileID: 3498225942440549642}
   m_Layer: 0
-  m_Name: Mobbing-Piopigo
+  m_Name: Iron pincers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6016042035377694839
+--- !u!4 &4408856939449294673
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6016042035377694838}
+  m_GameObject: {fileID: 7099348790061460498}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: 0, z: 500}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6016042035377694836
+--- !u!114 &3498225942440549642
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6016042035377694838}
+  m_GameObject: {fileID: 7099348790061460498}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaccc65d1b0755f4980c13f4eba6f125, type: 3}
+  m_Script: {fileID: 11500000, guid: d755da71caf8e144ea51bba3446e61f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   traitSound: {fileID: 0}
-  traitName: Mobbing
-  descr: Piopigo are more dangerous in groups.
-  unitType: 0
-  isPassive: 1
+  traitName: Iron Pincers
+  descr: '[descr]'
+  unitType: 1
+  isPassive: 0
+  mustSetup: 0
   targeting: 0
   aoe: 0
   ignores_blocking_terrain: 0
   minimum_range: 0
-  range: 0
-  min_dmg_range: 0
-  max_dmg_range: 0
-  brkMult: 0
+  range: 1
+  min_dmg_range: 0.8
+  max_dmg_range: 1
+  brkMult: 1
   pwCost: 0
-  usesPhysAttack: 0
-  usesPhysDefense: 0
+  usesPhysAttack: 1
+  usesPhysDefense: 1
   isHeal: 0
   usesTrigger: 0
-  attached_unit_id: 0

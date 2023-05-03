@@ -83,9 +83,13 @@ public class Mission0 : Mission
         (Enemy, int, int, int, int)[] dep_array = {
            
             //first room group
-            (defEnemies[0], 2, 7, 1, 0),
-            (defEnemies[0], 4, 7, 1, 0),
-            (defEnemies[0], 5, 8, 1, 0)
+            (defEnemies[0], 0, 7, 0, 0),
+            //(defEnemies[0], 4, 7, 3, 0),
+            //(defEnemies[0], 5, 8, 3, 0)
+
+            //testing holdout
+            //(defEnemies[1], 4, 7, 0, 0)
+
         };
 
         return dep_array;
