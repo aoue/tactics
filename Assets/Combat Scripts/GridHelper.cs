@@ -16,12 +16,12 @@ public class GridHelper
     public void atk_dfs(Tile dest, HashSet<Tile> v, Tile start, int rangeLeft, int min_range, Tile[,] myGrid, int map_x_border, int map_y_border, Trait t, bool originTile)
     {
         //here, dest is the tile the unit is imagining it is on. We have to use dest.x,y instead of real x,y
-        if (Math.Abs(dest.x - start.x) + Math.Abs(dest.y - start.y) >= min_range)
+        if (Math.Abs(dest.x - start.x) + Math.Abs(dest.y - start.y) >= min_range && start.get_canBeTargeted())
         {
             v.Add(start);
         }
 
-        if (!originTile && !t.get_ignores_blocking_terrain() && start.get_blocksAttacks()) return;
+        if (!originTile && !t.get_ignores_blocking_terrain() && (start.get_blocksAttacks() || !start.get_canBeTargeted())) return;
 
         if (rangeLeft == 0) return;
 
@@ -59,7 +59,7 @@ public class GridHelper
                 //to left
                 for (int i = dest.x - 1; i > dest.x - t.get_range() - 1; i--)
                 {
-                    if (within_border(i, dest.y, map_x_border, map_y_border) && myGrid[i, dest.y] != null)
+                    if (within_border(i, dest.y, map_x_border, map_y_border) && myGrid[i, dest.y] != null && myGrid[i, dest.y].get_canBeTargeted())
                     {
                         //if the tile is valid, then add to list you can hit
                         if (Math.Abs(dest.x - i) >= t.get_min_range())
@@ -76,7 +76,7 @@ public class GridHelper
                 //to right
                 for (int i = dest.x + 1; i < dest.x + t.get_range() + 1; i++)
                 {
-                    if (within_border(i, dest.y, map_x_border, map_y_border) && myGrid[i, dest.y] != null)
+                    if (within_border(i, dest.y, map_x_border, map_y_border) && myGrid[i, dest.y] != null && myGrid[i, dest.y].get_canBeTargeted())
                     {
                         //if the tile is valid, then add to list you can hit
                         if (Math.Abs(dest.x - i) >= t.get_min_range())
@@ -93,7 +93,7 @@ public class GridHelper
                 //to top
                 for (int j = dest.y + 1; j < dest.y + t.get_range() + 1; j++)
                 {
-                    if (within_border(dest.x, j, map_x_border, map_y_border) && myGrid[dest.x, j] != null)
+                    if (within_border(dest.x, j, map_x_border, map_y_border) && myGrid[dest.x, j] != null && myGrid[dest.x, j].get_canBeTargeted())
                     {
                         if (Math.Abs(dest.y - j) >= t.get_min_range())
                         {
@@ -108,7 +108,7 @@ public class GridHelper
                 //to bottom
                 for (int j = dest.y - 1; j > dest.y - t.get_range() - 1; j--)
                 {
-                    if (within_border(dest.x, j, map_x_border, map_y_border) && myGrid[dest.x, j] != null)
+                    if (within_border(dest.x, j, map_x_border, map_y_border) && myGrid[dest.x, j] != null && myGrid[dest.x, j].get_canBeTargeted())
                     {
                         if (Math.Abs(dest.y - j) >= t.get_min_range())
                         {
@@ -127,7 +127,7 @@ public class GridHelper
                     for (int j = dest.y - 1; j < dest.y + 1 + 1; j++)
                     {
                         //if the tile is on the grid, and is not the unit's tile.
-                        if (myGrid[i, j] != null && within_border(i, j, map_x_border, map_y_border) && !(i == dest.x && j == dest.y) && Math.Abs(dest.x - i) + Math.Abs(dest.y - j) >= t.get_min_range())
+                        if (myGrid[i, j] != null && within_border(i, j, map_x_border, map_y_border) && myGrid[i, j].get_canBeTargeted() && !(i == dest.x && j == dest.y) && Math.Abs(dest.x - i) + Math.Abs(dest.y - j) >= t.get_min_range() )
                         {
                             origins.Add(myGrid[i, j]);
                         }
@@ -211,11 +211,30 @@ public class GridHelper
             case AoEType.ADJACENT_FOUR:
                 // this one hits the target tile plus the four tiles next to it.
                 // (Have to check that each tile is within the map borders here)
-                if (within_border(x_click, y_click, map_x_border, map_y_border) && myGrid[x_click, y_click] != null) targetList.Add(myGrid[x_click, y_click]);
+                targetList.Add(myGrid[x_click, y_click]);
                 if (within_border(x_click - 1, y_click, map_x_border, map_y_border) && myGrid[x_click - 1, y_click] != null) targetList.Add(myGrid[x_click - 1, y_click]);
                 if (within_border(x_click + 1, y_click, map_x_border, map_y_border) && myGrid[x_click + 1, y_click] != null) targetList.Add(myGrid[x_click + 1, y_click]);
                 if (within_border(x_click, y_click - 1, map_x_border, map_y_border) && myGrid[x_click, y_click - 1] != null) targetList.Add(myGrid[x_click, y_click - 1]);
                 if (within_border(x_click, y_click + 1, map_x_border, map_y_border) && myGrid[x_click, y_click + 1] != null) targetList.Add(myGrid[x_click, y_click + 1]);
+                break;
+            case AoEType.WAVE_3:
+                // this one hits the target tile and the two tiles adj to it that are not on the same row as the user
+                targetList.Add(myGrid[x_click, y_click]);
+                //first, we need to determine if the line is vertical or horizontal.
+                if (y_click == y_unit)
+                {
+                    //then the line is horizontal.
+                    //which means we add the tiles that are on the top and bottom
+                    if (within_border(x_click, y_click - 1, map_x_border, map_y_border) && myGrid[x_click, y_click - 1] != null) targetList.Add(myGrid[x_click, y_click - 1]);
+                    if (within_border(x_click, y_click + 1, map_x_border, map_y_border) && myGrid[x_click, y_click + 1] != null) targetList.Add(myGrid[x_click, y_click + 1]);
+                }
+                else
+                {
+                    //otherwise, the line must be vertical.
+                    //which means we add the tiles that are on the left and right
+                    if (within_border(x_click - 1, y_click, map_x_border, map_y_border) && myGrid[x_click - 1, y_click] != null) targetList.Add(myGrid[x_click - 1, y_click]);
+                    if (within_border(x_click + 1, y_click, map_x_border, map_y_border) && myGrid[x_click + 1, y_click] != null) targetList.Add(myGrid[x_click + 1, y_click]);
+                }
                 break;
         }
 

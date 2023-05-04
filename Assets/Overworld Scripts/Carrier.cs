@@ -32,7 +32,7 @@ public class Carrier : MonoBehaviour
 
     [SerializeField] private Sprite[] targetingSprites; //order: line, square, radius, self
 
-    private string[] AoELabels = {"Single", "All-between", "All", "Adjacent-Four"}; //order: single, all betweeen, all
+    private string[] AoELabels = {"Single", "All-between", "All", "Adjacent-Four", "Wave-Three"}; //corresponding to single, all_betweeen, all, wave_3
     private string[] unitTypeConverter = new string[1] { "Creature" };
     private string[] affConverter = new string[3] { "Agile", "Balanced", "Heavy" };
 

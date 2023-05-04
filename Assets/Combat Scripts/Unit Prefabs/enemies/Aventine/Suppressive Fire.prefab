@@ -51,7 +51,7 @@ MonoBehaviour:
   isPassive: 0
   mustSetup: 0
   targeting: 0
-  aoe: 3
+  aoe: 4
   ignores_blocking_terrain: 0
   minimum_range: 2
   range: 3

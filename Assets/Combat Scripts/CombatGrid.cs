@@ -361,7 +361,7 @@ public class CombatGrid : MonoBehaviour
             for(int i = u.x - u.get_controlRange(); i < u.x + u.get_controlRange() + 1; i++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
-                if (gridHelper.within_border(i, u.y, map_x_border, map_y_border) && myGrid[i, u.y] != null)
+                if (gridHelper.within_border(i, u.y, map_x_border, map_y_border) && myGrid[i, u.y] != null && myGrid[i, u.y].get_movementCost() != -1)
                 {
                     myGrid[i, u.y].player_controlled = true;
                     zocTiles.Add(myGrid[i, u.y]);
@@ -371,7 +371,7 @@ public class CombatGrid : MonoBehaviour
             for (int j = u.y - u.get_controlRange(); j < u.y + u.get_controlRange() + 1; j++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
-                if (gridHelper.within_border(u.x, j, map_x_border, map_y_border) && myGrid[u.x, j] != null)
+                if (gridHelper.within_border(u.x, j, map_x_border, map_y_border) && myGrid[u.x, j] != null && myGrid[u.x, j].get_movementCost() != -1)
                 {
                     myGrid[u.x, j].player_controlled = true;
                     zocTiles.Add(myGrid[u.x, j]);
@@ -386,7 +386,7 @@ public class CombatGrid : MonoBehaviour
             for (int i = u.x - u.get_controlRange(); i < u.x + u.get_controlRange() + 1; i++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
-                if (gridHelper.within_border(i, u.y, map_x_border, map_y_border))
+                if (gridHelper.within_border(i, u.y, map_x_border, map_y_border) && myGrid[i, u.y] != null && myGrid[i, u.y].get_movementCost() != -1)
                 {
                     myGrid[i, u.y].enemy_controlled = true;
                     zocTiles.Add(myGrid[i, u.y]);
@@ -396,7 +396,7 @@ public class CombatGrid : MonoBehaviour
             for (int j = u.y - u.get_controlRange(); j < u.y + u.get_controlRange() + 1; j++)
             {
                 //if the tile is on the grid, set tile.playerControlled to true.
-                if (gridHelper.within_border(u.x, j, map_x_border, map_y_border))
+                if (gridHelper.within_border(u.x, j, map_x_border, map_y_border) && myGrid[u.x, j] != null && myGrid[u.x, j].get_movementCost() != -1)
                 {
                     myGrid[u.x, j].enemy_controlled = true;
                     zocTiles.Add(myGrid[u.x, j]);
@@ -864,14 +864,17 @@ public class CombatGrid : MonoBehaviour
             if (playerUnits[i] != null)
             {
                 unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(1f, 1f, 1f);
-                playerUnits[i].refresh();
-            }
-            
+
+                //find out if unit is on a baseTile and pass the bool through
+                if (myGrid[playerUnits[i].x, playerUnits[i].y] is BaseTile) playerUnits[i].refresh(true);
+                else playerUnits[i].refresh(false);           
+            } 
         }
 
         foreach (Unit u in enemyUnits)
         {
-            u.refresh();
+            if (myGrid[u.x, u.y] is BaseTile) u.refresh(true);
+            else u.refresh(false);
         }
         turnPatternMarker.enabled = true;
         
@@ -1077,8 +1080,15 @@ public class CombatGrid : MonoBehaviour
         //wait while all the possible origin spots are shown.
         yield return new WaitForSeconds(enemy_pause_before_attack);
 
+        //display target highlights
+        //highlight_targets(int x_pos, int y_pos, Trait ability)
+        //Debug.Log("now about to show target highlights!");
+        highlight_targets(enemy_active_info.Item3.x, enemy_active_info.Item3.y, active_ability);
+
+        //maybe even another pause is needed here?
+
         //hide possible origin spots and proceeed with the actual attack.
-        yield return StartCoroutine(perform_attack_animation(affectedUnits, false));       
+        yield return StartCoroutine(perform_attack_animation(affectedUnits, false));
     }
     void end_enemy_turn(bool anyKills, bool isPassed)
     {
@@ -1331,7 +1341,7 @@ public class CombatGrid : MonoBehaviour
                             //remove from unit box shortcut list too
                             unit_shortcut_buttons[i].GetComponent<Image>().color = new Color(1f, 1f, 1f);
                             unit_shortcut_buttons[i].GetComponent<Image>().sprite = defaultUnitShortcutSprite;
-                            unit_shortcut_buttons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Deploy\nUnit";
+                            unit_shortcut_buttons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "";
                             break;
                         }
                     }
@@ -1631,7 +1641,7 @@ public class CombatGrid : MonoBehaviour
     }
     void highlight_targets(int x_pos, int y_pos, Trait ability)
     {
-        //highlights what square will be highlighted by a move's Ao.    
+        //highlights what square will be highlighted by a move's AoE.    
         //first; clear it.
         foreach (Tile t in targetHighlightGroup)
         {
@@ -1643,6 +1653,7 @@ public class CombatGrid : MonoBehaviour
         //(if origin tile is valid, then highlight based on that.)
         if (myGrid[x_pos, y_pos].isValid)
         {
+            //Debug.Log("highlighting targets");
             //gather all tiles based on active_ability and position
             //and highlight them
             targetHighlightGroup = gridHelper.generate_targetList(ability, myGrid, x_pos, y_pos, active_unit.x, active_unit.y, visited);

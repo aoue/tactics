@@ -48,7 +48,6 @@ MonoBehaviour:
   - {fileID: 3091262671685752835, guid: 74b805501d58d1a48841c84f74746b3f, type: 3}
   - {fileID: 6669561844638855848, guid: 80de8ee9a67fcec4e8f857e0f4fe3e6b, type: 3}
   - {fileID: 302569972232621701, guid: c17207c336cf3cf4abafb911e91a835b, type: 3}
-  allPlayerUnitsStates: 000000000000000002000000
   targetingSprites:
   - {fileID: 21300000, guid: 6a5a2f97c65304d468a08ba576e491c5, type: 3}
   - {fileID: 21300000, guid: 1ab34c96ae67ee144ae7729e143df5d8, type: 3}

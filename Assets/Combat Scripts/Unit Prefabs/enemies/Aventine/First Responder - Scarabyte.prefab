@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3116255560887603008}
   - component: {fileID: 3116255560887603009}
   m_Layer: 0
-  m_Name: First Responder
+  m_Name: First Responder - Scarabyte
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63,3 +63,4 @@ MonoBehaviour:
   usesPhysDefense: 0
   isHeal: 0
   usesTrigger: 0
+  moveBonus: 1

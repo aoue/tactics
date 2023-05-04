@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum AoEType { SINGLE, ALL_BETWEEN, ALL, ADJACENT_FOUR }
+public enum AoEType { SINGLE, ALL_BETWEEN, ALL, ADJACENT_FOUR, WAVE_3 }
 public enum TargetingType { LINE, SQUARE, RADIUS, SELF }
 public enum UnitType { NOTHING, SCARECROW, HAUNT }
 public class Trait : MonoBehaviour

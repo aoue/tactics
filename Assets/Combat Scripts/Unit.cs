@@ -98,9 +98,11 @@ public class Unit : MonoBehaviour
             }
         }
     }
-    public void refresh()
+    public void refresh(bool onBase)
     {
         //called at the start of a round.
+        //restore brk if broken
+        //restore 10% of maxhp if unit is on a base.
         hasMoved = false;
         ap = 1;
         if (brk == 0)
@@ -111,6 +113,11 @@ public class Unit : MonoBehaviour
             set_brkBar();
             unlock_sliders();
         }
+        if (onBase)
+        {
+            take_heal((int)(hpMax * 0.1));
+        }
+        set_hpBar();
         unitSprite.color = new Color(1f, 1f, 1f);
     }
     public void set_hasMoved(bool value)

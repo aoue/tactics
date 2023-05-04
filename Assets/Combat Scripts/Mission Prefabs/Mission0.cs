@@ -46,24 +46,24 @@ public class Mission0 : Mission
     {
         //returns an array representing the map
         //row, depth into that row
-        Tile[,] layout0 = new Tile[11, 11] {
-            { null, null, null, null, null, null, missionTiles[0], missionTiles[0], missionTiles[0], null, null},
-            { null, null, null, null, null, null, missionTiles[0], missionTiles[0], missionTiles[0], null, null},
-            { null, null, null, null, null, missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], null},
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0]},
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0]},
-            { null, null, null, null, null, missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], null},
-            { null, null, null, null, null, null, missionTiles[0], missionTiles[0], missionTiles[0], null, null},
-            { null, null, null, null, null, null, missionTiles[0], missionTiles[0], missionTiles[0], null, null},
-            { null, null, null, null, null, null, missionTiles[0], missionTiles[0], missionTiles[0], null, null},
-            { null, null, null, null, null, null, missionTiles[0], missionTiles[0], missionTiles[0], null, null},
-            { null, null, null, null, null, null, missionTiles[0], missionTiles[0], missionTiles[0], null, null}
+        Tile[,] layout0 = new Tile[11, 12] {
+            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
+            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[1], null},
+            { missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null},
+            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1]},
+            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1]},
+            { missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null},
+            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
+            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
+            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
+            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
+            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null}
         };
         //the mission layout will maintain this orientation in game.
         return layout0;
     }
     public override int get_layout_x_dim() { return 11; }
-    public override int get_layout_y_dim() { return 11; }
+    public override int get_layout_y_dim() { return 12; }
 
     //unit setup and reinforcements
     public override (int, int, int)[] get_deployment_spots()
@@ -84,8 +84,10 @@ public class Mission0 : Mission
            
             //first room group
             (defEnemies[0], 0, 7, 0, 0),
-            //(defEnemies[0], 4, 7, 3, 0),
-            //(defEnemies[0], 5, 8, 3, 0)
+            (defEnemies[0], 4, 7, 0, 0),
+            (defEnemies[0], 5, 8, 0, 0),
+            (defEnemies[0], 10, 6, 0, 0),
+            (defEnemies[0], 10, 7, 0, 0)
 
             //testing holdout
             //(defEnemies[1], 4, 7, 0, 0)
