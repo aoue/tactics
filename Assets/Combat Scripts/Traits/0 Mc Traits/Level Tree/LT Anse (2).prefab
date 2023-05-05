@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 657871e8e80959748b28d6d0d19f5b8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attachedMove: {fileID: 4504385311543521236, guid: da3da7d8709928c4dba9702ef7c02b23,
+  attachedMove: {fileID: 3854024242281426378, guid: 37739ec0310ca784aa3ae0726fd53b00,
     type: 3}
   learnExpCost: 10
   hp_inc: 5

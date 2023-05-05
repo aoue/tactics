@@ -226,18 +226,17 @@ public class GridHelper
                     //then the line is horizontal.
                     //which means we add the tiles that are on the top and bottom
                     if (within_border(x_click, y_click - 1, map_x_border, map_y_border) && myGrid[x_click, y_click - 1] != null) targetList.Add(myGrid[x_click, y_click - 1]);
-                    if (within_border(x_click, y_click + 1, map_x_border, map_y_border) && myGrid[x_click, y_click + 1] != null) targetList.Add(myGrid[x_click, y_click + 1]);
+                    if (within_border(x_click, y_click + 1, map_x_border, map_y_border) && myGrid[x_click, y_click + 1] != null) targetList.Add(myGrid[x_click, y_click + 1]);    
                 }
                 else
                 {
                     //otherwise, the line must be vertical.
                     //which means we add the tiles that are on the left and right
                     if (within_border(x_click - 1, y_click, map_x_border, map_y_border) && myGrid[x_click - 1, y_click] != null) targetList.Add(myGrid[x_click - 1, y_click]);
-                    if (within_border(x_click + 1, y_click, map_x_border, map_y_border) && myGrid[x_click + 1, y_click] != null) targetList.Add(myGrid[x_click + 1, y_click]);
+                    if (within_border(x_click + 1, y_click, map_x_border, map_y_border) && myGrid[x_click + 1, y_click] != null) targetList.Add(myGrid[x_click + 1, y_click]); 
                 }
                 break;
         }
-
         return targetList;
     }
 

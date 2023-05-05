@@ -55,7 +55,7 @@ MonoBehaviour:
   hpBar: {fileID: 2224677385453866844}
   brkBar: {fileID: 787137986180141067}
   box_portrait: {fileID: 0}
-  active_portrait: {fileID: 21300000, guid: 7728ca5d78843894791249fe2bd269ac, type: 3}
+  active_portrait: {fileID: 21300000, guid: 835669d0b9690ad40b450eda2ab87d6d, type: 3}
   unitName: Scarabyte
   level: 1
   exp: 4
@@ -132,7 +132,7 @@ SpriteRenderer:
   m_SortingLayerID: -480042095
   m_SortingLayer: 2
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 233e1405c7bf9af42a792b74597114ee, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c99469f9f35779f49a9fbd8ab5868494, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

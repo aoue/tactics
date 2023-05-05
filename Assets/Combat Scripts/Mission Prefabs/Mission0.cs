@@ -6,16 +6,16 @@ public class Mission0 : Mission
 {
     //The file for mission0.
     //tile legend:
-    // 0: empty/snow
-    // 1: light woods
-    // 2: left-right tracks 
-    // 3: heavy woods
-    // 4: defend tile
+    // 0: tunnel floor
+    // 1: tunnel wall
+    // 2: reinforcement tile (impassable) 
+    // 3: arrive tile
 
     //mission win/loss conditions
     public override bool is_mission_won(Unit[] pl, List<Unit> el, Tile[,] grid, int roundNumber, List<Tile> baseList)
     {
         //win if all enemies are defeated.
+        //or if arrive tile reached, but that's handled in combatgrid.
         //if (el.Count == 0) 
         if (el.Count <= 0) 
         {
@@ -46,7 +46,7 @@ public class Mission0 : Mission
     {
         //returns an array representing the map
         //row, depth into that row
-        Tile[,] layout0 = new Tile[11, 12] {
+        Tile[,] layout0 = new Tile[15, 12] {
             { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
             { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[1], null},
             { missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null},
@@ -56,13 +56,21 @@ public class Mission0 : Mission
             { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
             { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
             { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
+
+            { null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null},
+
+            { null, null, null, null, missionTiles[2], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[2], null},
+            { null, null, null, null, missionTiles[2], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[2], null},
+
+            { null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null},
+
             { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
-            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null}
+            { null, null, null, null, null, missionTiles[1], missionTiles[3], missionTiles[3], missionTiles[3], missionTiles[1], null, null}
         };
         //the mission layout will maintain this orientation in game.
         return layout0;
     }
-    public override int get_layout_x_dim() { return 11; }
+    public override int get_layout_x_dim() { return 15; }
     public override int get_layout_y_dim() { return 12; }
 
     //unit setup and reinforcements
@@ -86,12 +94,14 @@ public class Mission0 : Mission
             (defEnemies[0], 0, 7, 0, 0),
             (defEnemies[0], 4, 7, 0, 0),
             (defEnemies[0], 5, 8, 0, 0),
-            (defEnemies[0], 10, 6, 0, 0),
-            (defEnemies[0], 10, 7, 0, 0)
 
-            //testing holdout
-            //(defEnemies[1], 4, 7, 0, 0)
-
+            //final room group
+            (defEnemies[0], 12, 6, 4, 0),
+            (defEnemies[0], 12, 8, 4, 0),
+            (defEnemies[1], 11, 7, 4, 0)
+            
+            //and there are reinforcements too
+            
         };
 
         return dep_array;

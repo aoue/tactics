@@ -162,7 +162,7 @@ public class Enemy : Unit
                 foreach (Tile potential_origin in origins)
                 {
                     //generate all the units that it would hit.
-                    List<Tile> targetList = gridHelper.generate_targetList(get_traitList()[i], myGrid, potential_origin.x, potential_origin.y, x, y, visited);
+                    List<Tile> targetList = gridHelper.generate_targetList(get_traitList()[i], myGrid, potential_origin.x, potential_origin.y, dest.x, dest.y, visited);
                     int atkScore = score_attack(get_traitList()[i], targetList, brain);
                     //Debug.Log("targetList length: " + targetList.Count + " | potential origin is " + potential_origin.x + ", " + potential_origin.y + "| score is " + atkScore);
                     
@@ -190,7 +190,7 @@ public class Enemy : Unit
         if ( runningMax > 0 )
         {
             //randomly pick one of the runningMaxList, and add to move information list.
-            (int, List<Tile>, Tile) ans =  runningMaxList[UnityEngine.Random.Range(0, runningMaxList.Count)];
+            (int, List<Tile>, Tile) ans = runningMaxList[UnityEngine.Random.Range(0, runningMaxList.Count)];
             moveInformationList.Add(ans);
 
             //(keep distance, but you still want to be able to attack)
@@ -292,13 +292,7 @@ public class Enemy : Unit
         return score;
     }
 
-    //Helper functions
-    
-    
-    
-    
-    
-
+    //Getters
     public override (int, List<Tile>, Tile) get_action_information(int actionIndex)
     {
         return moveInformationList[actionIndex];

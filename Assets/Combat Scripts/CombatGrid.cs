@@ -1081,7 +1081,6 @@ public class CombatGrid : MonoBehaviour
         yield return new WaitForSeconds(enemy_pause_before_attack);
 
         //display target highlights
-        //highlight_targets(int x_pos, int y_pos, Trait ability)
         //Debug.Log("now about to show target highlights!");
         highlight_targets(enemy_active_info.Item3.x, enemy_active_info.Item3.y, active_ability);
 
@@ -1378,8 +1377,10 @@ public class CombatGrid : MonoBehaviour
         if (anyKills)
         {
             active_ability.on_kill(active_unit, totalDmg);
-            update_ZoC();
-        }               
+            
+        }
+        //update ZoC to reflect any killed or broken units
+        update_ZoC();
 
         yield return new WaitForSeconds(combat_highlights_linger);
 

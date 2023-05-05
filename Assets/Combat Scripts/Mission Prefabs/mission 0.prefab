@@ -47,7 +47,8 @@ MonoBehaviour:
   missionTiles:
   - {fileID: 8614815216704928305, guid: 7ad36552d4a3c3f4bbb9f53cf4d40b0f, type: 3}
   - {fileID: 1579138454088827572, guid: f47f1c2cacfd5f742a4a09517f76bf90, type: 3}
-  - {fileID: 5281483637158938816, guid: 9e340a6f0e49ecd41932ab5343a75fff, type: 3}
+  - {fileID: 8470355861109346430, guid: 3e5a921c2cf75944499b33c256bf30ad, type: 3}
+  - {fileID: 8592379809605444390, guid: b1fe2b2b03b0c894fb68b21c595a1244, type: 3}
   defEnemies:
   - {fileID: 1424655179639249732, guid: 0cc21903f1ef34a47a80c8112a75d524, type: 3}
   - {fileID: 6916689384517214054, guid: 2caabb8ca25084a4f904940ada6dd631, type: 3}
