@@ -978,6 +978,7 @@ public class CombatGrid : MonoBehaviour
     {
         //selects the best destination, trait, target location for chosenUnit.
         //if the unit's activation delay is > 0, though, then do nothing.
+
         if (chosenUnit.get_act_delay() > 0)
         {
             chosenUnit.dec_act_delay();

@@ -214,7 +214,7 @@ public class Enemy : Unit
     public override int score_attack(Trait t, List<Tile> targetList, BattleBrain brain)
     {
         //score a possible attack.
-
+       
         //depends a lot on ai type.
         // -foolish and regular scores all attacks as 1 (player hit), or -1 (enemy hit)
         // -elite and scores all attacks based on projected damage. Also, will never attack an ally.
@@ -225,7 +225,6 @@ public class Enemy : Unit
         switch (unitAI)
         {
             case AI.FOOLISH:
-
                 foreach (Tile targetTile in targetList)
                 {
                     if (targetTile.occupied())
@@ -235,10 +234,10 @@ public class Enemy : Unit
                             score += 100;
                             if (caresAboutKills)
                             {
-                                score = (int)(score * (2f - targetTile.get_heldUnit().get_hpPercentage()));
+                                score = (int)(score * (4f - targetTile.get_heldUnit().get_hpPercentage()));
                             }
                         }
-                        else score -= 50;
+                        else {score -= 50;}
                     }
                 }
 
@@ -246,7 +245,6 @@ public class Enemy : Unit
             case AI.REGULAR:
                 foreach (Tile targetTile in targetList)
                 {
-                    if (targetTile == null) Debug.Log("ttarget tile is null.");
                     if (targetTile.occupied())
                     {
                         if (targetTile.get_heldUnit().get_isAlly())
@@ -288,7 +286,6 @@ public class Enemy : Unit
                 }
                 break;
         }
-
         return score;
     }
 

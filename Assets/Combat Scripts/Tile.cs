@@ -14,7 +14,6 @@ public class Tile : MonoBehaviour
     [SerializeField] private int movementCost; //-1 for impassable.
     [SerializeField] private float coverReduction; //high means more dmg reduction. From 0 to 1.
     [SerializeField] private string descr;
-    [SerializeField] private bool unitBehindActualImage;
 
     //for highlight and marking zoc, targeting, etc. start disabled.
     [SerializeField] private SpriteRenderer highlightLayer; //used to highlight the tile either light blue (for movement), green (for heal move), or red (for attack move)
@@ -54,24 +53,10 @@ public class Tile : MonoBehaviour
     public void place_unit(Unit u)
     {
         heldUnit = u;
-        if (unitBehindActualImage)
-        {
-            //then set actual image alpha to 0.5
-            Color tempColor = gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color;
-            tempColor.a = 0.5f;
-            gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = tempColor;
-        }
     }
     public void remove_unit()
     {
         heldUnit = null;
-        if (unitBehindActualImage)
-        {
-            //then set actual image alpha to 1
-            Color tempColor = gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color;
-            tempColor.a = 1f;
-            gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = tempColor;
-        }
     }
     public bool occupied()
     {

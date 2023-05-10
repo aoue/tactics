@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum AoEType { SINGLE, ALL_BETWEEN, ALL, ADJACENT_FOUR, WAVE_3 }
 public enum TargetingType { LINE, SQUARE, RADIUS, SELF }
-public enum UnitType { NOTHING, SCARECROW, HAUNT }
+public enum UnitType { NOTHING, SCARECROW, HAUNT, WEAVER }
 public class Trait : MonoBehaviour
 {
     //passive and abilities.
