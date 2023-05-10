@@ -48,32 +48,20 @@ public class Mission0 : Mission
     {
         //returns an array representing the map
         //row, depth into that row
-        Tile[,] layout0 = new Tile[15, 12] {
-            { null, null, null, null, null, missionTiles[1], missionTiles[2], missionTiles[2], missionTiles[2], missionTiles[1], null, null},
-            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
-            { missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null},
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[4], missionTiles[0], missionTiles[0], missionTiles[5], missionTiles[0], missionTiles[0], missionTiles[1]},
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[5], missionTiles[0], missionTiles[1]},
-            { missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null},
-            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
-            { null, null, null, null, null, missionTiles[1], missionTiles[5], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
-            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
-
-            { null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null},
-
-            { null, null, null, null, missionTiles[2], missionTiles[0], missionTiles[4], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1]},
-            { null, null, null, null, missionTiles[2], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[4], missionTiles[0], missionTiles[0], missionTiles[1]},
-
-            { null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null},
-
-            { null, null, null, null, null, missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], null, null},
-            { null, null, null, null, null, missionTiles[1], missionTiles[3], missionTiles[3], missionTiles[3], missionTiles[1], null, null}
+        Tile[,] layout0 = new Tile[7, 5] {
+            { missionTiles[1], missionTiles[0], missionTiles[5], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] }
         };
         //the mission layout will maintain this orientation in game.
         return layout0;
     }
-    public override int get_layout_x_dim() { return 15; }
-    public override int get_layout_y_dim() { return 12; }
+    public override int get_layout_x_dim() { return 5; }
+    public override int get_layout_y_dim() { return 5; }
 
     //unit setup and reinforcements
     public override (int, int, int)[] get_deployment_spots()
@@ -81,8 +69,8 @@ public class Mission0 : Mission
         //returns an array of unit IDs and coords representing unit starting spots.
         //unit id, row, depth into that row (if no unit with the id in reserve party, then we fail silently. all good)
         (int, int, int)[] dep_array = {
-            (0, 3, 2),
-            (1, 4, 2)
+            //(0, 3, 2),
+            (1, 0, 1)
         };
         return dep_array;
     }
@@ -93,15 +81,16 @@ public class Mission0 : Mission
         (Enemy, int, int, int, int)[] dep_array = {
            
             //first room group
-            (defEnemies[0], 0, 7, 0, 0),
-            (defEnemies[0], 4, 7, 0, 0),
-            (defEnemies[0], 5, 8, 0, 0),
+            (defEnemies[0], 1, 2, 0, 0),
+            (defEnemies[0], 2, 3, 0, 0),
+            (defEnemies[0], 0, 3, 0, 0)
 
+            /*
             //final room group, sleeping 4
             (defEnemies[0], 12, 6, 4, 0),
             (defEnemies[0], 12, 8, 4, 0),
             (defEnemies[1], 11, 7, 4, 0)
-            
+            */
             //and there are reinforcements too
             
         };

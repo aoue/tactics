@@ -175,7 +175,7 @@ SpriteRenderer:
   m_Size: {x: 2, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6281772272875594679
@@ -240,7 +240,6 @@ MonoBehaviour:
   movementCost: 2
   coverReduction: 0.2
   descr: The scattered boxes provide slight cover.
-  unitBehindActualImage: 0
   highlightLayer: {fileID: 1904667572332340068}
   targetIcon: {fileID: 6990453053382342198}
   zocRenderer: {fileID: 4356628264042783428}
@@ -294,7 +293,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: ce7e451599b26d142be15d9000b7b1b7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0655e65469c8b2a4686c10d38d607db1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -446,7 +445,7 @@ RectTransform:
   m_GameObject: {fileID: 8561427809800204041}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.9, y: 1.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6281772272875594667}
@@ -455,7 +454,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2, y: 2}
+  m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &1904667572332340068
 SpriteRenderer:
@@ -498,12 +497,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 29097b3f051049f409c6b3c0fd307564, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4778588f0a52afa4987eb110683df4df, type: 3}
   m_Color: {r: 0, g: 1, b: 1, a: 0.38039216}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

@@ -20,6 +20,7 @@ public class CombatGrid : MonoBehaviour
     private const float combat_hpBar_linger = 0.05f; //how long we wait for the period between hpbars finishing decreasing and then dead/broken units being removed/updated
     private const float combat_highlights_linger = 0.5f; //how long we wait for the period between dead/broken units being removed/updated and target highlights being unhighlighted
     private bool animating; //true while animating. Disables player input.
+    private const float tile_dimension = 2f;
 
     [SerializeField] private MissionManager missionList; //all missions.
     private Mission loadedMission;
@@ -239,7 +240,7 @@ public class CombatGrid : MonoBehaviour
     //Display
     public Vector3 get_pos_from_coords(int x, int y)
     { 
-        return new Vector3(2 * y, 2 * (map_x_border - 1 - x), 0f); 
+        return new Vector3(tile_dimension * y, tile_dimension * (map_x_border - 1 - x), 0f); 
     }
     public void display_grid(Mission m)
     {
@@ -1761,8 +1762,8 @@ public class CombatGrid : MonoBehaviour
                 //reject all non-adjacent tiles.
                 if (Math.Abs(i) + Math.Abs(j) != 1) continue;
                 
-                //if on the map and not null
-                if (gridHelper.within_border(start.x + i, start.y + j, map_x_border, map_y_border) && myGrid[start.x + i, start.y + j] != null)
+                //if on the map and not null AND not occupied by an enemy
+                if (gridHelper.within_border(start.x + i, start.y + j, map_x_border, map_y_border) && myGrid[start.x + i, start.y + j] != null && (myGrid[start.x + i, start.y + j].get_heldUnit() == null || myGrid[start.x + i, start.y + j].get_heldUnit().get_isAlly()))
                 {
                     if (myGrid[start.x + i, start.y + j].path == null) myGrid[start.x + i, start.y + j].path = new List<Tile>();
                     //overwrite tile's path IF: 
