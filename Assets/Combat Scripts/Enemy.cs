@@ -305,7 +305,7 @@ public class Enemy : Unit
         if (x > 0) 
         {
             sleepSpriteRenderer.enabled = true;
-            sleepSpriteRenderer.color = new Color(0f, 0f, 0f);
+            //sleepSpriteRenderer.color = new Color(0f, 0f, 0f);
         }
         else sleepSpriteRenderer.enabled = false;
     }

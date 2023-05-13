@@ -1267,7 +1267,7 @@ public class CombatGrid : MonoBehaviour
                 {
                     int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, playerUnits);
                     totalDmg += dmg;
-                    target.take_dmg(dmg, active_ability.get_brkMult());
+                    target.take_dmg(dmg, active_ability.get_brkOffset());
                     //show damage numbers
                     
                     DamageFloater d = Instantiate(dmgFloater, target.gameObject.transform.position, Quaternion.identity);
@@ -1280,7 +1280,7 @@ public class CombatGrid : MonoBehaviour
                 {
                     int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, enemyUnits.ToArray());
                     totalDmg += dmg;
-                    target.take_dmg(dmg, active_ability.get_brkMult());  
+                    target.take_dmg(dmg, active_ability.get_brkOffset());
                     //show damage numbers
                     DamageFloater d = Instantiate(dmgFloater, target.gameObject.transform.position, Quaternion.identity);
                     d.setup(dmg.ToString(), true, combat_hpBar_duration);

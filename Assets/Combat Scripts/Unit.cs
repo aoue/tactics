@@ -33,9 +33,9 @@ public class Unit : MonoBehaviour
     [SerializeField] private int controlRangeBase; //tiles outward that their ZoC extends in each direction. Real value. 
     private int controlRange; //tiles outward that their ZoC extends in each direction. Set to 0 when unit broken.
     [SerializeField] private int phys_atk;
-    [SerializeField] private double phys_def;
+    [SerializeField] private int phys_def;
     [SerializeField] private int magic_atk;
-    [SerializeField] private double magic_def;
+    [SerializeField] private int magic_def;
 
     //state
     private bool hasMoved; //true if the unit has moved (like, over tiles) this turn, false otherwise.
@@ -87,9 +87,6 @@ public class Unit : MonoBehaviour
         {
             if (t != null)
             {
-                //reset triggered state
-                t.reset_triggered();
-
                 //add to unit's trait list
                 if (t.get_unitType() != UnitType.NOTHING)
                 {
@@ -124,7 +121,7 @@ public class Unit : MonoBehaviour
     {
         hasMoved = value;
     }
-    public void take_dmg(int dmg, float brkMultiplier)
+    public void take_dmg(int dmg, int brkOffset)
     {
         //causes dmg to the unit.
         //Any dmg is dealt to both hp and brk.
@@ -134,7 +131,7 @@ public class Unit : MonoBehaviour
 
         if (!isBroken)
         {
-            brk = Math.Max(0, (brk - (int)(dmg * brkMultiplier)));
+            brk = Math.Max(0, brk - (dmg + brkOffset));
             if (brk == 0)
             {
                 brk_self();
@@ -165,13 +162,13 @@ public class Unit : MonoBehaviour
     {
         //updates the hpbar:
         //set the scale of the sprite to hp / hpmax
-        hpBar.localScale = new Vector3((float)hp / (float)hpMax, 1f);
+        hpBar.localScale = new Vector3((float)hp / (float)hpMax, 0.4f);
     }
     void set_brkBar()
     {
         //updates the hpbar:
         //set the scale of the sprite to hp / hpmax
-        brkBar.localScale = new Vector3((float)brk / (float)brkMax, 0.5f);
+        brkBar.localScale = new Vector3((float)brk / (float)brkMax, 0.4f);
     }
     public void unlock_sliders()
     {
@@ -234,9 +231,9 @@ public class Unit : MonoBehaviour
     public int get_level() { return level; }
     public int get_exp() { return exp; }
     public int get_physa() { return phys_atk; }
-    public double get_physd() { return phys_def; }
+    public int get_physd() { return phys_def; }
     public int get_maga() { return magic_atk; }
-    public double get_magd() { return magic_def; }
+    public int get_magd() { return magic_def; }
     public bool get_hasMoved() {return hasMoved; }
     public bool get_isDead() { return isDead; }
     public bool get_isBroken() { return isBroken; }
@@ -250,9 +247,9 @@ public class Unit : MonoBehaviour
     public void set_hpMax(int x) { hpMax = x; }
     public void set_brkMax(int x) { brkMax = x; }
     public void set_physa(int x) { phys_atk = x; }
-    public void set_physd(double x) { phys_def = x; }
+    public void set_physd(int x) { phys_def = x; }
     public void set_maga(int x) { magic_atk = x; }
-    public void set_magd(double x) { magic_def = x; }
+    public void set_magd(int x) { magic_def = x; }
     public void init_learnList() { learnedList = new moveLearnState[24]; }
 
     //virtuals (for enemy AI)

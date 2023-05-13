@@ -53,14 +53,12 @@ public class Trait : MonoBehaviour
     [SerializeField] private bool ignores_blocking_terrain; //if true, then the move is not affected by tiles that block attacks
     [SerializeField] private int minimum_range; //used for validating tiles when attacking. Can only hit a tile where manhattan distance is >= x tiles away/
     [SerializeField] private int range; //determines how far the attack can reach
-    [SerializeField] private float min_dmg_range; //floor of random dmg distribution range.
-    [SerializeField] private float max_dmg_range; //ceiling of random dmg distribution range.
-    [SerializeField] private float brkMult; //determines the amount of brk dmg dealt.
+    [SerializeField] private int[] dmg_range; //rolls for possible range.
+    [SerializeField] private int brkOffset; //determines the amount of brk dmg dealt.
     [SerializeField] private int pwCost; //the power cost to use the move.
     [SerializeField] private bool usesPhysAttack; //on true, use attacker's phys attack for dmg calc. On false, use attacker's mag attack.
     [SerializeField] private bool usesPhysDefense; //on true, use target's phys def for dmg calc. On false, use target's mag def.
     [SerializeField] private bool isHeal;
-    [SerializeField] private bool usesTrigger; //if true, then can only be used once per deployment.
 
     //state
     //set to true in the relevant function, if applicable. Set to false in unit.start_of_mission()
@@ -149,20 +147,6 @@ public class Trait : MonoBehaviour
         if (isPassive)
         {
             buildStr += "Passive";
-
-            if (usesTrigger)
-            {
-                
-                if (triggered)
-                {
-                    buildStr += " (already used)";
-                }
-                else
-                {
-                    buildStr += " (not yet used)";
-                }
-            }
-
         }
         else
         {
@@ -171,15 +155,22 @@ public class Trait : MonoBehaviour
             if (isHeal) buildStr += " Support Ability";
             else buildStr += " Attack Ability";
 
-            if (usesPhysAttack) buildStr += "| Phys Atk vs. ";           
-            else buildStr += "| EAC Atk vs. ";
+            if (usesPhysAttack) buildStr += "| ATK vs. ";           
+            else buildStr += "| HAC vs. ";
             
-            if (usesPhysDefense) buildStr += " Phys Def";
-            else buildStr += " EAC Def";
+            if (usesPhysDefense) buildStr += " DEF";
+            else buildStr += " ICE";
 
             if (mustSetup) buildStr += "(Setup Required) | ";
 
-            string powerStr = get_min_dmg_range() + "-" + get_max_dmg_range();
+            string powerStr = "DMG: [";
+            for (int i = 0; i < dmg_range.Length; i++)
+            {
+                powerStr += dmg_range[i];
+                if (i < dmg_range.Length - 1) powerStr += "-";
+            }
+            powerStr += "]";
+
             buildStr += "\n" + powerStr + "x Force | " + pwCost + " cost.";
         }
 
@@ -199,15 +190,13 @@ public class Trait : MonoBehaviour
     public int get_min_range() { return minimum_range; }
     public int get_range() { return range; }
     public int get_minimum_range() { return minimum_range; }
-    public float get_min_dmg_range() { return min_dmg_range; }
-    public float get_max_dmg_range() { return max_dmg_range; }
-    public float get_brkMult() { return brkMult; }
+    public int[] get_dmg_range() { return dmg_range; }
+    public int get_brkOffset() { return brkOffset; }
     public int get_pwCost() { return pwCost; }
     public bool get_usesPhysAttack() { return usesPhysAttack; }
     public bool get_usesPhysDefense() { return usesPhysDefense; }
     public bool get_isHeal() { return isHeal; }
     public UnitType get_unitType() { return unitType; }
-    public void reset_triggered() { triggered = false; }
     public bool get_ignores_blocking_terrain() { return ignores_blocking_terrain; }
 
 }

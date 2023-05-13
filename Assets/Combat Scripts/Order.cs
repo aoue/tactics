@@ -56,13 +56,13 @@ public class Order : MonoBehaviour
     }
 
     //called when player is attacking in battleBrain to influence the cover modifier
-    public virtual float order_coverMod_offense(float coverMod)
+    public virtual int order_coverMod_offense(int coverMod)
     {
         //here, you would say: ignores defensive bonuses from cover
         return coverMod;
     }
     //called when player is defending in battleBrain to influence the cover modifier
-    public virtual float order_coverMod_defense(float coverMod)
+    public virtual int order_coverMod_defense(int coverMod)
     {
         //here, you would say: receive double defensive bonuses from cover
         return coverMod;
@@ -73,7 +73,7 @@ public class Order : MonoBehaviour
     {
         return physa;
     }
-    public virtual double order_physd(double physd)
+    public virtual int order_physd(int physd)
     {
         return physd;
     }
@@ -81,7 +81,7 @@ public class Order : MonoBehaviour
     {
         return maga;
     }
-    public virtual double order_magd(double magd)
+    public virtual int order_magd(int magd)
     {
         return magd;
     }

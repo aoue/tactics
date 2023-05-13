@@ -41,11 +41,11 @@ public class BattleBrain
             else atk = u1.get_maga();
         }
 
-        double def;
+        int def;
         double coverMod;
         if (playerAttacking)
         {
-            coverMod = order.order_coverMod_offense(1f - occupied_tile.get_cover());
+            coverMod = order.order_coverMod_offense(occupied_tile.get_cover());
 
             if (t.get_usesPhysDefense()) def = u2.get_physd();
             else def = u2.get_magd();
@@ -57,26 +57,20 @@ public class BattleBrain
                 if (t.get_usesPhysDefense()) def = order.order_physd(u2.get_physd());
                 else def = order.order_magd(u2.get_magd());
 
-                coverMod = order.order_coverMod_defense(1f - occupied_tile.get_cover());
+                coverMod = order.order_coverMod_defense(occupied_tile.get_cover());
             }
             else
             {
                 if (t.get_usesPhysDefense()) def = u2.get_physd();
                 else def = u2.get_magd();
 
-                coverMod = 1f - occupied_tile.get_cover();
+                coverMod = occupied_tile.get_cover();
             }
         }
 
-        //integer damage formula:
-        //Debug.Log("performing attack calc. u1 aff =" + u1.get_aff() + " | u2 aff =" + u2.get_aff() + "| aff mult = " + affinityMultArray[u1.get_aff(), u2.get_aff()]);
-        //int dmg = Mathf.Max(1, (int)((u1.get_level() + atk + t.get_power() - def) * coverMod * affinityMultArray[u1.get_aff(), u2.get_aff()] * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
-
-        //multiplicative damage formula:
-        //int dmg = Mathf.Max(1, (int)((2 * atk * (t.get_power() + (u1.get_level() * 2)) / (1.5f * def)) * coverMod * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range()) * affinityMultArray[u1.get_aff(), u2.get_aff()]));
-
-        //integer + defense mult damage formula:
-        int dmg = Mathf.Max(1, (int)((u1.get_level() + atk) * def * coverMod * affinityMultArray[u1.get_aff(), u2.get_aff()] * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
+        //damage formula: dmg = roll + user's atk - target's def
+        int dmg_range_roll = t.get_dmg_range()[UnityEngine.Random.Range(0, t.get_dmg_range().Length)];
+        int dmg = dmg_range_roll + atk - def;
 
         if (order != null) dmg = order.order_damage(dmg);
 
@@ -102,9 +96,8 @@ public class BattleBrain
                 }
             }
         }
-        
 
-        return dmg;
+        return Math.Max(1, dmg);
     }
     public int calc_heal(Unit u1, Unit u2, Trait t, bool playerAttacking, Order order)
     {
@@ -130,8 +123,9 @@ public class BattleBrain
         }
 
 
-        //integer based formula
-        int heal = Mathf.Max(1, (int)((u1.get_level() + atk) * UnityEngine.Random.Range(t.get_min_dmg_range(), t.get_max_dmg_range())));
+        //damage formula: dmg = roll + user's atk - target's def
+        int dmg_range_roll = t.get_dmg_range()[UnityEngine.Random.Range(0, t.get_dmg_range().Length)];
+        int heal = dmg_range_roll + atk;
 
         if (order != null) heal = order.order_heal(heal);
 
@@ -155,7 +149,7 @@ public class BattleBrain
             }
         }
 
-        return heal;
+        return Math.Max(1, heal);
     }
 
 

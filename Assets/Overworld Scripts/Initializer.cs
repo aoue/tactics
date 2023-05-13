@@ -25,14 +25,14 @@ public class Initializer : MonoBehaviour
     void reset_anse()
     {
         Unit u = Carrier.Instance.get_allUnitList()[0];
-        u.set_hpMax(100);
-        u.set_brkMax(55);
-        u.set_physa(30);
-        u.set_physd(1.0);
-        u.set_maga(30);
-        u.set_magd(1.0);
+        u.set_hpMax(8);
+        u.set_brkMax(4);
+        u.set_physa(1);
+        u.set_physd(1);
+        u.set_maga(1);
+        u.set_magd(1);
         u.set_exp(0);
-        /*
+        
         u.init_learnList();
         for(int i = 0; i < u.get_traitList().Length; i++)
         {
@@ -44,18 +44,18 @@ public class Initializer : MonoBehaviour
         {
             u.get_learnedList()[i] = moveLearnState.UNKNOWN;
         }
-        */
+        
     }
 
     void reset_friday()
     {
         Unit u = Carrier.Instance.get_allUnitList()[1];
-        u.set_hpMax(90);
-        u.set_brkMax(50);
-        u.set_physa(40);
-        u.set_physd(1.0);
-        u.set_maga(5);
-        u.set_magd(1.0);
+        u.set_hpMax(7);
+        u.set_brkMax(4);
+        u.set_physa(1);
+        u.set_physd(0);
+        u.set_maga(0);
+        u.set_magd(2);
         u.set_exp(0);
         u.init_learnList();
         for(int i = 0; i < u.get_traitList().Length; i++)

@@ -14346,7 +14346,6 @@ MonoBehaviour:
   unitTrees:
   - {fileID: 6560460232150501052, guid: 683fb6fbdbeae1049a2ad0d23514f749, type: 3}
   - {fileID: 5562344746360802144, guid: 926d490c349858d468d14f5c387fb607, type: 3}
-  - {fileID: 5562344746360802144, guid: 926d490c349858d468d14f5c387fb607, type: 3}
   levelTreeButtons:
   - {fileID: 1091211157}
   - {fileID: 1765222154}

@@ -12,7 +12,7 @@ public class Tile : MonoBehaviour
     [SerializeField] private bool blocksAttacks;
     [SerializeField] private bool canBeTargeted;
     [SerializeField] private int movementCost; //-1 for impassable.
-    [SerializeField] private float coverReduction; //high means more dmg reduction. From 0 to 1.
+    [SerializeField] private int coverReduction; //int dmg reduction or increase
     [SerializeField] private string descr;
 
     //for highlight and marking zoc, targeting, etc. start disabled.
@@ -179,6 +179,6 @@ public class Tile : MonoBehaviour
     public int get_movementCost() { return movementCost; }
     public string get_tileName() { return tileName; }
     public string get_descr() { return descr; }
-    public float get_cover() { return coverReduction; }
+    public int get_cover() { return coverReduction; }
     public Unit get_heldUnit() { return heldUnit; }
 }

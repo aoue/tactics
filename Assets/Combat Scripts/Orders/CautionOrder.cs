@@ -8,12 +8,12 @@ public class CautionOrder : Order
 
     //called at the start of damage calculations in battlebrain to influence each individual stat.
 
-    public override double order_physd(double physd)
+    public override int order_physd(int physd)
     {
-        return (physd / 1.3f);
+        return (physd + 1);
     }
-    public override double order_magd(double magd)
+    public override int order_magd(int magd)
     {
-        return (magd / 1.3f);
+        return (magd + 1);
     }
 }

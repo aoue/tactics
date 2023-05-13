@@ -20,9 +20,9 @@ public class LevelTreeMove : MonoBehaviour
     [SerializeField] private int hp_inc; // hpmax
     [SerializeField] private int brk_inc; // brkmax
     [SerializeField] private int pa_inc; // phys atk
-    [SerializeField] private float pd_inc; // phys def
+    [SerializeField] private int pd_inc; // phys def
     [SerializeField] private int ma_inc; // mag atk
-    [SerializeField] private float md_inc; // mag def
+    [SerializeField] private int md_inc; // mag def
     
     // called when the move is learned, permanently increasing unit stats.
     public void learn_increases(Unit u)

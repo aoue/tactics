@@ -46,8 +46,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   traitSound: {fileID: 0}
   traitName: Attachment-Anse
-  descr: Likes being near Anse, for some reason. Deals 25% more and takes 25% less
-    damage when in 2 range of him.
+  descr: Likes being near Anse, for some reason. Deals 1 more damage and takes 1
+    less damage when in 2 range of him.
   unitType: 0
   isPassive: 1
   mustSetup: 0
@@ -56,12 +56,10 @@ MonoBehaviour:
   ignores_blocking_terrain: 0
   minimum_range: 0
   range: 0
-  min_dmg_range: 0
-  max_dmg_range: 0
-  brkMult: 0
+  dmg_range: 
+  brkOffset: 0
   pwCost: 0
   usesPhysAttack: 0
   usesPhysDefense: 0
   isHeal: 0
-  usesTrigger: 0
   unitNameStr: Anse

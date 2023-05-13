@@ -84,7 +84,6 @@ public class LevelTreeManager : MonoBehaviour
         moveIncText.text = "";
         developmentTitle.text = "Development - " + u.get_unitName();
 
-
         // set the state of all the levelTreeButtons. They are one of:
         // -(temp) no move in slot: hide button
         // -learned. Button can be clicked.
@@ -93,7 +92,7 @@ public class LevelTreeManager : MonoBehaviour
         // -unknown. button cannot be clicked (yet)
         for (int i = 0; i < levelTreeButtons.Length && i < currentTree.get_treeMoves().Length; i++)
         {
-            // Debug.Log("the state of u.get_learnedList()[" + i + "] is " + u.get_learnedList()[i]);
+            //Debug.Log("the state of u.get_learnedList()[" + i + "] is " + u.get_learnedList()[i]);
             if (currentTree.get_treeMoves()[i] == null)
             {
                 levelTreeButtons[i].gameObject.SetActive(false);
@@ -104,7 +103,7 @@ public class LevelTreeManager : MonoBehaviour
                 // -CAN_LEARN: the move can be can be clicked
                 // -LEARNED: the move can be clicked
                 // -CANNOT_LEARN and UNKNOWN: the move cannot be clicked
-                levelTreeButtons[i].gameObject.SetActive(true);
+                levelTreeButtons[i].gameObject.SetActive(true);        
                 if(u.get_learnedList()[i] == moveLearnState.CANNOT_LEARN || u.get_learnedList()[i] == moveLearnState.UNKNOWN)
                 {
                     levelTreeButtons[i].interactable = false;
@@ -281,10 +280,10 @@ public class LevelTreeManager : MonoBehaviour
 
         unitStatText.text = "HP: " +  u.get_hpMax()
                 + "\nBRK: " + u.get_brkMax()
-                + "\nPhys Atk: " + u.get_physa()
-                + "\nPhys Def: " + (100f - (u.get_physd() * 100f))
-                + "%\nEAC Atk: " + u.get_maga()
-                + "\nEAC Def: " + (100f - (u.get_magd() * 100f))
+                + "\nATK: " + u.get_physa()
+                + "\nDEF: " + u.get_physd()
+                + "\nHAC: " + u.get_maga()
+                + "\nICE: " + u.get_magd()
                 + "%\n\n" + buildUnitTypeStr;
         displayExp();
     }

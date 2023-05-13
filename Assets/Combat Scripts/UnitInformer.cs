@@ -110,18 +110,18 @@ public class UnitInformer : MonoBehaviour
             {
                 if (u.get_act_delay() > 0)
                 {
-                    stats_1.text += "\n\nStartup in —<i>" + u.get_act_delay() + " rounds</i>";
+                    stats_1.text += "\n\nReady in —<i>" + u.get_act_delay() + " rounds</i>";
                 }
             }
 
-            stats_2.text = "Phys Atk: " + u.get_physa()
-                + "\nPhys Def: " + (100f - (u.get_physd() * 100f))
-                + "%\nEAC Atk: " + u.get_maga()
-                + "\nEAC Def: " + (100f - (u.get_magd() * 100f)) + "%";
+            stats_2.text = "\nATK: " + u.get_physa()
+                + "\nDEF: " + u.get_physd()
+                + "\nHAC: " + u.get_maga()
+                + "\nICE: " + u.get_magd();
 
             active_portrait.gameObject.SetActive(true);
 
-            //trait-abiltiy window           
+            //trait-abiltiy window
             for (int i = 0; i < traitButtons.Length; i++)
             {               
                 //fill trait-ability button text.

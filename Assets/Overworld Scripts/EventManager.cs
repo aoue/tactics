@@ -633,7 +633,7 @@ public class EventManager : MonoBehaviour
         {
             this.set_unit_state(unit_id, val);
         });
-        script.BindExternalFunction("inc_stat", (int unit_id, int stat_id, float val) =>
+        script.BindExternalFunction("inc_stat", (int unit_id, int stat_id, int val) =>
         {
             this.inc_unit_stat(unit_id, stat_id, val);
         });
@@ -911,31 +911,31 @@ public class EventManager : MonoBehaviour
         //sets the availability of units in the level tree. 0: fully, 1: visible but not clickable, 2: not visible or clickable
         Carrier.Instance.get_allUnitStates()[unit_id] = val;
     }
-    void inc_unit_stat(int unit_id, int stat_id, float val)
+    void inc_unit_stat(int unit_id, int stat_id, int val)
     {
         Unit u = Carrier.Instance.get_allUnitList()[unit_id];
         switch(stat_id)
         {
             case 0:
-                u.set_hpMax(u.get_hpMax() + (int)val);
+                u.set_hpMax(u.get_hpMax() + val);
                 break;
             case 1:
-                u.set_brkMax(u.get_brkMax() + (int)val);
+                u.set_brkMax(u.get_brkMax() + val);
                 break;
             case 2:
-                u.set_physa(u.get_physa() + (int)val);
+                u.set_physa(u.get_physa() + val);
                 break;
             case 3:
-                u.set_physd(Math.Round(u.get_physd() - val, 2));
+                u.set_physd(u.get_physd() + val);
                 break;
             case 4:
-                u.set_maga(u.get_maga() + (int)val);
+                u.set_maga(u.get_maga() + val);
                 break;
             case 5:
-                u.set_magd(Math.Round(u.get_magd() - val, 2));
+                u.set_magd(u.get_magd() + val);
                 break;
             case 6:
-                u.set_exp(u.get_exp() + (int)val);
+                u.set_exp(u.get_exp() + val);
                 break;
         }
     }
