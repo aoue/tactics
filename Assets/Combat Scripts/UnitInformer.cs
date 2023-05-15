@@ -17,19 +17,17 @@ public class UnitInformer : MonoBehaviour
     [SerializeField] private Image active_portrait;    
     [SerializeField] private Text nameText;
     [SerializeField] private Text unitTypesText;
-    [SerializeField] private Image affImage;
-    [SerializeField] private Text stats_1; //the main stats view. hp, brk, mvmt.
+    [SerializeField] private Text stats_1; //the first column of main stats view; hp, brk, mvmt, control.
+    [SerializeField] private Text stats_2; //the second column of main stats view; patk, pdef, maga, magd
+    [SerializeField] private Text order_text; //the third column of main stats view; order text
 
-    //side display
-    [SerializeField] private Text stats_2; //the side stats view. patk, pdef, maga, magd
+    //side display 
     [SerializeField] private Image targetingImage; //from Targeting type
     [SerializeField] private Text targetingLabel; //from AoE Type
     [SerializeField] private Text traitName;
     [SerializeField] private Text traitdescr; //three lines.
     [SerializeField] private Button[] traitButtons; //four buttons.
     [SerializeField] private Button passButton; 
-
-
 
     private Unit heldUnit; //the locked unit.
     public void set_heldUnit(Unit u)
@@ -77,7 +75,7 @@ public class UnitInformer : MonoBehaviour
             active_portrait.sprite = u.get_active_p();
 
             //main stats window
-            string buildUnitTypeStr = Carrier.Instance.get_affConverter()[u.get_aff()];
+            string buildUnitTypeStr = "";
             
             HashSet<UnitType> addedTypes = new HashSet<UnitType>();
             foreach(Trait t in u.get_traitList())
@@ -91,18 +89,17 @@ public class UnitInformer : MonoBehaviour
             }
             nameText.text = u.get_unitName();
             unitTypesText.text = buildUnitTypeStr;
-            affImage.sprite = affSprites[u.get_aff()];
 
-            stats_1.text = "HP: " + u.get_hp() + " / " + u.get_hpMax()
-                + "\nBRK: " + u.get_brk() + " / " + u.get_brkMax()
-                + "\nMovement: " + u.get_movement()
-                + "\nControl: " + u.get_controlRange();
+            stats_1.text = "HP." + u.get_hp() + "o" + u.get_hpMax()
+                + "\nBRK." + u.get_brk() + "o" + u.get_brkMax()
+                + "\nMVMT." + u.get_movement()
+                + "\nCTRL." + u.get_controlRange();
 
             if (u.get_isAlly())
             {
                 if (u.get_unitOrder() != null)
                 {
-                    stats_1.text += "\n\nOrder—" + u.get_unitOrder().get_orderName()
+                    order_text.text = u.get_unitOrder().get_orderName()
                     + "\n<i>" + u.get_unitOrder().get_orderDescr() + "</i>";
                 }
             }
@@ -110,14 +107,14 @@ public class UnitInformer : MonoBehaviour
             {
                 if (u.get_act_delay() > 0)
                 {
-                    stats_1.text += "\n\nReady in —<i>" + u.get_act_delay() + " rounds</i>";
+                    order_text.text += "Ready in —<i>" + u.get_act_delay() + " rounds</i>";
                 }
             }
 
-            stats_2.text = "\nATK: " + u.get_physa()
-                + "\nDEF: " + u.get_physd()
-                + "\nHAC: " + u.get_maga()
-                + "\nICE: " + u.get_magd();
+            stats_2.text = "ATK." + u.get_physa()
+                + "\nDEF." + u.get_physd()
+                + "\nHAC." + u.get_maga()
+                + "\nICE." + u.get_magd();
 
             active_portrait.gameObject.SetActive(true);
 

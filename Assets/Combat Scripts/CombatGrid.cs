@@ -7,7 +7,7 @@ using System.Linq; //for List.Min()
 using UnityEngine.SceneManagement;
 
 
-enum State { SELECT_UNIT, SELECT_MOVEMENT, SELECT_TARGET, ENEMY, BETWEEN_ROUNDS };
+public enum State { SELECT_UNIT, SELECT_MOVEMENT, SELECT_TARGET, ENEMY, BETWEEN_ROUNDS };
 public class CombatGrid : MonoBehaviour
 {
     //responsible for instantiating and managing the combat grid, and for general combat control.
@@ -19,6 +19,7 @@ public class CombatGrid : MonoBehaviour
     private const float combat_hpBar_duration = 0.5f; //how long we will watch the unit's hpbars decrease for.
     private const float combat_hpBar_linger = 0.05f; //how long we wait for the period between hpbars finishing decreasing and then dead/broken units being removed/updated
     private const float combat_highlights_linger = 0.5f; //how long we wait for the period between dead/broken units being removed/updated and target highlights being unhighlighted
+    private const float slider_anim_duration = 0.5f; //how many seconds the slider needs to update its visuals.
     private bool animating; //true while animating. Disables player input.
     private const float tile_dimension = 2f;
 
@@ -27,6 +28,7 @@ public class CombatGrid : MonoBehaviour
 
     [SerializeField] private FadeManager fader;
     [SerializeField] private Canvas uiCanvas;
+    [SerializeField] private PlayByPlay pbpManager;
     [SerializeField] private CombatAudio audio;   
     [SerializeField] private CombatDialoguer cDia;
     [SerializeField] private CameraController cam;
@@ -127,6 +129,7 @@ public class CombatGrid : MonoBehaviour
         update_pw();
 
         gameState = State.BETWEEN_ROUNDS;
+        pbpManager.fill(gameState, active_unit, active_ability);
         update_ZoC();
 
         fader.fade_from_black_cheat(2f);
@@ -154,6 +157,7 @@ public class CombatGrid : MonoBehaviour
                     start_player_turn();
 
                     gameState = State.SELECT_UNIT;
+                    pbpManager.fill(gameState, active_unit, active_ability);
                     break;
                 case State.SELECT_TARGET:
                     //if we're in target select: return unit to original position, return to movement select, cancel attack highlights and target highlights
@@ -185,6 +189,7 @@ public class CombatGrid : MonoBehaviour
                     highlight_tiles_mv(active_unit);
 
                     gameState = State.SELECT_MOVEMENT;
+                    pbpManager.fill(gameState, active_unit, active_ability);
                     break;
             }
         }
@@ -412,8 +417,34 @@ public class CombatGrid : MonoBehaviour
     void update_pw()
     {
         //update pw slider and pw text
-        pwSlider.value = pw;
-        pwText.text = pw + "/30 PW";
+
+        //update pw slider using a coroutine
+        //note: the power slider has its values multiplied by 10, so that the values can slide.
+        StartCoroutine(slide_pw_value(pw));  
+    }
+    IEnumerator slide_pw_value(int new_pw_value)
+    {
+        //coroutine that changes the value of the slider over time, teehee.
+        //it changes the value from initial value to final value over a period of slider_anim_duration seconds.
+        //e.g. starting val = 3 (30), end val = 7 (70), so we need to move 40 slider units in 1 second, i.e. 
+
+        int starting_value = (int)pwSlider.value;
+        int ending_value = new_pw_value * 10;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < slider_anim_duration)
+        {
+            //Vector3 dest = get_pos_from_coords(path[i].x, path[i].y);
+            //obj.transform.position = Vector3.MoveTowards(obj.transform.position, dest, Time.deltaTime * movement_animation_speed);
+            
+            pwSlider.value = starting_value + ((ending_value - starting_value) * elapsedTime/slider_anim_duration);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        pwSlider.value = ending_value;
+        pwText.text = new_pw_value + "/10";
     }
     void set_turnPattern_display()
     {
@@ -465,7 +496,7 @@ public class CombatGrid : MonoBehaviour
     void update_order()
     {
         //updates the order bg visuals with the information in active_order.
-        orderTitleText.text = "ORDER\n" + active_order.get_orderName();
+        orderTitleText.text = active_order.get_orderName();
         orderdescrText.text = active_order.get_orderDescr();
     }
     public void hide_informers()
@@ -710,6 +741,7 @@ public class CombatGrid : MonoBehaviour
         {
             animating = false;
             gameState = State.BETWEEN_ROUNDS;
+            pbpManager.fill(gameState, active_unit, active_ability);
             //Debug.Log("between rounds");
 
             //we're at the start of a round.
@@ -755,6 +787,7 @@ public class CombatGrid : MonoBehaviour
                 if (player_actions_possible())
                 {
                     gameState = State.SELECT_UNIT;
+                    pbpManager.fill(gameState, active_unit, active_ability);
                     start_player_turn();
                 }
                                 
@@ -766,6 +799,7 @@ public class CombatGrid : MonoBehaviour
                 if (enemy_actions_possible())
                 {
                     gameState = State.ENEMY;
+                    pbpManager.fill(gameState, active_unit, active_ability);
                     start_enemy_turn();
                 }
                              
@@ -857,6 +891,7 @@ public class CombatGrid : MonoBehaviour
 
         nextRoundButton.interactable = false;
         gameState = State.SELECT_UNIT;
+        pbpManager.fill(gameState, active_unit, active_ability);
         turnPatternIndex = -1;
 
         //refresh ap of all units
@@ -1217,6 +1252,7 @@ public class CombatGrid : MonoBehaviour
 
         //prepare for select target
         gameState = State.SELECT_TARGET;
+        pbpManager.fill(gameState, active_unit, active_ability);
         uInformer.set_pass(true);
         clear_highlights(); //remove movement tile highlights
                             //add target selection highlights
@@ -1454,6 +1490,7 @@ public class CombatGrid : MonoBehaviour
             movementHighlightTile = null;
         }
         gameState = State.ENEMY;
+        pbpManager.fill(gameState, active_unit, active_ability);
         animating = false;
         next_turn();
     }
@@ -1542,7 +1579,8 @@ public class CombatGrid : MonoBehaviour
 
                 highlight_tiles_mv(active_unit); //add movement tile highlights
                 uInformer.set_heldUnit(heldUnit);
-                gameState = State.SELECT_MOVEMENT;             
+                gameState = State.SELECT_MOVEMENT;   
+                pbpManager.fill(gameState, active_unit, active_ability);          
                 break;
 
             case State.SELECT_MOVEMENT:
@@ -1622,9 +1660,15 @@ public class CombatGrid : MonoBehaviour
         tInformer.fill(myGrid[x_pos, y_pos]);
 
         //if friendly unit; show moves with pw. else; set pw as -1
-        
-        if (heldUnit == null) return;
 
+        if (heldUnit == null || gameState == State.SELECT_TARGET) return;
+        else
+        {
+            uInformer.fill(heldUnit, pw, true);
+        }
+        // SELECT_TARGET
+        //gameState
+        /*
         if (heldUnit == active_unit)
         {           
             uInformer.fill(heldUnit, pw, true);
@@ -1640,7 +1684,7 @@ public class CombatGrid : MonoBehaviour
                 uInformer.fill(heldUnit, -1, false);
             }
         }
-        
+        */
     }
     void highlight_targets(int x_pos, int y_pos, Trait ability)
     {
@@ -1805,10 +1849,8 @@ public class CombatGrid : MonoBehaviour
             //Of course, traits can modify mvCost making certain terrain passable for a unit.
 
             //if (mvCost > 0) //<-- you can pay what you have left for the last tile.
-            //heavy: must pay full cost for every tile.
-            //light and medium: can pay what you have for last tile.
             //we check mvCost > 0 to see if tile is impassable.
-            if (mvCost > 0 && ((u.get_aff() == 2 && moveLeft >= mvCost) || ( u.get_aff() <= 1 && mvCost > 0))) 
+            if (mvCost > 0) 
             {
                 //if tile is in the opponent's ZoC, then it costs all remaining movement.
                 if ((isPlayer && next.enemy_controlled) || (!isPlayer && next.player_controlled))

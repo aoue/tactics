@@ -76,7 +76,7 @@ Let's end.
 ~imm_bg(3)
 ~outside(0)
 ~show(3, 100)
-~show(4, 300)
+//~show(4, 300)
 ~v_wiggle(3, 0.1, 1)
 //vertical wiggle or nod, yep.
 

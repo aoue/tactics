@@ -267,7 +267,7 @@ public class LevelTreeManager : MonoBehaviour
         Unit u = Carrier.Instance.get_allUnitList()[currentUnitIndex];
 
         HashSet<UnitType> addedTypes = new HashSet<UnitType>();
-        string buildUnitTypeStr = Carrier.Instance.get_affConverter()[u.get_aff()];
+        string buildUnitTypeStr = "";
         foreach(Trait t in u.get_traitList())
         {
             //if not nothing, and not already added, add.             

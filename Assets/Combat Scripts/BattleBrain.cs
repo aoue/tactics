@@ -7,17 +7,6 @@ public class BattleBrain
 {
     //calculator for combat.
 
-    //(light, medium, heavy)
-    //the attacker's affinity vs. the defender's affinity
-    //medium to 1x to light.
-    //heavy does 0.5x to light
-    float[,] affinityMultArray = new float[3, 3]
-    {
-        {1.0f, 1.0f, 1.0f },
-        {1.0f, 1.0f, 1.0f },
-        {0.5f, 1.0f, 1.0f }
-    };
-
     public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile, bool playerAttacking, Order order, Unit[] u1_allies)
     {
         //use attacker's phys a or mag a?
