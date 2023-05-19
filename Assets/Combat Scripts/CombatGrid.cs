@@ -444,7 +444,7 @@ public class CombatGrid : MonoBehaviour
         }
 
         pwSlider.value = ending_value;
-        pwText.text = new_pw_value + "/10";
+        pwText.text = new_pw_value + "/10 PW";
     }
     void set_turnPattern_display()
     {
@@ -496,8 +496,21 @@ public class CombatGrid : MonoBehaviour
     void update_order()
     {
         //updates the order bg visuals with the information in active_order.
-        orderTitleText.text = active_order.get_orderName();
-        orderdescrText.text = active_order.get_orderDescr();
+        if (set_order) 
+        {
+            //if true, then we're about to set the order. color to orange and set text.
+            orderImage.color = new Color(255f/255f, 196f/255f, 129f/255f);
+            orderTitleText.text = "SET_ORDER";
+            orderdescrText.text = "<i>Order will be set by next unit.</i>";
+        }
+        else
+        {    
+            //otherwise, set color to white and text to display info on the order.
+            orderImage.color = new Color(255f/255f, 255f/255f, 255f/255f);
+            orderTitleText.text = active_order.get_orderName();
+            orderdescrText.text = active_order.get_orderDescr();
+        }
+        
     }
     public void hide_informers()
     {
@@ -1269,7 +1282,7 @@ public class CombatGrid : MonoBehaviour
         animating = false;
 
         //update uinformer visuals
-        uInformer.fill(active_unit, pw, true);
+        uInformer.fill(active_unit, pw, true, set_order);
     }
     IEnumerator perform_attack_animation(List<Unit> affectedUnits, bool isPlayer)
     {
@@ -1439,8 +1452,8 @@ public class CombatGrid : MonoBehaviour
         if (active_unit != null && set_order == true)
         {
             active_order = active_unit.get_unitOrder();
-            update_order();
             set_order = false;
+            update_order();
         }
                
         //remove target icons
@@ -1664,7 +1677,7 @@ public class CombatGrid : MonoBehaviour
         if (heldUnit == null || gameState == State.SELECT_TARGET) return;
         else
         {
-            uInformer.fill(heldUnit, pw, true);
+            uInformer.fill(heldUnit, pw, true, set_order);
         }
         // SELECT_TARGET
         //gameState
@@ -1893,7 +1906,7 @@ public class CombatGrid : MonoBehaviour
         //fills uInformer on hover.
         if (playerUnits[which] != null)
         {
-            uInformer.fill(playerUnits[which], pw, false);
+            uInformer.fill(playerUnits[which], pw, false, set_order);
         }       
     }
     public void click_unit_shortcut(int which)

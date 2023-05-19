@@ -31,7 +31,6 @@ public class EventManager : MonoBehaviour
     [SerializeField] private Button buttonPrefab = null;
     [SerializeField] private Image speakerBoxPortrait;
     [SerializeField] private Button[] textControlButtons; //in order: auto, skip, history
-    [SerializeField] private Image msgPopupImage;
     [SerializeField] private TextMeshProUGUI msgPopupText;
 
     //[SerializeField] private Material defaultMaterial;
@@ -619,10 +618,6 @@ public class EventManager : MonoBehaviour
         {
             this.camera_shake(intensity, duration);
         });
-        script.BindExternalFunction("msg_popup", (string name) =>
-        {
-            this.msg_popup(name);
-        });
         script.BindExternalFunction("program", (string name, float duration) =>
         {
             this.run_program(name, duration);
@@ -939,21 +934,6 @@ public class EventManager : MonoBehaviour
                 break;
         }
     }
-    void msg_popup(string name)
-    {
-        //shows a message popup that slides in, shows a short while, then fades out.
-        //displays something like: 'Message request from [name]'
-
-        //set box to its starting position
-        //2620 x, 700 y
-        msgPopupImage.transform.position = new Vector2(2620f, 700f);
-        msgPopupImage.color = new Color(msgPopupImage.color.r, msgPopupImage.color.g, msgPopupImage.color.b, 1f);
-        msgPopupText.color = new Color(msgPopupText.color.r, msgPopupText.color.g, msgPopupText.color.b, 1f);
-        msgPopupText.text = "Message request from [" + name + "]";
-
-        //coroutine:
-        StartCoroutine(msg_popup_control());
-    }
     void run_program(string name, float duration)
     {
         // what does this do?
@@ -990,42 +970,6 @@ public class EventManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         effectsOver = true;
         programGraphic.gameObject.SetActive(false);
-    }
-
-
-    IEnumerator msg_popup_control()
-    {
-        //slide in over time
-        //1220 x, 700 y
-        float timeElapsed = 0f;
-        float slideDuration = 0.5f;
-        float slideSpeed = 2600f;
-        Vector2 toHere = new Vector2(1220f, 700f);
-        while (timeElapsed < slideDuration)
-        {
-            //2f * Time.deltaTime because the dimensions of a game tile is 2 by 2.
-            msgPopupImage.transform.position = Vector3.MoveTowards(msgPopupImage.transform.position, toHere, slideSpeed * Time.deltaTime);
-            timeElapsed += Time.deltaTime;
-            yield return null;
-        }
-        //msgPopupImage.transform.position = new Vector2(1220f, 700f);
-
-        yield return new WaitForSeconds(3.5f);
-
-        //wait a few seconds
-        //fade out over a few more seconds
-        Color objectColor = msgPopupImage.color;
-        Color textColor = msgPopupText.color;
-        while ( msgPopupImage.color.a > 0)
-        {
-            float fadeAmount = objectColor.a - (1f* Time.deltaTime);
-            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-            textColor = new Color(textColor.r, textColor.g, textColor.b, fadeAmount);
-
-            msgPopupText.color = textColor;
-            msgPopupImage.color = objectColor;
-            yield return null;
-        }
     }
 
     IEnumerator v_wiggle(int id, int repeats, Vector3 moveAmount)

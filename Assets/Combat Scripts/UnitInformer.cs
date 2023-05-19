@@ -19,6 +19,8 @@ public class UnitInformer : MonoBehaviour
     [SerializeField] private Text unitTypesText;
     [SerializeField] private Text stats_1; //the first column of main stats view; hp, brk, mvmt, control.
     [SerializeField] private Text stats_2; //the second column of main stats view; patk, pdef, maga, magd
+
+    [SerializeField] private Image order_highlight; //the bg behind the order text that turns on to draw player attention that this action will be setting the order.
     [SerializeField] private Text order_text; //the third column of main stats view; order text
 
     //side display 
@@ -60,12 +62,16 @@ public class UnitInformer : MonoBehaviour
     {
         if (heldUnit != null)
         {
-            fill(heldUnit, -1, false);
+            fill(heldUnit, -1, false, false);
         }
     }
-    public void fill(Unit u, int pw, bool allowButtonsInteractable)
+    public void fill(Unit u, int pw, bool allowButtonsInteractable, bool set_order)
     {
         //set all fields with the unit's corresponding data
+        // if unit is a player unit and orderSet is false, then highlight the bg behind the player unit's order text to remind them that they will trigger an order.
+
+        if (set_order) { order_highlight.enabled = true; }
+        else { order_highlight.enabled = false; }
 
         //heldUnit is when the game enters player movement phase. That's when.
         if (u != null)
@@ -75,23 +81,28 @@ public class UnitInformer : MonoBehaviour
             active_portrait.sprite = u.get_active_p();
 
             //main stats window
-            string buildUnitTypeStr = "";
+            string buildUnitTypeStr = "CLASSES\n";
             
             HashSet<UnitType> addedTypes = new HashSet<UnitType>();
-            foreach(Trait t in u.get_traitList())
+            for(int i = 0; i < u.get_traitList().Length; i++)
             {
                 //if not nothing, and not already added, add.             
-                if (t != null && t.get_unitType() != UnitType.NOTHING && !addedTypes.Contains(t.get_unitType()))
+                if (u.get_traitList()[i] != null && u.get_traitList()[i].get_unitType() != UnitType.NOTHING && !addedTypes.Contains(u.get_traitList()[i].get_unitType()))
                 {
-                    addedTypes.Add(t.get_unitType());
-                    buildUnitTypeStr += "-" + Carrier.Instance.get_unitTypeConverter()[(int)t.get_unitType() - 1];
+                    addedTypes.Add(u.get_traitList()[i].get_unitType());
+                    buildUnitTypeStr += Carrier.Instance.get_unitTypeConverter()[(int)u.get_traitList()[i].get_unitType() - 1];
+                    if (i != u.get_traitList().Length - 1)
+                    {
+                        buildUnitTypeStr += "-";
+                    }
                 }               
+                
             }
             nameText.text = u.get_unitName();
             unitTypesText.text = buildUnitTypeStr;
 
-            stats_1.text = "HP." + u.get_hp() + "o" + u.get_hpMax()
-                + "\nBRK." + u.get_brk() + "o" + u.get_brkMax()
+            stats_1.text = "HP." + u.get_hp() + "/" + u.get_hpMax()
+                + "\nBRK." + u.get_brk() + "/" + u.get_brkMax()
                 + "\nMVMT." + u.get_movement()
                 + "\nCTRL." + u.get_controlRange();
 
@@ -105,10 +116,12 @@ public class UnitInformer : MonoBehaviour
             }
             else
             {
+                order_highlight.enabled = false;
                 if (u.get_act_delay() > 0)
                 {
-                    order_text.text += "Ready in —<i>" + u.get_act_delay() + " rounds</i>";
+                    order_text.text = "Ready in —<i>" + u.get_act_delay() + " rounds</i>";
                 }
+                else order_text.text = "";
             }
 
             stats_2.text = "ATK." + u.get_physa()

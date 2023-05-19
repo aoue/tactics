@@ -15,7 +15,6 @@ public class PlayByPlay : MonoBehaviour
     // also the enemy unit does this too.
 
     [SerializeField] private Text titleText; // display the current action that the player has to do next: SELECT, MOVE, PICK TARGET, COMPLETED
-    [SerializeField] private Text displayText; //displays all the information given out by the play by play.
 
     public void fill(State gameState, Unit u, Trait t)
     {
@@ -25,24 +24,19 @@ public class PlayByPlay : MonoBehaviour
         switch(gameState)
         {
             case State.BETWEEN_ROUNDS:
-                titleText.text = "START_ROUND";
-                displayText.text = "";
+                titleText.text = "START_ROUND...";
                 break;
             case State.ENEMY:
-                titleText.text = "ENEMY PHASE";
-                displayText.text = "";
+                titleText.text = "ENEMY PHASE...";
                 break;
             case State.SELECT_UNIT:
-                titleText.text = "SELECT_UNIT";
-                displayText.text = "";
+                titleText.text = "SELECT_UNIT...";
                 break;
             case State.SELECT_MOVEMENT:
-                titleText.text = "SELECT_MOVEMENT";
-                displayText.text = "";
+                titleText.text = "SELECT_MOVEMENT...";
                 break;
             case State.SELECT_TARGET:
-                titleText.text = "SELECT_TARGET";
-                displayText.text = "";
+                titleText.text = "SELECT_TARGET...";
                 break;
         }
     }

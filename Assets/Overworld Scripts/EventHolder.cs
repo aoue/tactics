@@ -5,26 +5,27 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Ink.Runtime;
 
-public enum eventType { RED_COMBAT, RED, BLUE, GREEN };
+public enum eventType { NONE, LOAD_PART, LOAD_MISSION };
 public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     // this holds info and starts the event.
 
     //is the one to try to validate the event.
     [SerializeField] private PortraitLibrary pLib;
-    [SerializeField] private GameObject combatIcon;
+    [SerializeField] private Sprite combatSprite;
+    [SerializeField] private Sprite storySprite;
+    [SerializeField] private Sprite unknownSprite;
     [SerializeField] private Button beginButton;
-    [SerializeField] private Image[] attachedFrames;
+    [SerializeField] private Image attachedFrame;
     [SerializeField] private TextAsset ev;
     [SerializeField] private eventType type;
     
     //progression
     [SerializeField] private int minProgressionToEnable; // the minimum value of progression needed for the event to validate.
     [SerializeField] private int incProgression; // if true, then add +1 to part's progression.
-    [SerializeField] private int[] attachedCharacters; // ids of box images shown in the attached image slots.
+    [SerializeField] private int attachedCharacter; // ids of box images shown in the attached image slots.
 
-    [SerializeField] private int partLoadIndex; // if is a RED type event, load this part index on click. Otherwise, ignore it.
-    [SerializeField] private int combatLoadIndex; // if is a RED_COMBAT type event, load this mission index on click. Otherwise, ignore it.
+    [SerializeField] private int loadIndex; // the index of the part or mission that will be loaded on this.
 
     private bool completed; // starts false. Becomes true once event has been run. Must be false for event to validate.
 
@@ -32,42 +33,32 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void setup_event()
     {
         //called if the event passes validation.
-
-        // set the colour and visual effects accompanying of the event.
-        Image frame = gameObject.GetComponent<Image>();
-        switch(type)
-        {
-            case eventType.RED_COMBAT:
-                frame.color = new Color(255f / 255f, 102f / 255f, 102f/ 255f);
-                combatIcon.SetActive(true);
-                break;
-            case eventType.RED:
-                frame.color = new Color(255f / 255f, 102f / 255f, 102f / 255f);
-                combatIcon.SetActive(false);
-                break;
-            case eventType.BLUE:
-                frame.color = new Color(102 / 255f, 102f / 255f, 255f / 255f);
-                combatIcon.SetActive(false);
-                break;
-            case eventType.GREEN:
-                frame.color = new Color(102f / 255f, 255f / 255f, 102f / 255f);
-                combatIcon.SetActive(false);
-                break;
-            default:
-                break;
-        }
         
         // fill the attached character portrait slots
         // while less than length, turn on slot and fill with character image
-        for(int i = 0; i < attachedCharacters.Length; i++)
+        switch(attachedCharacter)
         {
-            attachedFrames[i].transform.GetChild(0).gameObject.GetComponent<Image>().sprite = pLib.retrieve_boxp(attachedCharacters[i]);
-            attachedFrames[i].gameObject.SetActive(true);
+            case -3:
+                attachedFrame.sprite = unknownSprite;
+                break;
+            case -2:
+                attachedFrame.sprite = combatSprite;
+                break;
+            case -1:
+                attachedFrame.sprite = storySprite;
+                break;
+            default:
+                attachedFrame.sprite = pLib.retrieve_boxp(attachedCharacter);
+                break;
+
         }
-        // while greater or equal to length, hide slot
-        for(int i = attachedCharacters.Length; i < 4; i++)
+        if (type == eventType.NONE)
         {
-            attachedFrames[i].gameObject.SetActive(false);
+            beginButton.gameObject.GetComponent<Image>().color = new Color(0.76f, 0.76f, 0.76f);
+        }
+        else
+        {
+            beginButton.gameObject.GetComponent<Image>().color = new Color(200f/255f, 46f/255f, 46f/255f);
         }
         gameObject.SetActive(true);
     }
@@ -86,13 +77,13 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         switch(type)
         {
-            case eventType.RED_COMBAT:
+            case eventType.LOAD_MISSION:
                 // load combat mission
-                gameObject.transform.parent.GetComponent<Part>().pass_combat_to_overworld(combatLoadIndex);
+                gameObject.transform.parent.GetComponent<Part>().pass_combat_to_overworld(loadIndex);
                 break;
-            case eventType.RED:
+            case eventType.LOAD_PART:
                 // load new part
-                gameObject.transform.parent.GetComponent<Part>().pass_part_to_overworld(partLoadIndex);
+                gameObject.transform.parent.GetComponent<Part>().pass_part_to_overworld(loadIndex);
                 break;
             default:
                 // play event as normal

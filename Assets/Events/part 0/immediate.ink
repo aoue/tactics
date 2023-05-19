@@ -26,8 +26,6 @@ EXTERNAL speaker(whichSlot, state) //SUSPENDED; applies the speaker effect to th
 EXTERNAL hide(whichSlot) //hides full portrait
 EXTERNAL v_wiggle(whichSlot, power, repeats) //causes the character portrait in the specified slot to wiggle vertically. Moves power percentage. Repeats x times.
 EXTERNAL h_wiggle(whichSlot, power, repeats) //causes the character portrait in the specified slot to wiggle horizontally. Moves power percentage. Repeats x times.
-EXTERNAL msg_popup(name) //causes a message popup to slide in, then fade out. Displays something like: 'Message request from [name]'
-EXTERNAL msg_popup_hide() //hides it.
 EXTERNAL program(name, duration) // runs program popup. Name is text displayed above bar. Duration is in seconds.
 
 EXTERNAL unit_state(unit_id, val) //sets the availability of units in the level tree. 0: fully, 1: visible but not clickable, 2: not visible or clickable
@@ -75,8 +73,9 @@ Let's end.
 ~play_music(0)
 ~imm_bg(3)
 ~outside(0)
-~show(3, 100)
-//~show(4, 300)
+~show(0, 100)
+~show(1, 101)
+~show(2, 102)
 ~v_wiggle(3, 0.1, 1)
 //vertical wiggle or nod, yep.
 
@@ -132,9 +131,5 @@ This is grey.
 
 ~c("white")
 And finally... this is white again.
-
-~msg_popup("Yvette")
-testing msg popup control a second time smilew
-
 
 -> END
