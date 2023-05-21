@@ -65,6 +65,7 @@ public class EventManager : MonoBehaviour
     [SerializeField] private HistoryScroller histScroll; //used to fill/clear the content of the history interface.
     private List<HistoryEntry> historyList; 
     private int historyLimit = 15; //the max number of displays the historyList stores at a time.
+    private float speakerglow_anim_duration = 0.25f;
     
     [SerializeField] private GameObject canProceedArrow; //visible when canProceed, invisible when cannot.
     private bool canProceed;
@@ -492,6 +493,7 @@ public class EventManager : MonoBehaviour
         set_name(""); //hide name box
         set_boxPortrait(-1); //hide box portrait
         set_centered(false); //do not show text in centered.
+        set_speaker_glow(-1, true);
         centeredText.text = "";
     }
     Button CreateChoiceView(string text)
@@ -606,9 +608,9 @@ public class EventManager : MonoBehaviour
         {
             this.set_portrait_holo(which, state);
         });
-        script.BindExternalFunction("speaker", (int which, int state) =>
+        script.BindExternalFunction("speakerglow", (int which) =>
         {
-            this.set_speaker_glow(which, state);
+            this.set_speaker_glow(which, false);
         });
         script.BindExternalFunction("hide", (int which) =>
         {
@@ -786,10 +788,93 @@ public class EventManager : MonoBehaviour
         if (state == -1) portraitSlots[whichSlot].GetComponent<Image>().material = null;
         else portraitSlots[whichSlot].GetComponent<Image>().material = holoMaterial;
     }
-    void set_speaker_glow(int which, int state)
+    void set_speaker_glow(int whichSlot, bool forceInstant)
     {
-        if (state == -1){}
-        else return;
+        // darkens all portrait slots except for whichSlot, making them seem brighter. -1 to restore everyone to full.
+        if (skipOn || forceInstant)
+        {
+            Color lit = new Color(1f, 1f, 1f, 1f);
+            if (whichSlot == -1)
+            {
+                // put all portrait slots to full white
+                for(int i = 0; i < portraitSlots.Length; i++)
+                {
+                    portraitSlots[i].GetComponent<Image>().color = lit;
+                }
+            }
+            else
+            {
+                // put all portrait slots to dark, except for whichSlot which is set to white
+                Color darkened = new Color(0.5f, 0.5f, 0.5f, 1f);
+                for(int i = 0; i < portraitSlots.Length; i++)
+                {
+                    if (i != whichSlot) portraitSlots[i].GetComponent<Image>().color = darkened;
+                }
+                portraitSlots[whichSlot].GetComponent<Image>().color = lit;
+            }
+        }
+        else
+        {
+            StartCoroutine(run_speakerglow_anim(whichSlot));
+        } 
+    }
+    IEnumerator run_speakerglow_anim(int whichSlot)
+    {
+        float elapsedTime = 0f;
+        Color compareDark = new Color(0.5f, 0.5f, 0.5f, 1f);
+        Color compareWhite = new Color(1f, 1f, 1f, 1f);
+        while (elapsedTime < speakerglow_anim_duration)
+        {
+            if (skipOn) break;
+
+            if (whichSlot == -1)
+            {
+                //so the final colour values are 1f, 1f, 1f
+                //we will be starting from potentially 1f or 0.5f
+                // -at 1f, don't make any change.
+                // -at 0.5f, incrementally increase from 0.5f to 1f over the duration.
+                float value = 0.5f + (elapsedTime/speakerglow_anim_duration) / 2;
+                Color inc_lit = new Color(value, value, value, 1f);
+
+                // light up all
+                for(int i = 0; i < portraitSlots.Length; i++)
+                {
+                    if (colors_equal(portraitSlots[i].GetComponent<Image>().color, compareWhite)) continue;
+                    else portraitSlots[i].GetComponent<Image>().color = inc_lit;
+                }
+            }
+            else
+            {
+                // put all portrait slots to dark, except for whichSlot which is set to white
+                //we will be starting from potentially 1f or 0.5f
+                // -if at 1f, incrementally decrease from 1f to 0.5f over the duration.
+                // -if at 0.5f, don't make any change.
+
+                //after one fifth of the duration, the value should be 0.9f
+                float dark_value = 1f - ((elapsedTime/speakerglow_anim_duration) / 2);
+                Color inc_darkened = new Color(dark_value, dark_value, dark_value, 1f);
+
+                // darken all but whichSlot
+                for(int i = 0; i < portraitSlots.Length; i++)
+                {
+                    if (colors_equal(portraitSlots[i].GetComponent<Image>().color, compareDark)) continue;
+                    if (i != whichSlot) portraitSlots[i].GetComponent<Image>().color = inc_darkened;
+                }
+
+                // and at the same time, light up whichSlot
+                if (!colors_equal(portraitSlots[whichSlot].GetComponent<Image>().color, compareWhite))
+                {
+                    float light_value = 0.5f + (elapsedTime/speakerglow_anim_duration) / 2;
+                    Color inc_lit = new Color(light_value, light_value, light_value, 1f);
+                    portraitSlots[whichSlot].GetComponent<Image>().color = inc_lit;
+                }
+                
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        // set to exact values at the end.
+        set_speaker_glow(whichSlot, true);
     }
     void hide_portrait_slot(int whichSlot)
     {
@@ -1087,6 +1172,13 @@ public class EventManager : MonoBehaviour
             yield return null;
         }
         portraitSlots[whichSlot].gameObject.SetActive(false);
+    }
+
+    //helper
+    bool colors_equal(Color c1, Color c2)
+    {
+        // used to compare colors. Returns true if colors are equal, false otherwise.
+        return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b;
     }
 
     //audio effects

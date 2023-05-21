@@ -11,7 +11,6 @@ public enum State { SELECT_UNIT, SELECT_MOVEMENT, SELECT_TARGET, ENEMY, BETWEEN_
 public class CombatGrid : MonoBehaviour
 {
     //responsible for instantiating and managing the combat grid, and for general combat control.
-
     private const float pause_before_event_start = 1f; //the pause/fade duration before starting an event.
     private const float enemy_pause_before_attack = 0.35f; //the seconds the enemy unit will pause with possible origin tiles before attacking.
     private const float enemy_pause_before_movement = 0.35f; //the seconds the enemy unit will pause with highlighted movement range before moving.

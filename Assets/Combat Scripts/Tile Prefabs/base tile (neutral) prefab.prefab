@@ -69,7 +69,7 @@ MonoBehaviour:
   blocksAttacks: 0
   canBeTargeted: 1
   movementCost: 1
-  coverReduction: 0.3
+  coverReduction: 0
   descr: A power relay that genereates power each round for the side that controls
     it. Also recovers HP on unit standing on it at turn start.
   highlightLayer: {fileID: 604655263382334622}
@@ -235,7 +235,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 4778588f0a52afa4987eb110683df4df, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 06c01201840357b409d71b5851bf5a1a, type: 3}
   m_Color: {r: 0, g: 1, b: 1, a: 0.38039216}
   m_FlipX: 0
   m_FlipY: 0
@@ -421,7 +421,7 @@ SpriteRenderer:
   m_Size: {x: 2, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &5711515881581165330

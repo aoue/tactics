@@ -22,7 +22,7 @@ EXTERNAL p(pId) //pId to show corresponding BOX portrait. -1 to hide.
 EXTERNAL p_holo(pId) //turns hologram shader on to the name sprite. -1 to turn off.
 EXTERNAL show(whichSlot, portraitID) //shows full portrait
 EXTERNAL holo(whichSlot, state) //applies hologram shade to portrait slot. Instant. -1 to turn off.
-EXTERNAL speaker(whichSlot, state) //SUSPENDED; applies the speaker effect to the portrait slot. -1  to turn off.
+EXTERNAL speakerglow(whichSlot) //darkens all portrait slots except for whichSlot, making them seem brighter. -1 to restore everyone to full.
 EXTERNAL hide(whichSlot) //hides full portrait
 EXTERNAL v_wiggle(whichSlot, power, repeats) //causes the character portrait in the specified slot to wiggle vertically. Moves power percentage. Repeats x times.
 EXTERNAL h_wiggle(whichSlot, power, repeats) //causes the character portrait in the specified slot to wiggle horizontally. Moves power percentage. Repeats x times.
@@ -73,15 +73,27 @@ Let's end.
 ~play_music(0)
 ~imm_bg(3)
 ~outside(0)
-~show(0, 100)
-~show(1, 101)
-~show(2, 102)
+~show(3, 100)
+~show(4, 200)
 ~v_wiggle(3, 0.1, 1)
 //vertical wiggle or nod, yep.
 
+Suddenly a voice is heard from a speaker overhead.
+
+
 ~n("Friday")
 ~p(100)
+~speakerglow(3)
 I'm talking a little bit.
+
+~n("Anse")
+~p(200)
+~speakerglow(4)
+And now I'm talking.
+
+~p(-1)
+~speakerglow(-1)
+And now nobody is talking...
 
 ~n("")
 ~p(-1)

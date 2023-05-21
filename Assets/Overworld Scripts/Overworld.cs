@@ -20,6 +20,9 @@ public class Overworld : MonoBehaviour
 
     [SerializeField] private BackgroundManager overworldBackgrounds;
     [SerializeField] private Part[] parts; //all their children are event holders.
+
+    //messager
+    [SerializeField] private Messager messageManager; // link to the messager object. Set during part loading.
     
     //day logic
     private int currentPartIndex;
@@ -76,6 +79,8 @@ public class Overworld : MonoBehaviour
                 eh.disable_event();
             }
         }
+
+        messageManager.validate(currentPartIndex);
 
         if (!ranImmediate && parts[currentPartIndex].get_story() != null)
         {
