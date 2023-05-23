@@ -10,6 +10,7 @@ public class Initializer : MonoBehaviour
     [SerializeField] private Trait[] anseStarting;
     [SerializeField] private Trait[] fridayStarting;
     [SerializeField] private Trait[] yvetteStarting;
+    [SerializeField] private Trait[] naiStarting;
 
     public void reset_units()
     {
@@ -17,6 +18,7 @@ public class Initializer : MonoBehaviour
         reset_anse();
         reset_friday();
         reset_yvette();
+        reset_nai();
     }
 
     // INDIVIDUAL UNIT RESETS
@@ -85,6 +87,30 @@ public class Initializer : MonoBehaviour
         for(int i = 0; i < u.get_traitList().Length; i++)
         {
             u.get_traitList()[i] = yvetteStarting[i];
+            if (i > 0 && i < 3) u.get_learnedList()[i-1] = moveLearnState.LEARNED;
+            else if (i >= 3) u.get_learnedList()[i-1] = moveLearnState.CAN_LEARN;
+        }
+        for(int i = u.get_traitList().Length; i < u.get_learnedList().Length; i++)
+        {
+            u.get_learnedList()[i] = moveLearnState.UNKNOWN;
+        }
+        
+    }
+    void reset_nai()
+    {
+        Unit u = Carrier.Instance.get_allUnitList()[3];
+        u.set_hpMax(6);
+        u.set_brkMax(3);
+        u.set_physa(0);
+        u.set_physd(0);
+        u.set_maga(1);
+        u.set_magd(1);
+        u.set_exp(0);
+        
+        u.init_learnList();
+        for(int i = 0; i < u.get_traitList().Length; i++)
+        {
+            u.get_traitList()[i] = naiStarting[i];
             if (i > 0 && i < 3) u.get_learnedList()[i-1] = moveLearnState.LEARNED;
             else if (i >= 3) u.get_learnedList()[i-1] = moveLearnState.CAN_LEARN;
         }

@@ -69,9 +69,10 @@ public class Mission0 : Mission
         //returns an array of unit IDs and coords representing unit starting spots.
         //unit id, row, depth into that row (if no unit with the id in reserve party, then we fail silently. all good)
         (int, int, int)[] dep_array = {
-            //(0, 1, 1),
-            //(1, 0, 1),
-            (2, 2, 1)
+            (0, 1, 1),
+            (1, 0, 1),
+            (2, 2, 1),
+            (3, 3, 1)
         };
         return dep_array;
     }

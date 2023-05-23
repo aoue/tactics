@@ -128,11 +128,11 @@ public class Trait : MonoBehaviour
         //if it's a certain type, then do whatever.
 
         //e.g. flight makes all costs = 1
-        //amphibious makes water tiles cost 1, whereas normally they cost -1 (impassable.)
+        //amphibious makes water tiles cost 1, whereas normally they cost a flag that marks them as impassable
 
         return t.get_movementCost();
     }
- 
+
     public string get_traitDescr()
     {
         //generate the string based on move information.
@@ -171,7 +171,7 @@ public class Trait : MonoBehaviour
 
             if (mustSetup) buildStr += " (Setup Required) | ";
 
-            string powerStr = "DMG: [";
+            string powerStr = "Rolls: [";
             for (int i = 0; i < dmg_range.Length; i++)
             {
                 powerStr += dmg_range[i];
@@ -179,7 +179,7 @@ public class Trait : MonoBehaviour
             }
             powerStr += "]";
 
-            buildStr += "\n" + powerStr + "x Force | " + pwCost + " cost.";
+            buildStr += "\n" + powerStr + " | " + pwCost + " cost.";
         }
 
         //each has its own sep text and image

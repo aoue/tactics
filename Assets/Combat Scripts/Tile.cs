@@ -94,7 +94,6 @@ public class Tile : MonoBehaviour
     //Visuals
     public void highlight_target_mv()
     {
-        Debug.Log("highlight_target_mv() called");
         targetIcon.color = new Color(0f, 0f, 1f);
         targetIcon.enabled = true;
     }

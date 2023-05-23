@@ -27,7 +27,9 @@ public class HistoryScroller : MonoBehaviour
         {
             GameObject entry = Instantiate(entryPrefab) as GameObject;
             entry.GetComponent<Text>().text = he[i].name;
+            entry.GetComponent<Text>().color = he[i].nameColor;
             entry.transform.GetChild(0).GetComponent<Text>().text = he[i].sentence;
+            entry.transform.GetChild(0).GetComponent<Text>().color = he[i].sentenceColor;
 
             entry.transform.SetParent(content.transform, false);
         }

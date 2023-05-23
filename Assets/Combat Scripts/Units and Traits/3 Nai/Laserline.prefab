@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &9141622729061033628
+--- !u!1 &4990001081241805622
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,59 +8,56 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 9141622729061033626}
-  - component: {fileID: 9141622729061033629}
+  - component: {fileID: 4990001081241805624}
+  - component: {fileID: 4990001081241805623}
   m_Layer: 0
-  m_Name: Ambi-Guns
+  m_Name: Laserline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &9141622729061033626
+--- !u!4 &4990001081241805624
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9141622729061033628}
+  m_GameObject: {fileID: 4990001081241805622}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 948.2345, y: 428.75958, z: -2301.75}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9141622729061033629
+--- !u!114 &4990001081241805623
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9141622729061033628}
+  m_GameObject: {fileID: 4990001081241805622}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d755da71caf8e144ea51bba3446e61f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   traitSound: {fileID: 0}
-  traitName: Ambi-Guns
-  descr: Versatile guns that can fire at close range.
-  unitType: 0
+  traitName: Laserline
+  descr: '[descr]'
+  unitType: 3
   isPassive: 0
-  targeting: 2
-  aoe: 0
+  mustSetup: 0
+  targeting: 0
+  aoe: 1
   ignores_blocking_terrain: 0
-  minimum_range: 0
-  affinity: 0
-  range: 2
-  power: 3
-  min_dmg_range: 0.85
-  max_dmg_range: 1
-  brkMult: 1
+  minimum_range: 1
+  range: 3
+  dmg_range: 010000000100000002000000
+  brkOffset: 0
   pwCost: 0
-  usesPhysAttack: 1
-  usesPhysDefense: 1
+  usesPhysAttack: 0
+  usesPhysDefense: 0
   isHeal: 0
-  usesTrigger: 0

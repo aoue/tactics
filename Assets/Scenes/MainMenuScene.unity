@@ -1259,6 +1259,12 @@ MonoBehaviour:
   - {fileID: 8123271002466339381, guid: 2ecc10a928637704287e14e5b229d973, type: 3}
   - {fileID: 0}
   - {fileID: 0}
+  naiStarting:
+  - {fileID: 4990001081241805623, guid: 89af0794a5adecc43b2edf4ccc2dfbd6, type: 3}
+  - {fileID: 8234417444354426049, guid: 77a75bd9fe55f3d4d8eafb0b2849411f, type: 3}
+  - {fileID: 7116190743607296319, guid: 28910cb74b5a6a64fb8d1b3dad63d321, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!4 &1044333140
 Transform:
   m_ObjectHideFlags: 0

@@ -64,7 +64,7 @@ public class EventManager : MonoBehaviour
     [SerializeField] private GameObject HistoryPort; //master gameobject for the history interface.
     [SerializeField] private HistoryScroller histScroll; //used to fill/clear the content of the history interface.
     private List<HistoryEntry> historyList; 
-    private int historyLimit = 15; //the max number of displays the historyList stores at a time.
+    private int historyLimit = 20; //the max number of displays the historyList stores at a time.
     private float speakerglow_anim_duration = 0.25f;
     
     [SerializeField] private GameObject canProceedArrow; //visible when canProceed, invisible when cannot.
@@ -440,7 +440,7 @@ public class EventManager : MonoBehaviour
             if ( sentence.Length > 0)
             {
                 //add name, sentence pair to history
-                HistoryEntry entry = new HistoryEntry(currentSpeakerName, sentence);
+                HistoryEntry entry = new HistoryEntry(currentSpeakerName, sentence, sentenceText.color, nameText.color);
                 if (historyList.Count == historyLimit) //history limit is here.
                 {
                     historyList.RemoveAt(0);
