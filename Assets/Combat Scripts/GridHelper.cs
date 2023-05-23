@@ -38,6 +38,8 @@ public class GridHelper
         }
     }
 
+    // TARGETING GENERATION
+    // That is, which tiles can the player click on when making an attack; the valid origin points for a move.
     public HashSet<Tile> get_all_possible_attack_origins(Trait t, Tile[,] myGrid, Tile dest)
     {
         //corresponding function is CombatGrid.cs is 'void highlight_attack(Trait t)'
@@ -146,6 +148,8 @@ public class GridHelper
         return origins;
     }
     
+    // AOE GENERATION
+    // That is, which tiles will be affected when the player clicks on an origin tile for an attack.
     public List<Tile> generate_targetList(Trait t, Tile[,] myGrid, int x_click, int y_click, int x_unit, int y_unit, HashSet<Tile> visited)
     {
         //helper function for traits and generating targetlists. For scoring attacks, etc.

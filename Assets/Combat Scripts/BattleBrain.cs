@@ -31,7 +31,7 @@ public class BattleBrain
         }
 
         int def;
-        double coverMod;
+        int coverMod;
         if (playerAttacking)
         {
             coverMod = order.order_coverMod_offense(occupied_tile.get_cover());
@@ -59,8 +59,9 @@ public class BattleBrain
 
         //damage formula: dmg = roll + user's atk - target's def
         int dmg_range_roll = t.get_dmg_range()[UnityEngine.Random.Range(0, t.get_dmg_range().Length)];
-        int dmg = dmg_range_roll + atk - def;
+        int dmg = dmg_range_roll + atk - def - coverMod;
 
+        // this is for player attacks only, so it is a spot for offensive orders. 
         if (order != null) dmg = order.order_damage(dmg);
 
         //once calc is done

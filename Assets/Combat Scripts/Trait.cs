@@ -77,6 +77,10 @@ public class Trait : MonoBehaviour
     }
 
     //for traits with additionnal effects
+    public virtual void on_mission_start(Unit self)
+    {
+        //can do things like reset triggered, etc.
+    }
     public virtual void on_own_death(Unit self)
     {
         //examples:
@@ -155,19 +159,23 @@ public class Trait : MonoBehaviour
             if (isHeal) buildStr += " Support Ability";
             else buildStr += " Attack Ability";
 
-            if (usesPhysAttack) buildStr += "| ATK vs. ";           
-            else buildStr += "| HAC vs. ";
+            if (usesPhysAttack) buildStr += "| ATK ";           
+            else buildStr += "| HAC ";
             
-            if (usesPhysDefense) buildStr += " DEF";
-            else buildStr += " ICE";
+            if (!isHeal)
+            {
+                if (usesPhysDefense) buildStr += "vs.  DEF";
+                else buildStr += "vs. ICE";
+            }
+            
 
-            if (mustSetup) buildStr += "(Setup Required) | ";
+            if (mustSetup) buildStr += " (Setup Required) | ";
 
             string powerStr = "DMG: [";
             for (int i = 0; i < dmg_range.Length; i++)
             {
                 powerStr += dmg_range[i];
-                if (i < dmg_range.Length - 1) powerStr += "-";
+                if (i < dmg_range.Length - 1) powerStr += ".";
             }
             powerStr += "]";
 

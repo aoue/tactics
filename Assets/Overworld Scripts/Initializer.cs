@@ -9,12 +9,14 @@ public class Initializer : MonoBehaviour
 
     [SerializeField] private Trait[] anseStarting;
     [SerializeField] private Trait[] fridayStarting;
+    [SerializeField] private Trait[] yvetteStarting;
 
     public void reset_units()
     {
         //resets all units to their new game states.
         reset_anse();
         reset_friday();
+        reset_yvette();
     }
 
     // INDIVIDUAL UNIT RESETS
@@ -28,9 +30,9 @@ public class Initializer : MonoBehaviour
         u.set_hpMax(8);
         u.set_brkMax(4);
         u.set_physa(1);
-        u.set_physd(1);
+        u.set_physd(0);
         u.set_maga(1);
-        u.set_magd(1);
+        u.set_magd(0);
         u.set_exp(0);
         
         u.init_learnList();
@@ -46,13 +48,12 @@ public class Initializer : MonoBehaviour
         }
         
     }
-
     void reset_friday()
     {
         Unit u = Carrier.Instance.get_allUnitList()[1];
         u.set_hpMax(7);
         u.set_brkMax(4);
-        u.set_physa(1);
+        u.set_physa(0);
         u.set_physd(0);
         u.set_maga(0);
         u.set_magd(2);
@@ -69,6 +70,29 @@ public class Initializer : MonoBehaviour
             u.get_learnedList()[i] = moveLearnState.UNKNOWN;
         }
     }
-
+    void reset_yvette()
+    {
+        Unit u = Carrier.Instance.get_allUnitList()[2];
+        u.set_hpMax(10);
+        u.set_brkMax(5);
+        u.set_physa(1);
+        u.set_physd(1);
+        u.set_maga(0);
+        u.set_magd(0);
+        u.set_exp(0);
+        
+        u.init_learnList();
+        for(int i = 0; i < u.get_traitList().Length; i++)
+        {
+            u.get_traitList()[i] = yvetteStarting[i];
+            if (i > 0 && i < 3) u.get_learnedList()[i-1] = moveLearnState.LEARNED;
+            else if (i >= 3) u.get_learnedList()[i-1] = moveLearnState.CAN_LEARN;
+        }
+        for(int i = u.get_traitList().Length; i < u.get_learnedList().Length; i++)
+        {
+            u.get_learnedList()[i] = moveLearnState.UNKNOWN;
+        }
+        
+    }
 
 }

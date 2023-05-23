@@ -10,7 +10,7 @@ public class AggressionOrder : Order
 
     public override int order_physa(int physa)
     {
-        return (int)(physa * 1.5f);
+        return physa + 1;
     }
 
 }

@@ -80,7 +80,7 @@ public class Overworld : MonoBehaviour
             }
         }
 
-        messageManager.validate(currentPartIndex);
+        messageManager.validate(parts[currentPartIndex].get_messagerID());
 
         if (!ranImmediate && parts[currentPartIndex].get_story() != null)
         {

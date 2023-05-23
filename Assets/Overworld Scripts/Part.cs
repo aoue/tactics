@@ -11,6 +11,7 @@ public class Part : MonoBehaviour
 
     [SerializeField] private TextAsset immediate; //the script for the immediate. Plays immediately on part start.
     [SerializeField] private EventHolder[] partEvents;
+    [SerializeField] private int messagerID; // the id used to get information for the messager in overworld. -1 for nothing.
     [SerializeField] private int backgroundIndex;
     [SerializeField] private int musicIndex; //the index in overworld audio of the music track to play. -1 to stop.
     [SerializeField] private string dateString; //the date string. displayed in top left.
@@ -33,4 +34,5 @@ public class Part : MonoBehaviour
     public int get_musicIndex() { return musicIndex; }
     public TextAsset get_story() { return immediate; }
     public string get_dateString() { return dateString; }
+    public int get_messagerID() { return messagerID; }
 }

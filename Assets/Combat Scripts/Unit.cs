@@ -86,6 +86,8 @@ public class Unit : MonoBehaviour
         {
             if (t != null)
             {
+                //reset trait
+                t.on_mission_start(this);
                 //add to unit's trait list
                 if (t.get_unitType() != UnitType.NOTHING)
                 {
@@ -243,7 +245,9 @@ public class Unit : MonoBehaviour
     //setters, for leveling up
     public void set_exp(int x) { exp = x; }
     public void set_hpMax(int x) { hpMax = x; }
+    public void set_hp(int x) { hp = x; }
     public void set_brkMax(int x) { brkMax = x; }
+    public void set_brk(int brk) { brk = x; }
     public void set_physa(int x) { phys_atk = x; }
     public void set_physd(int x) { phys_def = x; }
     public void set_maga(int x) { magic_atk = x; }

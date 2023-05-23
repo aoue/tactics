@@ -195,7 +195,7 @@ public class CombatDialoguer : MonoBehaviour
         }
         else
         {
-            cgFrame.sprite = pLibrary.retrieve_cgFrame(which);
+            cgFrame.sprite = pLibrary.retrieve_combatImage(which);
             cgFrame.enabled = true;
         }
     }

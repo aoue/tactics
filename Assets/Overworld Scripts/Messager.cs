@@ -30,6 +30,7 @@ public class Messager : MonoBehaviour
 	it's like a mini browser window open.
     */
 
+    [SerializeField] private PortraitLibrary pLibrary;
     [SerializeField] private Image blocker; // to stop player from doing other things while the popup is showing.
     [SerializeField] private GameObject popup; // to enable/disable entire object.
     [SerializeField] private Text senderText; // to set the name of the sender, at the top.
@@ -42,15 +43,16 @@ public class Messager : MonoBehaviour
     private bool viewed; // If false, can open. Else, cannot open.
     private float blocker_fade_anim_duration = 1f; // how long it takes for blocker alpha to fade to 60f
     private float blocker_max_alpha = 0.1f; // how long it takes for blocker alpha to fade to 60f
-    private int savedPartID;
+    private int savedID;
 
-    public void validate(int partID)
+    // VISUALS
+    public void validate(int id)
     {
         // called during part setup.
         // use the partID to get information about the state we should set to:
         // -we have a thing for this part, so enable it.
         // -we don't, so disable the button.
-        savedPartID = partID;
+        savedID = id;
         bool validated = true;
         if (validated)
         {
@@ -68,10 +70,12 @@ public class Messager : MonoBehaviour
     {
         // called on sidebarButton click, must already have been validated.
 
-        // retrieve info and set fields.
-        senderText.text = "Sender: ____\nRE: ____";
-        //cgImage.sprite = 
-        bottomText.text = "HEY HEY HEY HEY HEY HEY anyway bruh have you seen like LMAO someonme posted it on the Aventine's main forum xDDD";
+        // retrieve sender text, cg image, and bottom text as a triple and assign to corresponding values.
+        (string, string, Sprite) info = retrieve_info_triple();
+        //senderText.text = "Sender: ____\nRE: ____";
+        senderText.text = info.Item1;
+        bottomText.text = info.Item2;
+        cgImage.sprite = info.Item3;
 
         // turn on background behind that stops the player from clicking anything else except for popup close.
         // turn it on immediately, then slide blocker's alpha from 0 to 60.
@@ -126,5 +130,22 @@ public class Messager : MonoBehaviour
         StartCoroutine(close_over_time());
         
     }
+
+
+    (string, string)[] infoTextArray = new (string, string)[2]{
+        ("Sender: Friday\nRE: Drew You This", "I drew you this."),
+        ("Sender: ____\nRE: ____", "hahahaahah")
+    };
+
+    // INFORMATION RETRIEVAL
+    (string, string, Sprite) retrieve_info_triple()
+    {
+        // return the (string, string) in messagerInfoArray corresponding to index savedID
+        // then combine with the sprite retrieved from portraitLibrary corresponding to index savedID
+        // finally, return the values as a triple of type (string, string, Sprite)
+
+        return (infoTextArray[savedID].Item1, infoTextArray[savedID].Item2, pLibrary.retrieve_messagerImage(savedID));
+    }
+    
 
 }

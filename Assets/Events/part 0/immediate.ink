@@ -14,7 +14,7 @@ EXTERNAL inside(wait) //reorders characters so that they appear before overlay a
 EXTERNAL outside(wait) //reorders characters so that they appear behind overlay and weather. Enter 0 at start, or 1 if switching with a bg call.
 EXTERNAL font(state) //switches to robot font. For sentence text only. '-1' to turn off, anything else to turn on.
 
-EXTERNAL center(state) //1: turns on. 0: turns off
+EXTERNAL center(state) //switches to NVL mode. 1: turns on. 0: turns off
 EXTERNAL n(name) //sets name text, or call with empty string to hide namebox.
 EXTERNAL c(id) //id is a string. sets colour of name text and sentence text. Input as a string, e.g. "red"
 
@@ -71,7 +71,7 @@ Let's end.
 
 
 ~play_music(0)
-~imm_bg(3)
+~imm_bg(0)
 ~outside(0)
 ~show(3, 100)
 ~show(4, 200)
@@ -91,12 +91,26 @@ I'm talking a little bit.
 ~speakerglow(4)
 And now I'm talking.
 
+~n("")
 ~p(-1)
 ~speakerglow(-1)
 And now nobody is talking...
+-> END
+
+~center(1)
+I start thinking to myself.
+It's very profound...
+You had better not interrupt me.
+
+~center(0)
+~n("Friday")
+~p(100)
+~speakerglow(3)
+Hey, what are you thinking about there?
 
 ~n("")
 ~p(-1)
+~speakerglow(-1)
 Okay, end now.
 
 -> END

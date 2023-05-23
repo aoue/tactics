@@ -69,8 +69,9 @@ public class Mission0 : Mission
         //returns an array of unit IDs and coords representing unit starting spots.
         //unit id, row, depth into that row (if no unit with the id in reserve party, then we fail silently. all good)
         (int, int, int)[] dep_array = {
-            (0, 1, 1),
-            (1, 0, 1)
+            //(0, 1, 1),
+            //(1, 0, 1),
+            (2, 2, 1)
         };
         return dep_array;
     }
@@ -83,7 +84,8 @@ public class Mission0 : Mission
             //first room group
             (defEnemies[0], 1, 2, 0, 0),
             (defEnemies[0], 2, 3, 0, 0),
-            (defEnemies[0], 0, 3, 1, 0)
+            (defEnemies[0], 0, 3, 1, 0),
+            (defEnemies[0], 3, 3, 0, 0)
 
             /*
             //final room group, sleeping 4

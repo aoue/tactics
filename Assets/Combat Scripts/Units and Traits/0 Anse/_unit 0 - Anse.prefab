@@ -155,9 +155,9 @@ MonoBehaviour:
   brkMax: 4
   controlRangeBase: 1
   phys_atk: 1
-  phys_def: 1
+  phys_def: 0
   magic_atk: 1
-  magic_def: 1
+  magic_def: 0
   unitOrder: {fileID: 6773564134839013533, guid: 811d92a95922178449a6c964f02d0d96,
     type: 3}
   traitList:
