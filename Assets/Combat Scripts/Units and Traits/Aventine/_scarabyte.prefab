@@ -89,6 +89,7 @@ MonoBehaviour:
   unitSprite: {fileID: 1424655179639249734}
   hpBar: {fileID: 3971375235995589038}
   brkBar: {fileID: 376666109872478344}
+  unitActivationSound: {fileID: 8300000, guid: 97ccf47e5cc90784fb8bb0fe76e7ef9d, type: 3}
   box_portrait: {fileID: 0}
   active_portrait: {fileID: 21300000, guid: 835669d0b9690ad40b450eda2ab87d6d, type: 3}
   unitName: Scarabyte

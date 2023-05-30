@@ -56,8 +56,10 @@ public class BattleBrain
                 coverMod = occupied_tile.get_cover();
             }
         }
+        if (u2.get_isBroken()) def = 0;
 
         //damage formula: dmg = roll + user's atk - target's def
+        //if the target is broken, then set their defense to 0
         int dmg_range_roll = t.get_dmg_range()[UnityEngine.Random.Range(0, t.get_dmg_range().Length)];
         int dmg = dmg_range_roll + atk - def - coverMod;
 

@@ -23,7 +23,7 @@ public class DamageFloater : MonoBehaviour
         }
         
         float xOffset = Random.Range(transform.position.x * 0.975f, transform.position.x * 1.025f);
-        float yOffset = Random.Range(transform.position.y * 0.975f, transform.position.y + 1.025f);
+        float yOffset = Random.Range(transform.position.y * 0.975f, transform.position.y * 1.025f);
 
         transform.position = new Vector3(xOffset, yOffset, 0f);
 
@@ -32,7 +32,47 @@ public class DamageFloater : MonoBehaviour
 
         actualText.text = toShow;
 
-        Destroy(gameObject, lifetime);
+        StartCoroutine(control(lifetime));
     }
+    IEnumerator control(float lifetime)
+    {
+        // after being created, the icon should constantly be floating away from the user.
+        // it should also fade in, linger a bit, then fade out while floating.
+        // finally, it will destroy itself.
+        // before being finally faded out and destroying itself.
+        
+        // the object will last for 3*lifetime
+        // the first third, it will fade in from nothing
+        // the second third, nothing
+        // the final third, it will fade all the way out
 
+        Vector3 targetPosition = new Vector3(transform.position.x + 0.1f , transform.position.y + 0.1f, transform.position.z);
+
+        float elapsedTime = 0f;
+        while (elapsedTime < lifetime)
+        {
+            //fade in
+            float value = elapsedTime / lifetime;
+            Color inc_light = new Color(actualText.color.r, actualText.color.g, actualText.color.b, value);
+            actualText.color = inc_light;
+
+            elapsedTime += Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, elapsedTime / lifetime * Time.deltaTime);
+            yield return null;
+        }
+        elapsedTime = 0f;
+        while (elapsedTime < lifetime/2)
+        {
+            //fade out
+            float value = 1f - (elapsedTime / lifetime*2);
+            Color inc_dark = new Color(actualText.color.r, actualText.color.g, actualText.color.b, value);
+            actualText.color = inc_dark;
+
+            elapsedTime += Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, elapsedTime / lifetime/2 * Time.deltaTime);
+            yield return null;
+        }
+
+        Destroy(gameObject);
+    }
 }

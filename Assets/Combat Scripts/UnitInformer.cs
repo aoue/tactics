@@ -11,7 +11,7 @@ public class UnitInformer : MonoBehaviour
     //hover over a unit: display this unit's information.
 
     //held data
-    [SerializeField] private Sprite[] affSprites;
+    [SerializeField] private Sprite emptyTraitIconSprite; 
     
     //main display
     [SerializeField] private Image active_portrait;    
@@ -37,7 +37,7 @@ public class UnitInformer : MonoBehaviour
         heldUnit = u;
     }
     public Unit get_heldUnit() { return heldUnit; }
-   
+    
     public bool is_traitButton_interactable(int which)
     {
         if (traitButtons[which].interactable == true )
@@ -124,10 +124,13 @@ public class UnitInformer : MonoBehaviour
                 else order_text.text = "";
             }
 
+            string defString = u.get_physd().ToString();
+            string magdString = u.get_magd().ToString();
+            if (u.get_isBroken()) { defString = "BRK"; magdString = "BRK"; }
             stats_2.text = "ATK." + u.get_physa()
-                + "\nDEF." + u.get_physd()
+                + "\nDEF." + defString
                 + "\nHAC." + u.get_maga()
-                + "\nICE." + u.get_magd();
+                + "\nICE." + magdString;
 
             active_portrait.gameObject.SetActive(true);
 
@@ -146,12 +149,18 @@ public class UnitInformer : MonoBehaviour
                     {
                         traitButtons[i].interactable = true;
                     }
-                    traitButtons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "(" + (i+1) + ") " + u.get_traitList()[i].get_traitName();
+                    //set text and move icon
+                    traitButtons[i].gameObject.transform.GetChild(1).gameObject.GetComponent<Text>().text = "(" + (i+1) + ")\n" + u.get_traitList()[i].get_traitName();
+                    traitButtons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = u.get_traitList()[i].get_traitIconSprite();
+                    traitButtons[i].gameObject.transform.GetChild(0).gameObject.SetActive(true);
                 }
                 else
                 {
+                    //disable button, set text to empty, set move icon to empty
                     traitButtons[i].interactable = false;
-                    traitButtons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "<i>Empty</i>";
+                    traitButtons[i].gameObject.transform.GetChild(1).gameObject.GetComponent<Text>().text = "";
+                    traitButtons[i].gameObject.transform.GetChild(0).gameObject.SetActive(false);
+                    //traitButtons[i].gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = emptyTraitIconSprite;
                 }
             }
             //fill title and descr text with element 0 - the locked one. Not moveable. Every unit in the game has a trait at this slot.

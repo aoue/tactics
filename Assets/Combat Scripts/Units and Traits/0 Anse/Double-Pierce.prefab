@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d755da71caf8e144ea51bba3446e61f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  traitIconSprite: {fileID: 21300000, guid: 5b4e5c53270afd747a581655dc1490f4, type: 3}
   traitSound: {fileID: 8300000, guid: b3fdfcc1fd23c8c42bbe0f1df3923bd1, type: 3}
   traitName: Double Pierce
   descr: '[descr]'

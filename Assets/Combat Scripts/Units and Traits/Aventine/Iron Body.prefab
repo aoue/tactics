@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d755da71caf8e144ea51bba3446e61f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  traitIconSprite: {fileID: 21300000, guid: b7a5f3a4eecf3d94d816a4d71813cdcd, type: 3}
   traitSound: {fileID: 0}
   traitName: Iron Body
   descr: Slams with the full weight of a hard metal body.

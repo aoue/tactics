@@ -53,7 +53,7 @@ MonoBehaviour:
   - {fileID: 6281772272875594664, guid: ba9dc5c34f6c3ef4096e3827388f02d8, type: 3}
   defEnemies:
   - {fileID: 1424655179639249732, guid: 0cc21903f1ef34a47a80c8112a75d524, type: 3}
-  - {fileID: 6916689384517214054, guid: 2caabb8ca25084a4f904940ada6dd631, type: 3}
+  - {fileID: 26937828575166125, guid: 93ba6687916c87d45bad4e18d53de5b0, type: 3}
   clearExp: 100
   LTC: 0
   nextPartIndex: 1

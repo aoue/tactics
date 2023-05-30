@@ -44,8 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b901fc28cf55f7a4b9dd9ecaab1bf408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  traitIconSprite: {fileID: 21300000, guid: d06b536f811612e419413911b911f036, type: 3}
   traitSound: {fileID: 0}
-  traitName: Attachment-Anse
+  traitName: Attachment
   descr: Likes being near Anse, for some reason. Deals 1 more damage and takes 1
     less damage when in 2 range of him.
   unitType: 0

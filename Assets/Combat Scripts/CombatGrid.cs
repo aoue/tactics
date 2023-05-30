@@ -48,6 +48,7 @@ public class CombatGrid : MonoBehaviour
     [SerializeField] private Sprite defaultUnitShortcutSprite;
     [SerializeField] private Text roundNumberText;
     [SerializeField] private DamageFloater dmgFloater;
+    [SerializeField] private TraitFloater traitFloater;
 
     [SerializeField] private GameObject missionSummaryObj; //the object that all the mission summary stuff is on
     [SerializeField] private Text missionSummaryTitleText; //the title text for the mission. will say 'Mission Clear' or 'Mission Fail'
@@ -932,6 +933,7 @@ public class CombatGrid : MonoBehaviour
         roundNumber += 1;
         roundNumberText.text = "Round " + roundNumber;
         allowRoundEvent = true;
+        update_ZoC();
 
         // jump camera to first unit in pl
         for (int i = 0; i < playerUnits.Length; i++)
@@ -1070,6 +1072,11 @@ public class CombatGrid : MonoBehaviour
         }
         //randomly select from bestList
         (Tile, int) best = bestList[UnityEngine.Random.Range(0, bestList.Count)];
+
+        //switch unit informer to the current unit
+        //play unit activation sound
+        uInformer.fill(chosenUnit, -1, false, false);
+        audio.play_sound(chosenUnit.get_unitActivationSound());
 
         //int, tilelist, tile
         enemy_active_info = active_unit.get_action_information(best.Item2);
@@ -1219,12 +1226,13 @@ public class CombatGrid : MonoBehaviour
         
         //furthermore, if it's one of the player's units moving, then the player retains camera control.
         //if it's the enemy moving though, then we'll slide the camera to the destination tile as the unit moves.
-
+        
         if (!isPlayer && path.Count > 1)
         {
             yield return new WaitForSeconds(enemy_pause_before_movement);
         }
-
+        
+        audio.play_stepperSound();
         //camera slide at the same time, but only for enemies.
         //the player shouldn't lose control of the camera during their turn.
         if (!isPlayer)
@@ -1246,6 +1254,7 @@ public class CombatGrid : MonoBehaviour
                 yield return null;
             }
         }
+        audio.stop_stepperSound();
         if (isPlayer)
         {
             finish_movement();
@@ -1290,6 +1299,10 @@ public class CombatGrid : MonoBehaviour
         // -show health bars decreasing on all the affected units
         // -when animation done: any units that have died, remove their sprites.
         // -when that's done (and attack duration time has passed), hide affectedTiles
+
+        //display trait floater
+        TraitFloater t = Instantiate(traitFloater, active_unit.gameObject.transform.position, Quaternion.identity);
+        t.setup(active_ability.get_traitIconSprite(), (combat_hpBar_duration + combat_hpBar_linger) * 2);
 
         //do all damage calculations. 
         // -each affected unit has had its hp updated, so now we adjust their hpbars in the animation segment
@@ -1592,7 +1605,8 @@ public class CombatGrid : MonoBehaviour
                 highlight_tiles_mv(active_unit); //add movement tile highlights
                 uInformer.set_heldUnit(heldUnit);
                 gameState = State.SELECT_MOVEMENT;   
-                pbpManager.fill(gameState, active_unit, active_ability);          
+                pbpManager.fill(gameState, active_unit, active_ability);
+                audio.play_sound(active_unit.get_unitActivationSound());
                 break;
 
             case State.SELECT_MOVEMENT:

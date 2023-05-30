@@ -16,7 +16,8 @@ public class Unit : MonoBehaviour
     [SerializeField] private Transform hpBar; //marks hp / hpmax percentage, in red
     [SerializeField] private Transform brkBar; //marks brk / brkmax percentage, in yellow
 
-    //stats  
+    //stats
+    [SerializeField] private AudioClip unitActivationSound; //sound that plays when unit is activated. Short voiceline or something.
     [SerializeField] private Sprite box_portrait; //the small one.
     [SerializeField] private Sprite active_portrait; //the large one.
     [SerializeField] private string unitName;
@@ -241,6 +242,7 @@ public class Unit : MonoBehaviour
     public Order get_unitOrder() { return unitOrder; }
     public moveLearnState[] get_learnedList() { return learnedList; }
     public List<UnitType> get_unitTypes() { return unitTypes; }
+    public AudioClip get_unitActivationSound() {return unitActivationSound; }
 
     //setters, for leveling up
     public void set_exp(int x) { exp = x; }

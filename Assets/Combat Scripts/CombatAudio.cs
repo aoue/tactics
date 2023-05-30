@@ -13,6 +13,7 @@ public class CombatAudio : MonoBehaviour
     [SerializeField] private AudioSource musicPlayer;
     [SerializeField] private AudioSource soundPlayer;
     [SerializeField] private AudioSource typer; //only plays text sound.
+    [SerializeField] private AudioSource stepper; //only plays stepping sound.
 
     //Play
     public void play_music(AudioClip ac)
@@ -30,6 +31,14 @@ public class CombatAudio : MonoBehaviour
     public void play_typingSound()
     {
         typer.Play();
+    }
+    public void play_stepperSound()
+    {
+        stepper.Play();
+    }
+    public void stop_stepperSound()
+    {
+        stepper.Stop();
     }
     public void stop_music()
     {

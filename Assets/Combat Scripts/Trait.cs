@@ -40,6 +40,7 @@ public class Trait : MonoBehaviour
     //active traits:
     // -can be used as an attack for targeting, dmg, etc.
 
+    [SerializeField] private Sprite traitIconSprite; //the small icon that the trait is.
     [SerializeField] private AudioClip traitSound; //the sound that plays when the trait is used. Or null for nothing.
     [SerializeField] private string traitName; //the name of the trait. Unique.
     [SerializeField] private string descr; //a 1-line (at the most) descr of the trait.
@@ -189,6 +190,7 @@ public class Trait : MonoBehaviour
         return buildStr + "\n<i>" + descr + "</i>";
     }
 
+    public Sprite get_traitIconSprite() { return traitIconSprite; }
     public AudioClip get_traitSound() { return traitSound; }
     public string get_traitName() { return traitName; }
     public bool get_mustSetup() {return mustSetup;}
