@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public enum AI { FOOLISH, REGULAR, ELITE };
 public class Enemy : Unit
 {
     //derived from unit.
@@ -14,12 +13,12 @@ public class Enemy : Unit
     [SerializeField] private SpriteRenderer sleepSpriteRenderer;
 
     // multiplied by level for stat increases. The normal stats are the offsets.
-    [SerializeField] protected double hp_slope;
-    [SerializeField] protected double brk_slope;
-    [SerializeField] protected double pa_slope;
-    //[SerializeField] protected double pd_slope;
-    [SerializeField] protected double ma_slope;
-    //[SerializeField] protected double md_slope;
+    [SerializeField] protected int hp_slope;
+    [SerializeField] protected int brk_slope;
+    [SerializeField] protected int pa_slope;
+    [SerializeField] protected int pd_slope;
+    [SerializeField] protected int ma_slope;
+    [SerializeField] protected int md_slope;
 
     [SerializeField] private int pri_base;
     [SerializeField] private int pri_range; //(range is -pri_range, pri_range)
@@ -35,12 +34,16 @@ public class Enemy : Unit
         //levels up the unit; meaning increasing its stats, the specified number of times.
         //this is used so a single prefab type can be used regardless of the level it is supposed to be.
         //Debug.Log("enemy.level_up() called with times = " + times);
-        set_hpMax((int)(get_hpMax() + times * hp_slope));
-        set_brkMax((int)(get_brkMax() + times * brk_slope));
-        set_physa((int)(get_physa() + times * pa_slope));
-        //set_physd((double)(get_physd() + times * pd_slope));
-        set_maga((int)(get_maga() + times * ma_slope));
-        //set_magd((double)(get_magd() + times * md_slope));
+
+        //each enemy unit will be an override of the enemy class and have its own version of level_up()
+        /*
+        set_hpMax(get_hpMax() + times * hp_slope);
+        set_brkMax(get_brkMax() + times * brk_slope);
+        set_physa(get_physa() + times * pa_slope);
+        set_physd(get_physd() + times * pd_slope);
+        set_maga(get_maga() + times * ma_slope);
+        set_magd(get_magd() + times * md_slope);
+        */
     }  
 
     public override void clear_moveInformationList_except_last()
@@ -81,13 +84,13 @@ public class Enemy : Unit
     }
 
     //ai parameters
-    [SerializeField] private AI unitAI;
-    [SerializeField] private bool keepDistance; //false if the unit charges straight in. True if the unit keeps distance.
-    [SerializeField] private bool caresAboutZoC; //true if the unit cares about ZoC score. False if doesn't care.
-    [SerializeField] private bool lessMoving; //true if the unit prefers to move less. False if doesn't care.
-    [SerializeField] private bool caresAboutBases; //true if the unit thinks it's important to capture a base. False if doesn't care.
-    [SerializeField] private bool caresAboutCover; //true if the unit thinks it's important to take cover. Adds 10* base's cover rating.
-    [SerializeField] private bool caresAboutKills; //true if the unit value hitting player units with low hp percentage. (or, for elite, will kill.)
+    [SerializeField] private bool valuesRange; //false if the unit charges straight in. True if the unit keeps distance.
+    [SerializeField] private bool valuesZOC; //true if the unit cares about ZoC score. False if doesn't care.
+    [SerializeField] private bool valuesLethargy; //true if the unit prefers to move less. False if doesn't care.
+    [SerializeField] private bool valuesBases; //true if the unit values capturing bases.
+    [SerializeField] private bool valuesCover; //true if the unit values being on cover. Adds 10* base's cover rating.
+    [SerializeField] private bool valuesKills; //true if the unit values hitting player units with low hp percentage.
+    [SerializeField] private int hitAllyMod; //integer, subtracted from move score for every ally hit.
 
     //more target scoring:
     // +if target is low/high brk
@@ -98,7 +101,6 @@ public class Enemy : Unit
     public override int score_move(int closestPlayerTile, Tile dest, int tilesAddedToZoC, Tile[,] myGrid, HashSet<Tile> visited, GridHelper gridHelper)
     {
         //score a grid destination.
-
         //factors:
         int score = 0;
 
@@ -107,38 +109,29 @@ public class Enemy : Unit
             score += 1000;
         }
 
-        // -non-controlled tiles this move adds ZoC control to (less points if foolish)
-        if (caresAboutZoC)
+        // -non-controlled tiles this move adds ZoC control to
+        if (valuesZOC)
         {
-            if (unitAI == AI.FOOLISH) score += tilesAddedToZoC;
-            else score += (2 * tilesAddedToZoC);
+            score += tilesAddedToZoC;
         }
 
         //if the unit doesn't care about keeping distance from the player,
         //i.e., the unit wants to charge straight in
-
+        /*
         if (unitAI == AI.FOOLISH)
         {
-            score -= (3 * closestPlayerTile);
-        }
-        else
-        {
+            //score -= (3 * closestPlayerTile);
             score -= closestPlayerTile;
-        }
+        }*/
+        score -= (closestPlayerTile);
         
-
-        if (lessMoving)
-        {
-            score -= Math.Abs(x - dest.x) + Math.Abs(y - dest.y);
-        }
-
         // -capturing a base is good
-        if (caresAboutBases && dest is BaseTile)
+        if (valuesBases && dest is BaseTile)
         {
-            score += 1;           
+            score += 1;       
         }
 
-        if (caresAboutCover)
+        if (valuesCover)
         {
             score += (int)(dest.get_cover()*10);
         }
@@ -193,13 +186,18 @@ public class Enemy : Unit
             (int, List<Tile>, Tile) ans = runningMaxList[UnityEngine.Random.Range(0, runningMaxList.Count)];
             moveInformationList.Add(ans);
 
-            //(keep distance, but you still want to be able to attack)
-            // -distance to closest player (more points if foolish) (remember: a lower value means you are closer.)
-            //if we want to keep distance, then the higher/farther closestPlayerTile is the better.
-            //if we do not want to keep distance, then the lower/closer closestPlayerTile is the better.
-            if (keepDistance)
+            //(if true, that means the unit prefers being further away from the target.)
+            //(check is in here, otherwise they would never approach the target)
+            if (valuesRange)
             {
                 score += (2 * closestPlayerTile);
+            }
+
+            //(if true, the unit prefers moving less)
+            //(check is in here, otherwise they would never approach the target)
+            if (valuesLethargy)
+            {
+                score -= Math.Abs(x - dest.x) + Math.Abs(y - dest.y);
             }
         }
         else
@@ -222,69 +220,23 @@ public class Enemy : Unit
         //for each target
         //  calculate damage score (positive if isPlayer, negative if not)
         int score = 0;
-        switch (unitAI)
+        foreach (Tile targetTile in targetList)
         {
-            case AI.FOOLISH:
-                foreach (Tile targetTile in targetList)
+            if (targetTile.occupied())
+            {
+                if (targetTile.get_heldUnit().get_isAlly())
                 {
-                    if (targetTile.occupied())
+                    score += 100;
+                    if (valuesKills)
                     {
-                        if (targetTile.get_heldUnit().get_isAlly())
-                        {
-                            score += 100;
-                            if (caresAboutKills)
-                            {
-                                score = (int)(score * (4f - targetTile.get_heldUnit().get_hpPercentage()));
-                            }
-                        }
-                        else {score -= 50;}
+                        score = (int)(score * (4f - targetTile.get_heldUnit().get_hpPercentage()));
                     }
                 }
-
-                break;
-            case AI.REGULAR:
-                foreach (Tile targetTile in targetList)
+                else 
                 {
-                    if (targetTile.occupied())
-                    {
-                        if (targetTile.get_heldUnit().get_isAlly())
-                        {
-                            score += 100;
-                            if (caresAboutKills)
-                            {
-                                score = (int)(score * (2f - targetTile.get_heldUnit().get_hpPercentage()));
-                            }
-                        }
-                        else score -= 100;
-                    }
+                    score += hitAllyMod;
                 }
-
-                break;
-            case AI.ELITE:
-                
-                foreach (Tile targetTile in targetList)
-                {
-                    //score the attack based on projected damage.
-                    if (targetTile.occupied())
-                    {
-                        int projected_dmg = brain.calc_damage(this, targetTile.get_heldUnit(), t, targetTile, false, null, null);
-
-                        if (projected_dmg >= targetTile.get_heldUnit().get_hp())
-                        {
-                            projected_dmg = (int)(projected_dmg * 1.5f);
-                        }
-
-                        if (targetTile.get_heldUnit().get_isAlly())
-                        {
-                            score += projected_dmg;
-                        }
-                        else
-                        {
-                            score -= projected_dmg;
-                        }
-                    }
-                }
-                break;
+            }
         }
         return score;
     }

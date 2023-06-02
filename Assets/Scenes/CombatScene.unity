@@ -541,7 +541,7 @@ GameObject:
   - component: {fileID: 111644098}
   - component: {fileID: 111644097}
   m_Layer: 5
-  m_Name: active unit portrait (not active)
+  m_Name: active unit portrait
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2766,7 +2766,7 @@ GameObject:
   - component: {fileID: 639963748}
   - component: {fileID: 639963750}
   m_Layer: 5
-  m_Name: unit informer (not active)
+  m_Name: unit informer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9494,12 +9494,12 @@ GameObject:
   - component: {fileID: 2034950572}
   - component: {fileID: 2034950574}
   m_Layer: 5
-  m_Name: tile informer (not active)
+  m_Name: tile informer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2034950571
 RectTransform:
   m_ObjectHideFlags: 0

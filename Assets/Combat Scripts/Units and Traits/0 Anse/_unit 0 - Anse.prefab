@@ -146,8 +146,8 @@ MonoBehaviour:
   hpBar: {fileID: 1308758430853295776}
   brkBar: {fileID: 986779691955203519}
   unitActivationSound: {fileID: 8300000, guid: db6a982144d6b0441801fc766a0e3312, type: 3}
-  box_portrait: {fileID: 21300000, guid: 3684652f0e1856b4096f4ddbddbb218c, type: 3}
-  active_portrait: {fileID: 21300000, guid: 4cd31d5e9021f7a479140d3f55af4d6a, type: 3}
+  box_portrait: {fileID: 21300000, guid: ac7b43e16e339644ea491b5a8e8f7e83, type: 3}
+  active_portrait: {fileID: 21300000, guid: 3e0d36631ffdb2f48ba43714fc18e201, type: 3}
   unitName: Anse
   level: 1
   exp: 0

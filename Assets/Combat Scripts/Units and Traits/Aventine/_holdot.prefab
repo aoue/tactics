@@ -75,20 +75,22 @@ MonoBehaviour:
   - {fileID: 0}
   sleepSpriteRenderer: {fileID: 6014944690136884990}
   hp_slope: 4
-  brk_slope: 1.5
+  brk_slope: 1
   pa_slope: 1
-  ma_slope: 0.5
+  pd_slope: 0
+  ma_slope: 0
+  md_slope: 0
   pri_base: 5
   pri_range: 5
   pri_panic: 3
   panic_threshold: 0.5
-  unitAI: 1
-  keepDistance: 1
-  caresAboutZoC: 1
-  lessMoving: 1
-  caresAboutBases: 0
-  caresAboutCover: 0
-  caresAboutKills: 0
+  valuesRange: 1
+  valuesZOC: 1
+  valuesLethargy: 1
+  valuesBases: 0
+  valuesCover: 1
+  valuesKills: 0
+  hitAllyMod: -50
 --- !u!212 &26937828575166127
 SpriteRenderer:
   m_ObjectHideFlags: 0
