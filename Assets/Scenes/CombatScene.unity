@@ -6120,6 +6120,8 @@ MonoBehaviour:
   roundNumberText: {fileID: 735003529}
   dmgFloater: {fileID: -7016093789985900139, guid: 494f2f59734063e4eafaf8fa138c2113,
     type: 3}
+  dmgPreviewFloater: {fileID: 9200437231184997349, guid: 365aa8995dcbc69478c8c2fa8707b22a,
+    type: 3}
   traitFloater: {fileID: 4130345988918464834, guid: 7d45fd241cf570f4394cd2c3c1a6727a,
     type: 3}
   missionSummaryObj: {fileID: 1932270051}

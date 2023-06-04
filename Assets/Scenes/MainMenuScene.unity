@@ -1129,6 +1129,7 @@ MonoBehaviour:
   musicPlayer: {fileID: 846158756}
   soundPlayer: {fileID: 0}
   typer: {fileID: 0}
+  stepper: {fileID: 0}
   musicList:
   - {fileID: 8300000, guid: 24789f97127fc5147b283e22e876b33f, type: 3}
   soundList: []

@@ -127,7 +127,7 @@ MonoBehaviour:
   valuesBases: 0
   valuesCover: 0
   valuesKills: 1
-  hitAllyPenalty: 0
+  hitAllyMod: 0
 --- !u!212 &1424655179639249734
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -48,6 +48,7 @@ public class CombatGrid : MonoBehaviour
     [SerializeField] private Sprite defaultUnitShortcutSprite;
     [SerializeField] private Text roundNumberText;
     [SerializeField] private DamageFloater dmgFloater;
+    [SerializeField] private DamagePreviewFloater dmgPreviewFloater;
     [SerializeField] private TraitFloater traitFloater;
 
     [SerializeField] private GameObject missionSummaryObj; //the object that all the mission summary stuff is on
@@ -75,6 +76,7 @@ public class CombatGrid : MonoBehaviour
     private Trait active_ability; //the move that we are selecting targets for.
     private Tile last_player_end_turn_tile; //the tile that the last active player unit ended its turn on. Influences enemy priority calculations.
     private bool set_order; //true on player's first move. Tells the game to set active_order to the unit's order.
+    private List<DamagePreviewFloater> activePreviewFloaters; //hold onto the visible damagepreviewfloaters so we can remove them later.
 
     private (int, List<Tile>, Tile) enemy_active_info; //information about the move the enemy is performing.
     //Tile: dest tile | int: chosen trait index | List<Tile> affected tiles | Tile: origin tile
@@ -88,6 +90,7 @@ public class CombatGrid : MonoBehaviour
     private int pw; //party power (i.e. the party's global mana pool.)
     private BattleBrain brain;
     private GridHelper gridHelper;
+
 
     //round event control
     private int roundNumber; //for timing round start events and reinforcements, that kind of thing.
@@ -111,6 +114,7 @@ public class CombatGrid : MonoBehaviour
         zocTiles = new List<Tile>();
         visited = new HashSet<Tile>();
         targetHighlightGroup = new List<Tile>();
+        activePreviewFloaters = new List<DamagePreviewFloater>();
         active_order = defaultOrder;
         allowRoundEvent = true;
         roundNumber = 0;
@@ -169,6 +173,12 @@ public class CombatGrid : MonoBehaviour
                     active_unit.y = past_active_unit_y;
                     active_unit.set_hasMoved(false);
                     myGrid[active_unit.x, active_unit.y].place_unit(active_unit);
+
+                    foreach(DamagePreviewFloater dpf in activePreviewFloaters)
+                    {
+                        dpf.remove();
+                    }
+                    activePreviewFloaters.Clear();
 
                     //change unit pos graphically
                     Vector3 dest = get_pos_from_coords(active_unit.x, active_unit.y);
@@ -1294,7 +1304,7 @@ public class CombatGrid : MonoBehaviour
     }
     IEnumerator perform_attack_animation(List<Unit> affectedUnits, bool isPlayer)
     {
-        //here's what it is to do:
+        // here's what it is to do:
         // -plays move sound (or none if null)
         // -show health bars decreasing on all the affected units
         // -when animation done: any units that have died, remove their sprites.
@@ -1645,6 +1655,12 @@ public class CombatGrid : MonoBehaviour
                 //visited: all tiles you can choose to be the origin of the attack
                 //targetHighlightGroup: all tiles that will be hit if you choose to attack for a given origin
 
+                foreach(DamagePreviewFloater dpf in activePreviewFloaters)
+                {
+                    dpf.remove();
+                }
+                activePreviewFloaters.Clear();
+
                 List<Unit> affectedUnits = tileList_to_targetList(gridHelper.generate_targetList(active_ability, myGrid, x_pos, y_pos, active_unit.x, active_unit.y, visited)); //used to damage/heal all affected units
                 clear_highlights();
 
@@ -1716,6 +1732,13 @@ public class CombatGrid : MonoBehaviour
     {
         //highlights what square will be highlighted by a move's AoE.    
         //first; clear it.
+
+        foreach(DamagePreviewFloater dpf in activePreviewFloaters)
+        {
+            dpf.remove();
+        }
+        activePreviewFloaters.Clear();
+
         foreach (Tile t in targetHighlightGroup)
         {
             //hide target icon
@@ -1734,16 +1757,27 @@ public class CombatGrid : MonoBehaviour
             foreach (Tile t in targetHighlightGroup)
             {
                 t.highlight_target(!ability.get_isHeal());
+
+                // in here; use damagepreviewfloater
+                if (active_unit.get_isAlly() && t.occupied())
+                {
+                    DamagePreviewFloater dpf = Instantiate(dmgPreviewFloater, t.gameObject.transform.position, Quaternion.identity);
+                    activePreviewFloaters.Add(dpf);
+
+                    string dpfStr;
+                    if (active_ability.get_isHeal()) dpfStr = brain.calc_heal_range_str(active_unit, t.get_heldUnit(), active_ability, active_unit.get_isAlly(), active_order); 
+                    else dpfStr = brain.calc_damage_range_str(active_unit, t.get_heldUnit(), active_ability, myGrid[t.get_heldUnit().x, t.get_heldUnit().y], active_unit.get_isAlly(), active_order, enemyUnits.ToArray());
+                    
+                    dpf.setup(dpfStr, !active_ability.get_isHeal());                    
+                }
+
             }
         }
-
-        
     }
     void highlight_attack(Trait t)
     {
         // use gridHelper's get_all_possible_attack_origins()
         // set visited = to the result of that.
-
         visited = gridHelper.get_all_possible_attack_origins(t, myGrid, myGrid[active_unit.x, active_unit.y]);
         
         foreach (Tile t2 in visited)

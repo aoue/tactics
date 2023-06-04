@@ -22,16 +22,12 @@ public class DamageFloater : MonoBehaviour
             actualText.color = new Color(0f, 1f, 0f);
         }
         
-        float xOffset = Random.Range(transform.position.x * 0.975f, transform.position.x * 1.025f);
-        float yOffset = Random.Range(transform.position.y * 0.975f, transform.position.y * 1.025f);
-
+        float xOffset = Random.Range(transform.position.x - 0.025f, transform.position.x + 0.025f);
+        float yOffset = Random.Range(transform.position.y - 0.025f, transform.position.y + 0.025f);
         transform.position = new Vector3(xOffset, yOffset, 0f);
-
         gameObject.GetComponent<MeshRenderer>().sortingLayerName = "Unit Layer";
         gameObject.GetComponent<MeshRenderer>().sortingOrder = 4;
-
         actualText.text = toShow;
-
         StartCoroutine(control(lifetime));
     }
     IEnumerator control(float lifetime)
