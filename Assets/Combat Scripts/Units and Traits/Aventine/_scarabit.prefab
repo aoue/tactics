@@ -49,7 +49,7 @@ GameObject:
   - component: {fileID: 1424655179639249732}
   - component: {fileID: 1424655179639249734}
   m_Layer: 0
-  m_Name: _scarabyte
+  m_Name: _scarabit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91,8 +91,8 @@ MonoBehaviour:
   brkBar: {fileID: 376666109872478344}
   unitActivationSound: {fileID: 8300000, guid: 97ccf47e5cc90784fb8bb0fe76e7ef9d, type: 3}
   box_portrait: {fileID: 0}
-  active_portrait: {fileID: 21300000, guid: 835669d0b9690ad40b450eda2ab87d6d, type: 3}
-  unitName: Scarabyte
+  active_portrait: {fileID: 21300000, guid: 2b2a4da7ea3d94b428798ae6067d4f6c, type: 3}
+  unitName: Scarabit
   level: 1
   exp: 4
   movement: 2

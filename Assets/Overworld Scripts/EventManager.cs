@@ -11,7 +11,6 @@ public class EventManager : MonoBehaviour
 {
     [SerializeField] private Overworld overworld; //link back to the boss.
     [SerializeField] private OverworldAudio audio;
-    [SerializeField] private FadeManager fader;
     [SerializeField] private PortraitLibrary pLibrary;
     [SerializeField] private ParticleSystem snowSystem;
     [SerializeField] private ParticleSystem rainSystem;
@@ -22,21 +21,19 @@ public class EventManager : MonoBehaviour
     [SerializeField] private GameObject eventObjects;
     [SerializeField] private CanvasGroup choiceParent;
     [SerializeField] private Image bg;
-    [SerializeField] private Image overlay;
+    [SerializeField] private Image fadeTapestry;
     [SerializeField] private GameObject NormalDialogueBox;
     [SerializeField] private GameObject nameBox;
     [SerializeField] private Text nameText;
     [SerializeField] private Text sentenceText;
-    [SerializeField] private Text centeredText;
     [SerializeField] private Button buttonPrefab = null;
     [SerializeField] private Image speakerBoxPortrait;
-    [SerializeField] private Button[] textControlButtons; //in order: auto, skip, history
-    [SerializeField] private TextMeshProUGUI msgPopupText;
+
+    [SerializeField] private GameObject bgSwitchPopup;
+    [SerializeField] private GameObject musicSwitchPopup;
 
     //[SerializeField] private Material defaultMaterial;
     [SerializeField] private Material holoMaterial;
-    [SerializeField] private Font defaultFont;
-    [SerializeField] private Font robotFont;
 
     //dialogue box hider
     private bool hideAcceptsInput = true; //when true, you can toggle hide. false when transforming.
@@ -49,12 +46,8 @@ public class EventManager : MonoBehaviour
     //typing speed controllers
     private float textWait = 0.035f; //how many seconds to wait after a non-period character in typesentence
     private float periodWait = 0.35f; //how many seconds to wait after a period character in typesentence
-    private float autoWait = 1.75f; //when auto is on, time waited when a sentence is fully written out before playing the next one  
-    private bool skipOn = false; //when true, don't wait at all between textWaits, just display one after another.
-    private bool autoOn = false; //when true, the player can't continue the text, but it will continue automatically.
     private bool historyOn = false; //when true, viewing history and cannot continue the story.
     private bool settingsOn = false; //when true, viewing settings and cannot continue the story.
-    private bool isCentered = false; //determines whether to use sentenceText or use centeredText in typeSentence().
 
     [SerializeField] private GameObject settingsView; //lets player adjust vn settings, like text speed.
     [SerializeField] private Slider programGraphic;
@@ -76,20 +69,9 @@ public class EventManager : MonoBehaviour
 
     void Update()
     {
-        //toggle text control states:
-        //a: auto
-        //left ctrl: skip
-        //h: history
-
-        if (Input.GetKeyDown(KeyCode.A) && historyOn == false && hideOn == false && settingsOn == false)
-        {
-            toggle_auto();
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftControl) && historyOn == false && hideOn == false && settingsOn == false)
-        {
-            toggle_skip();
-        }
-        else if (Input.GetKeyDown(KeyCode.H) && settingsOn == false)
+        if (!effectsOver) return;
+        
+        if (Input.GetKeyDown(KeyCode.H) && settingsOn == false)
         {
             toggle_history();
         }
@@ -102,30 +84,14 @@ public class EventManager : MonoBehaviour
             toggle_hide();
         }
 
-        //press 'spacebar' or 'enter' or 'LeftClick' to continue, only if canProceed if true, we aren't showing history, and we aren't hiding dialogue box
+        //press 'spacebar' or 'enter' to continue, only if canProceed if true, we aren't showing history, and we aren't hiding dialogue box
         if (canProceed == true && historyOn == false && settingsOn == false)
         {
-            if (skipOn == false && autoOn == false && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)))
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
             {
                 DisplayNextSentence();
             }
-            else if (skipOn == true)
-            {
-                DisplayNextSentence();
-            }
-            else if (autoOn == true)
-            {
-                DisplayNextSentence();
-            }                    
         }     
-    }
-
-    //MANAGE EVENT PREVIEW
-    public static void event_hovered(float xCoord, float yCoord)
-    {
-    }
-    public static void event_unhovered()
-    {
     }
 
     //MANAGE EVENT SKIP/AUTO BUTTONS
@@ -172,30 +138,6 @@ public class EventManager : MonoBehaviour
             StartCoroutine(modify_diaBox_alpha(false));
         }
     }
-    public void toggle_auto()
-    {
-        autoOn = !autoOn;
-        if (autoOn == true)
-        {
-            textControlButtons[0].image.color = Color.black;
-        }
-        else
-        {
-            textControlButtons[0].image.color = Color.grey;
-        }
-    }
-    public void toggle_skip()
-    {
-        skipOn = !skipOn;
-        if (skipOn == true)
-        {
-            textControlButtons[1].image.color = Color.black;
-        }
-        else
-        {
-            textControlButtons[1].image.color = Color.grey;
-        }
-    }   
     public void toggle_history()
     {
         //use a viewport to view the last ?? sentences.
@@ -204,12 +146,10 @@ public class EventManager : MonoBehaviour
 
         if (historyOn == true)
         {
-            textControlButtons[2].image.color = Color.black;
             show_history();
         }
         else
         {
-            textControlButtons[2].image.color = Color.grey;
             hide_history();
         }        
     }   
@@ -234,14 +174,12 @@ public class EventManager : MonoBehaviour
         settingsOn = true;
         if (settingsOn == true)
         {
-            textControlButtons[3].image.color = Color.black;
             settingsView.SetActive(true);
         }
     }
     public void hide_settings()
     {
         settingsOn = false;
-        textControlButtons[3].image.color = Color.grey;
         settingsView.SetActive(false);
     }
     public void set_textWaitTime(System.Single value)
@@ -270,105 +208,45 @@ public class EventManager : MonoBehaviour
         canProceedArrow.SetActive(false);
         while (!effectsOver)
         {
-            yield return null;
+            yield return new WaitForSeconds(0.2f);
         }
         
-        if (isCentered)
+        string saveString;
+        if (sentence[0] == '>')
         {
-            //in this case, then we add to the text until it gets to a certain length, at which point we clear it and begin again.
-            //(only clear and begin again at the start of a sentence, not during.)
-
-            //check whether to clear centered text. Clear if either there are X newline characters or total length is greater than Y.
-            if ( centeredText.text.Length - centeredText.text.Replace("\n", "").Length > 10 || centeredText.text.Length > 700)
-            {
-                centeredText.text = "";
-            }
-            string saveString  = centeredText.text;
-
-            if (skipOn)
-            {
-                centeredText.text = saveString + sentence;
-            }
-            else
-            {
-                yield return new WaitForSeconds(0.05f);
-
-                string displayString = "";
-                for(int i = 0; i < sentence.Length; i++)
-                {
-                    if (skipOn == true)
-                    {
-                        //i.e., if skip is turned on while the sentence is playing.
-                        centeredText.text = saveString + sentence;
-                        break;
-                    }
-                    displayString += sentence[i];
-                    centeredText.text = saveString + displayString;
-                    if (i < sentence.Length - 1 && (sentence[i] == '.' || sentence[i] == '!' || sentence[i] == '?')) yield return new WaitForSeconds(periodWait);
-                    else yield return new WaitForSeconds(textWait);
-                }               
-            }
-            centeredText.text += "\n";
+            //saveString = sentenceText.text.Replace("\"", ""); // save previous sentence and remove the now-extra set of quotations
+            saveString = sentenceText.text;
+            sentence = sentence.Substring(1, sentence.Length - 1);
         }
         else
         {
-            string saveString;
-            if (sentence[0] == '>')
-            {
-                //saveString = sentenceText.text.Replace("\"", ""); // save previous sentence and remove the now-extra set of quotations
-                saveString = sentenceText.text;
-                sentence = sentence.Substring(1, sentence.Length - 1);
-            }
-            else
-            {
-                saveString = "";
-                sentenceText.text = "";
-            }
-           
-            if (skipOn)
-            {
-                sentenceText.text = saveString + sentence;
-            }
-            else
-            {                              
-                
-                yield return new WaitForSeconds(0.05f);
-
-                string displayString = saveString;
-                for(int i = 0; i < sentence.Length; i++)
-                {
-                    if (skipOn == true)
-                    {
-                        //i.e., if skip is turned on while the sentence is playing.
-                        sentenceText.text = saveString + sentence;
-                        break;
-                    }
-                    displayString += sentence[i];
-                    //control quotes, parentheses, or nothing.
-                    if (nameText.text == "")
-                    {
-                        sentenceText.text = displayString;
-                    }
-                    else
-                    {
-                        //sentenceText.text = "\"" + displayString + "\"";
-                        sentenceText.text = displayString;
-                    }          
-                    if (i < sentence.Length - 1 && (sentence[i] == '.' || sentence[i] == '!' || sentence[i] == '?')) yield return new WaitForSeconds(periodWait);
-                    else yield return new WaitForSeconds(textWait);
-                }
-            }
-
+            saveString = "";
+            sentenceText.text = "";
         }
-        if (!skipOn) audio.play_typingSound();
+                                    
         yield return new WaitForSeconds(0.05f);
-        
-        if (autoOn == true && skipOn == false)
+
+        string displayString = saveString;
+        for(int i = 0; i < sentence.Length; i++)
         {
-            yield return new WaitForSeconds(autoWait);
+            displayString += sentence[i];
+            //control quotes, parentheses, or nothing.
+            if (nameText.text == "")
+            {
+                sentenceText.text = displayString;
+            }
+            else
+            {
+                //sentenceText.text = "\"" + displayString + "\"";
+                sentenceText.text = displayString;
+            }          
+            if (i < sentence.Length - 1 && (sentence[i] == '.' || sentence[i] == '!' || sentence[i] == '?')) yield return new WaitForSeconds(periodWait);
+            else yield return new WaitForSeconds(textWait);
         }
+        
+        audio.play_typingSound();
+        yield return new WaitForSeconds(0.05f);
         canProceed = true;
-        canProceedArrow.SetActive(true);
     }
 
     public void begin_immediate(TextAsset storyText)
@@ -378,7 +256,7 @@ public class EventManager : MonoBehaviour
     }
     public void begin_event(EventHolder ev)
     {
-        fader.fade_to_black();
+        //fader.fade_to_black();
         heldEv = ev;
         StartCoroutine(pause_before_starting_event());
     }   
@@ -388,18 +266,11 @@ public class EventManager : MonoBehaviour
         nameText.text = "";
         sentenceText.text = "";
 
-        //reset auto/skip/and history       
-        autoOn = false;
-        skipOn = false;
+        //reset history       
         historyOn = false;
         currentSpeakerName = "NO SPEAKER";
         if (historyList == null) historyList = new List<HistoryEntry>();
         else historyList.Clear();
-        for (int i = 0; i < textControlButtons.Length; i++)
-        {
-            textControlButtons[i].interactable = true;
-            textControlButtons[i].image.color = Color.grey;
-        }
 
         //setup starting speaker portraits - that is, hide them all.
         for (int i = 0; i < 5; i++)
@@ -424,7 +295,7 @@ public class EventManager : MonoBehaviour
     }
     void DisplayNextSentence()
     {
-        //delete any remaining choice thingies, if they are there.
+        //delete any remaining choice options
         int childCount = choiceParent.transform.childCount;
         for (int i = childCount - 1; i >= 0; --i)
         {
@@ -432,10 +303,9 @@ public class EventManager : MonoBehaviour
         }
 
         canProceed = false;
-        if ( script.canContinue == true)
+        if (script.canContinue == true)
         {
             string sentence = script.Continue().Trim();
-
             //if sentence is blank; then don't type sentence on it. call DisplayNextSentence again.
             if ( sentence.Length > 0)
             {
@@ -466,7 +336,6 @@ public class EventManager : MonoBehaviour
         }
         else
         {
-            //end of story.
             end_event();   
         }
     }   
@@ -480,7 +349,7 @@ public class EventManager : MonoBehaviour
         }
         
         //start a fade
-        fader.fade_from_black_cheat();
+        //fader.fade_from_black_cheat();
         eventObjects.SetActive(false);
         overworld.load_part();
     }
@@ -492,9 +361,9 @@ public class EventManager : MonoBehaviour
         set_colour("white");
         set_name(""); //hide name box
         set_boxPortrait(-1); //hide box portrait
-        set_centered(false); //do not show text in centered.
         set_speaker_glow(-1, true);
-        centeredText.text = "";
+        Color initFadeTapestry = new Color(0f, 0f, 0f, 1f);
+        fadeTapestry.color = initFadeTapestry;
     }
     Button CreateChoiceView(string text)
     {
@@ -513,7 +382,9 @@ public class EventManager : MonoBehaviour
         DisplayNextSentence();
     }
 
-    //LINKING EXTERNAL FUNCTIONS
+
+
+    // EXTERNAL FUNCTIONS
     void link_external_functions()
     {
         //all the storys share the same external functions. we are externalizing complexity from 
@@ -533,31 +404,10 @@ public class EventManager : MonoBehaviour
             this.play_sound(id);
         });
         
-
         //visuals
-         script.BindExternalFunction("font", (int state) => 
+        script.BindExternalFunction("bg", (int id, float duration) => 
         {
-            this.change_font(state);
-        });
-        script.BindExternalFunction("inside", (int wait) => 
-        {
-            this.inside(wait);
-        });
-        script.BindExternalFunction("outside", (int wait) => 
-        {
-            this.outside(wait);
-        });
-        script.BindExternalFunction("imm_bg", (int id) => 
-        {
-            this.imm_bg(id);
-        });
-        script.BindExternalFunction("bg", (int id) => 
-        {
-            this.set_bg(id);
-        });
-        script.BindExternalFunction("overlay", (int id) => 
-        {
-            this.set_overlay(id);
+            this.set_bg(id, duration);
         });
         script.BindExternalFunction("snow", (int strength) => 
         {
@@ -596,10 +446,6 @@ public class EventManager : MonoBehaviour
         {
             this.set_boxHolo(state);
         });
-        script.BindExternalFunction("center", (bool mode) =>
-        {
-            this.set_centered(mode);
-        });
         script.BindExternalFunction("show", (int which, int index) =>
         {
             this.set_portrait_slot(which, index);
@@ -624,19 +470,9 @@ public class EventManager : MonoBehaviour
         {
             this.run_program(name, duration);
         });
-
-        //game (e.g. rel increased, set flag, etc.)
-        script.BindExternalFunction("unit_state", (int unit_id, int val) =>
-        {
-            this.set_unit_state(unit_id, val);
-        });
-        script.BindExternalFunction("inc_stat", (int unit_id, int stat_id, int val) =>
-        {
-            this.inc_unit_stat(unit_id, stat_id, val);
-        });
     }
 
-    //text effects
+    // TEXT EFFECTS
     void set_boxPortrait(int speakerBoxId)
     {
         if (speakerBoxId == -1)
@@ -648,11 +484,6 @@ public class EventManager : MonoBehaviour
             speakerBoxPortrait.gameObject.SetActive(true);
             speakerBoxPortrait.sprite = pLibrary.retrieve_boxp(speakerBoxId);
         }
-    }
-    void set_boxHolo(int state)
-    {
-        if (state == -1) speakerBoxPortrait.material = null;
-        else speakerBoxPortrait.material = holoMaterial;
     }
     void set_name(string s)
     {
@@ -709,114 +540,121 @@ public class EventManager : MonoBehaviour
         }
         
     }
-    void set_centered(bool state)
-    {
-        isCentered = state;
 
-        if (isCentered)
+
+    // BACKGROUND EFFECTS
+    void set_bg(int id, float duration)
+    {
+        StartCoroutine(handle_bg_switch_fade(id, duration));
+    }
+    IEnumerator handle_bg_switch_fade(int id, float duration)
+    {
+        // hide textbox
+        effectsOver = false;
+        NormalDialogueBox.SetActive(false);
+
+        // steps:
+        // fade fadeTapestry all the way to 1f alpha (but acocunt for it already being at full alpha; never set it lower than it might be)
+        // change the background and linger for a second
+        // bring fadeTapestry's alpha all the way back to 0f
+
+        // if we're already fully faded (i.e. first fade, ignore this.)
+        if (fadeTapestry.color.a == 1f)
         {
-            //enable centered text and disable the sentence text
-            centeredText.transform.parent.gameObject.SetActive(true);
-            NormalDialogueBox.SetActive(false);
+            yield return new WaitForSeconds(duration);
         }
         else
         {
-            //disable centered text and enable sentence text
-            centeredText.transform.parent.gameObject.SetActive(false);
-            NormalDialogueBox.SetActive(true);
+            float elapsedTime = 0f;
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                Color newAlpha = new Color(0f, 0f, 0f, elapsedTime / duration);
+                fadeTapestry.color = newAlpha;
+                yield return null;
+            }
         }
-    }
-    void change_font(int state)
-    {
-        if (state == -1) sentenceText.font = defaultFont;
-        else sentenceText.font = robotFont;
-    }
+        yield return new WaitForSeconds(1f);
+        bg.sprite = pLibrary.retrieve_eventBg(id);
 
-    //visual effects
-    void camera_shake(int intensity, float duration)
-    {
-        // -currently not working.
-        //intensity determines how much the camera shakes
-        //duration determines how long the shake lasts.
-        //at the end of the time elapsed, returns back to normal.
-        StartCoroutine(trigger_camera_shake(intensity, duration));
-    }
-    IEnumerator trigger_camera_shake(int intensity, float duration)
-    {
-        Debug.Log("EventManager.trigger_camera_shake() called.");
-        //save initial position.
-        Vector3 initial_position = eventObjects.transform.localPosition;
-
-        //zoom in so we don't see the edges fraying
-        eventObjects.transform.localScale = new Vector3(1.05f, 1.05f, 1.05f);
-
-        //shake
-        while (duration > 0f)
+        float elapsedTime2 = 0f;
+        while (elapsedTime2 < duration)
         {
-            eventObjects.transform.localPosition = initial_position + (UnityEngine.Random.insideUnitSphere * intensity);
-            duration -= Time.deltaTime;
+            elapsedTime2 += Time.deltaTime;
+            Color newAlpha = new Color(0f, 0f, 0f, 1f - elapsedTime2 / duration);
+            fadeTapestry.color = newAlpha;
             yield return null;
         }
-        //reset initial position
-        eventObjects.transform.localPosition = initial_position;
-        eventObjects.transform.localScale = new Vector3(1f, 1f, 1f);
+
+        effectsOver = true;
+        NormalDialogueBox.SetActive(true);
     }
+
+
+    // CHARACTER PORTRAIT EFFECTS
     void set_portrait_slot(int whichSlot, int index)
     {
-        //if skip is on, then show directly.
-        //two methods: 
-        //1. if already showing an image: fade to half alpha, switch image, fade back to full alpha.
-        //2. if not showing an image: set half alpha, switch image, show image, fade to full alpha.
+        StartCoroutine(portrait_slot_show_anim(imgFadeSpeed, portraitSlots[whichSlot].activeSelf, whichSlot, pLibrary.retrieve_fullp(index)));
+    }
+    IEnumerator portrait_slot_show_anim(float speed, bool fadeOutFirst, int whichSlot, Sprite switchSprite)
+    {
+        Color objectColor = portraitSlots[whichSlot].GetComponent<Image>().color;
+        float fadeAmount;
 
-        //only do the fade if:
-        // - we're not skipping and
-        // - the slot is empty OR the slot is same char as current slot
-        //(current slot means: divide both by 100 and they give the same answer)
-        if (skipOn == false)
+        //if fadeOutFirst is true, then first fade the image to half alpha, then assign switchSprite to portraitSlots[whichSlot].
+        if (fadeOutFirst == true)
         {
-            StartCoroutine(handle_image_switch_fade(imgFadeSpeed, portraitSlots[whichSlot].activeSelf, whichSlot, pLibrary.retrieve_fullp(index)));
+            speed *= 2; //makes each img switch faster, so it matches the same total duration as the other method.
+            while ( objectColor.a > 0.25f )
+            {
+                fadeAmount = objectColor.a - (speed * Time.deltaTime);
+
+                objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
+                portraitSlots[whichSlot].GetComponent<Image>().color = objectColor;
+                yield return null;
+            }
         }
         else
         {
-            portraitSlots[whichSlot].GetComponent<Image>().sprite = pLibrary.retrieve_fullp(index);
+            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, 0.25f);
             portraitSlots[whichSlot].SetActive(true);
         }
+        portraitSlots[whichSlot].GetComponent<Image>().sprite = switchSprite;
+
+        //fade the image back to full alpha.
+        while ( objectColor.a < 1f )
+        {
+            fadeAmount = objectColor.a + (speed * Time.deltaTime);
+
+            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
+            portraitSlots[whichSlot].GetComponent<Image>().color = objectColor;
+            yield return null;
+        }
 
     }
-    void set_portrait_holo(int whichSlot, int state)
+
+    void hide_portrait_slot(int whichSlot)
     {
-        if (state == -1) portraitSlots[whichSlot].GetComponent<Image>().material = null;
-        else portraitSlots[whichSlot].GetComponent<Image>().material = holoMaterial;
+        StartCoroutine(portrait_slot_hide_anim(imgFadeSpeed, whichSlot));
     }
+    IEnumerator portrait_slot_hide_anim(float speed, int whichSlot)
+    {
+        Color objectColor = portraitSlots[whichSlot].GetComponent<Image>().color;
+        float fadeAmount;
+        while (objectColor.a > 0.25f)
+        {
+            fadeAmount = objectColor.a - (speed * 2 * Time.deltaTime);
+
+            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
+            portraitSlots[whichSlot].GetComponent<Image>().color = objectColor;
+            yield return null;
+        }
+        portraitSlots[whichSlot].gameObject.SetActive(false);
+    }
+
     void set_speaker_glow(int whichSlot, bool forceInstant)
     {
-        // darkens all portrait slots except for whichSlot, making them seem brighter. -1 to restore everyone to full.
-        if (skipOn || forceInstant)
-        {
-            Color lit = new Color(1f, 1f, 1f, 1f);
-            if (whichSlot == -1)
-            {
-                // put all portrait slots to full white
-                for(int i = 0; i < portraitSlots.Length; i++)
-                {
-                    portraitSlots[i].GetComponent<Image>().color = lit;
-                }
-            }
-            else
-            {
-                // put all portrait slots to dark, except for whichSlot which is set to white
-                Color darkened = new Color(0.5f, 0.5f, 0.5f, 1f);
-                for(int i = 0; i < portraitSlots.Length; i++)
-                {
-                    if (i != whichSlot) portraitSlots[i].GetComponent<Image>().color = darkened;
-                }
-                portraitSlots[whichSlot].GetComponent<Image>().color = lit;
-            }
-        }
-        else
-        {
-            StartCoroutine(run_speakerglow_anim(whichSlot));
-        } 
+        StartCoroutine(run_speakerglow_anim(whichSlot)); 
     }
     IEnumerator run_speakerglow_anim(int whichSlot)
     {
@@ -825,8 +663,6 @@ public class EventManager : MonoBehaviour
         Color compareWhite = new Color(1f, 1f, 1f, 1f);
         while (elapsedTime < speakerglow_anim_duration)
         {
-            if (skipOn) break;
-
             if (whichSlot == -1)
             {
                 //so the final colour values are 1f, 1f, 1f
@@ -876,50 +712,153 @@ public class EventManager : MonoBehaviour
         // set to exact values at the end.
         set_speaker_glow(whichSlot, true);
     }
-    void hide_portrait_slot(int whichSlot)
+    bool colors_equal(Color c1, Color c2)
     {
-        StartCoroutine(handle_image_hide_fade(imgFadeSpeed, whichSlot));
+        // used to compare colors. Returns true if colors are equal, false otherwise.
+        return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b;
     }
-    void imm_bg(int id)
-    {
-        // sets the bg immediately.
-        if (skipOn == false) 
-        {
-            fader.fade_to_black(); //automatic fading behaviour
-        }
-        bg.sprite = pLibrary.retrieve_eventBg(id);
-        effectsOver = true;
-    }
-    void set_bg(int id)
-    {
-        if (skipOn == false) {
-            fader.fade_to_black(); //automatic fading behaviour
-            //bg.sprite = pLibrary.retrieve_eventBg(id);
-            StartCoroutine(handle_bg_switch_fade(id));
-        }
-        else{
-            bg.sprite = pLibrary.retrieve_eventBg(id);
-        }
-    }
-    void set_overlay(int id)
-    {
-        if (id == -1) 
-        {
-            overlay.gameObject.SetActive(false);
-            return;
-        }
-        
 
-        if (skipOn == false) {
-            //bg.sprite = pLibrary.retrieve_eventBg(id);
-            StartCoroutine(handle_overlay(id));
-        }
-        else{
-            overlay.sprite = pLibrary.retrieve_overlay(id);
-            overlay.gameObject.SetActive(true);
-        }
-        
+    void set_portrait_holo(int whichSlot, int state)
+    {
+        if (state == -1) portraitSlots[whichSlot].GetComponent<Image>().material = null;
+        else portraitSlots[whichSlot].GetComponent<Image>().material = holoMaterial;
     }
+    void set_boxHolo(int state)
+    {
+        if (state == -1) speakerBoxPortrait.material = null;
+        else speakerBoxPortrait.material = holoMaterial;
+    }
+
+
+    // CAMERA AND MOVEMENT EFFECTS
+    void v_wiggle(int id, float power, int repeats)
+    {
+        //moves the corresponding portrait up and down.
+        //power is a percentage of the base amount.
+        Vector3 moveAmount = new Vector3(0f, power * -1f, 0f);
+        StartCoroutine(v_wiggle(id, repeats, moveAmount));
+    }
+    IEnumerator v_wiggle(int id, int repeats, Vector3 moveAmount)
+    {
+        //moves the corresponding portrait by the vector amount, twice. 
+        //There and back, there and back.
+        GameObject obj = portraitSlots[id];
+        for (int i = 0; i < repeats; i++)
+        {
+            float elapsedTime = 0f;
+            while (elapsedTime < 0.2f)
+            {
+                obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position + moveAmount, Time.deltaTime * 500);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            elapsedTime = 0f;
+            while (elapsedTime < 0.2f)
+            {
+                obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position - moveAmount, Time.deltaTime * 500);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+        }
+    }
+    void h_wiggle(int id, float power, int repeats)
+    {
+        //moves the corresponding portrait side to side.
+        //power is a percentage of the base amount.
+        Vector3 moveAmount = new Vector3(power * 1f, 0f, 0f);
+        StartCoroutine(h_wiggle(id, repeats, moveAmount));
+    }
+    IEnumerator h_wiggle(int id, int repeats, Vector3 moveAmount)
+    {
+        //moves the corresponding portrait by the vector amount, twice. 
+        //There and back, there and back.
+        GameObject obj = portraitSlots[id];
+        for (int i = 0; i < repeats; i++)
+        {
+            float elapsedTime = 0f;
+            while (elapsedTime < 0.5f)
+            {
+                obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position + moveAmount, Time.deltaTime * 200);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            elapsedTime = 0f;
+            while (elapsedTime < 0.5f)
+            {
+                obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position - moveAmount, Time.deltaTime * 200);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }         
+
+        }
+    }
+    
+    void camera_shake(int intensity, float duration)
+    {
+        // -currently not working.
+        //intensity determines how much the camera shakes
+        //duration determines how long the shake lasts.
+        //at the end of the time elapsed, returns back to normal.
+        StartCoroutine(trigger_camera_shake(intensity, duration));
+    }
+    IEnumerator trigger_camera_shake(int intensity, float duration)
+    {
+        //save initial position.
+        Vector3 initial_position = eventObjects.transform.localPosition;
+
+        //zoom in so we don't see the edges fraying
+        eventObjects.transform.localScale = new Vector3(1.05f, 1.05f, 1.05f);
+
+        //shake
+        while (duration > 0f)
+        {
+            eventObjects.transform.localPosition = initial_position + (UnityEngine.Random.insideUnitSphere * intensity);
+            duration -= Time.deltaTime;
+            yield return null;
+        }
+        //reset initial position
+        eventObjects.transform.localPosition = initial_position;
+        eventObjects.transform.localScale = new Vector3(1f, 1f, 1f);
+    }
+    
+    void run_program(string name, float duration)
+    {
+        // what does this do?
+        // display program progress bar
+        //  -program name above bar
+        //  -slide bar that goes from left to right
+        //  -hold while this is going on.
+        effectsOver = false;
+        programGraphic.gameObject.SetActive(true);
+        programGraphicText.text = name + "()";
+        programGraphic.value = 0f;
+        StartCoroutine(programSlide(duration));
+    }
+    IEnumerator programSlide(float duration)
+    {
+        yield return null;
+        // increase value of programGraphic over time
+        // at end, pause.
+        // then hide.
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            // so we have 100 units
+            // and we have to get our value to 100 over duration seconds
+            // e.g. over 5 seconds, it should increase by 20 units every sec
+            elapsedTime += Time.deltaTime;
+            programGraphic.value = 100f * elapsedTime / duration;
+
+            yield return null;
+        }
+
+        // then let game continue.
+        yield return new WaitForSeconds(0.5f);
+        effectsOver = true;
+        programGraphic.gameObject.SetActive(false);
+    }
+
+    // WEATHER EFFECTS
     void set_snow(int strength)
     {
         if (strength == -1) 
@@ -954,246 +893,22 @@ public class EventManager : MonoBehaviour
         if (strength == -1) windSystem.gameObject.SetActive(false);       
         else windSystem.gameObject.SetActive(true);      
     }
-    void inside(int wait)
-    {
-        //reorders the character canvas so that it appears before overlay and weather layers
-        if (wait <= 0){
-            characterCanvas.sortingLayerName = "Characters Inside Layer";
-            return;
-        }
-        StartCoroutine(handle_character_layer_switch("Characters Inside Layer"));
-    }
-    void outside(int wait)
-    {      
-        //reorders the character canvas so that it appears behind overlay and weather layers
-        if (wait <= 0){
-            characterCanvas.sortingLayerName = "Characters Outside Layer";
-            return;
-        }
-        StartCoroutine(handle_character_layer_switch("Characters Outside Layer"));
-    }
-    void v_wiggle(int id, float power, int repeats)
-    {
-        //moves the corresponding portrait up and down.
-        //power is a percentage of the base amount.
-        Vector3 moveAmount = new Vector3(0f, power * -1f, 0f);
-        StartCoroutine(v_wiggle(id, repeats, moveAmount));
-    }
-    void h_wiggle(int id, float power, int repeats)
-    {
-        //moves the corresponding portrait side to side.
-        //power is a percentage of the base amount.
-        Vector3 moveAmount = new Vector3(power * 1f, 0f, 0f);
-        StartCoroutine(h_wiggle(id, repeats, moveAmount));
-    }
-    void set_unit_state(int unit_id, int val)
-    {
-        //sets the availability of units in the level tree. 0: fully, 1: visible but not clickable, 2: not visible or clickable
-        Carrier.Instance.get_allUnitStates()[unit_id] = val;
-    }
-    void inc_unit_stat(int unit_id, int stat_id, int val)
-    {
-        Unit u = Carrier.Instance.get_allUnitList()[unit_id];
-        switch(stat_id)
-        {
-            case 0:
-                u.set_hpMax(u.get_hpMax() + val);
-                break;
-            case 1:
-                u.set_brkMax(u.get_brkMax() + val);
-                break;
-            case 2:
-                u.set_physa(u.get_physa() + val);
-                break;
-            case 3:
-                u.set_physd(u.get_physd() + val);
-                break;
-            case 4:
-                u.set_maga(u.get_maga() + val);
-                break;
-            case 5:
-                u.set_magd(u.get_magd() + val);
-                break;
-            case 6:
-                u.set_exp(u.get_exp() + val);
-                break;
-        }
-    }
-    void run_program(string name, float duration)
-    {
-        // what does this do?
-        // display program progress bar
-        //  -program name above bar
-        //  -slide bar that goes from left to right
-        //  -hold while this is going on.
-        if (skipOn) return;
-        effectsOver = false;
-        programGraphic.gameObject.SetActive(true);
-        programGraphicText.text = name + "()";
-        programGraphic.value = 0f;
-        StartCoroutine(programSlide(duration));
-    }
-    IEnumerator programSlide(float duration)
-    {
-        yield return null;
-        // increase value of programGraphic over time
-        // at end, pause.
-        // then hide.
-        float elapsedTime = 0f;
-        while (elapsedTime < duration)
-        {
-            // so we have 100 units
-            // and we have to get our value to 100 over duration seconds
-            // e.g. over 5 seconds, it should increase by 20 units every sec
-            elapsedTime += Time.deltaTime;
-            programGraphic.value = 100f * elapsedTime / duration;
 
-            yield return null;
-        }
-
-        // then let game continue.
-        yield return new WaitForSeconds(0.5f);
-        effectsOver = true;
-        programGraphic.gameObject.SetActive(false);
-    }
-
-    IEnumerator v_wiggle(int id, int repeats, Vector3 moveAmount)
-    {
-        //moves the corresponding portrait by the vector amount, twice. 
-        //There and back, there and back.
-        GameObject obj = portraitSlots[id];
-        for (int i = 0; i < repeats; i++)
-        {
-            float elapsedTime = 0f;
-            while (elapsedTime < 0.2f)
-            {
-                obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position + moveAmount, Time.deltaTime * 500);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-            elapsedTime = 0f;
-            while (elapsedTime < 0.2f)
-            {
-                obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position - moveAmount, Time.deltaTime * 500);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-        }
-    }
-    IEnumerator h_wiggle(int id, int repeats, Vector3 moveAmount)
-    {
-        //moves the corresponding portrait by the vector amount, twice. 
-        //There and back, there and back.
-        GameObject obj = portraitSlots[id];
-        for (int i = 0; i < repeats; i++)
-        {
-            float elapsedTime = 0f;
-            while (elapsedTime < 0.5f)
-            {
-                obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position + moveAmount, Time.deltaTime * 200);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-            elapsedTime = 0f;
-            while (elapsedTime < 0.5f)
-            {
-                obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position - moveAmount, Time.deltaTime * 200);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }         
-
-        }
-    }
-
-    IEnumerator handle_character_layer_switch(string s)
-    {
-        yield return new WaitForSeconds(1f);
-        characterCanvas.sortingLayerName = s;
-    }
-    IEnumerator handle_bg_switch_fade(int id)
-    {
-        effectsOver = false;
-        yield return new WaitForSeconds(1f);
-        bg.sprite = pLibrary.retrieve_eventBg(id);
-        effectsOver = true;
-    }
-    IEnumerator handle_overlay(int id)
-    {
-        yield return new WaitForSeconds(1f);
-        overlay.sprite = pLibrary.retrieve_overlay(id);
-        overlay.gameObject.SetActive(true);
-    }
-    IEnumerator handle_image_switch_fade(float speed, bool fadeOutFirst, int whichSlot, Sprite switchSprite)
-    {
-        Color objectColor = portraitSlots[whichSlot].GetComponent<Image>().color;
-        float fadeAmount;
-
-        //if fadeOutFirst is true, then first fade the image to half alpha, then assign switchSprite to portraitSlots[whichSlot].
-        if (fadeOutFirst == true)
-        {
-            speed *= 2; //makes each img switch faster, so it matches the same total duration as the other method.
-            while ( objectColor.a > 0.25f )
-            {
-                fadeAmount = objectColor.a - (speed * Time.deltaTime);
-
-                objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-                portraitSlots[whichSlot].GetComponent<Image>().color = objectColor;
-                yield return null;
-            }
-        }
-        else
-        {
-            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, 0.25f);
-            portraitSlots[whichSlot].SetActive(true);
-        }
-        portraitSlots[whichSlot].GetComponent<Image>().sprite = switchSprite;
-
-        //fade the image back to full alpha.
-        while ( objectColor.a < 1f )
-        {
-            fadeAmount = objectColor.a + (speed * Time.deltaTime);
-
-            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-            portraitSlots[whichSlot].GetComponent<Image>().color = objectColor;
-            yield return null;
-        }
-
-    }
-    IEnumerator handle_image_hide_fade(float speed, int whichSlot)
-    {
-        Color objectColor = portraitSlots[whichSlot].GetComponent<Image>().color;
-        float fadeAmount;
-        while (objectColor.a > 0.25f)
-        {
-            fadeAmount = objectColor.a - (speed * 2 * Time.deltaTime);
-
-            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-            portraitSlots[whichSlot].GetComponent<Image>().color = objectColor;
-            yield return null;
-        }
-        portraitSlots[whichSlot].gameObject.SetActive(false);
-    }
-
-    //helper
-    bool colors_equal(Color c1, Color c2)
-    {
-        // used to compare colors. Returns true if colors are equal, false otherwise.
-        return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b;
-    }
-
-    //audio effects
+    // AUDIO EFFECTS
     void stop_music()
     {
-        audio.stop_music();
+        //GetComponent<AudioSource>().stop_music();
     }
     void start_music(int id)
     {
-        audio.ow_play_music(id);
+        //GetComponent<AudioSource>().ow_play_music(id);
     }
     void play_sound(int id)
     {
-        audio.ow_play_sound(id);
+        //GetComponent<AudioSource>().ow_play_sound(id);
     }
+
+    
 
 
 }

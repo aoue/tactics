@@ -17,7 +17,6 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private OverworldAudio audioManager; // controls the audio for this scene
     [SerializeField] private CanvasGroup mainButtonsGroup; // handle setting the buttons to interatable or not. For control flow.
 
-    [SerializeField] private FadeManager fader;
     [SerializeField] private Initializer init; // handles setting or resetting things to the state that they should be at the start of the game.
 
     private float awakeDelay = 2f;
@@ -41,7 +40,7 @@ public class MainMenu : MonoBehaviour
         {
             mainButtonsGroup.alpha = 0f;
             mainButtonsGroup.interactable = false;
-            fader.fade_from_black_cheat(awakeDelay);
+            //fader.fade_from_black_cheat(awakeDelay);
             StartCoroutine(enable_main_buttons_after_delay());
         }
     }
@@ -74,8 +73,9 @@ public class MainMenu : MonoBehaviour
         init.reset_units();
 
         // fade to black and load game
-        if (!testing) { fader.fade_to_black_stay(loadDelay); StartCoroutine(load_game_after_delay()); }
-        else { Carrier.Instance.new_game(); SceneManager.LoadScene(1); }
+        //if (!testing) { fader.fade_to_black_stay(loadDelay); StartCoroutine(load_game_after_delay()); }
+        //else { Carrier.Instance.new_game(); SceneManager.LoadScene(1); }
+        Carrier.Instance.new_game(); SceneManager.LoadScene(1);
     }
     public void click_load()
     {

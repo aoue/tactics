@@ -319,7 +319,7 @@ MonoBehaviour:
   brkBar: {fileID: 224350195281374642}
   unitActivationSound: {fileID: 8300000, guid: 4e724768c635cff488270551ab5da7a5, type: 3}
   box_portrait: {fileID: 21300000, guid: d48a3d41adc6a9e4ba4c9d0fb693feef, type: 3}
-  active_portrait: {fileID: 21300000, guid: 4fc0d713aba4e464080a4de0b5f9fa3f, type: 3}
+  active_portrait: {fileID: 21300000, guid: b65af831c514dd8489a3968a9dd3b2b1, type: 3}
   unitName: Friday
   level: 1
   exp: 0

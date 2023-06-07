@@ -13,7 +13,6 @@ public class Overworld : MonoBehaviour
 
     //visuals
     [SerializeField] private Text partText; //In the top left corner, used to display the date. 
-    [SerializeField] private FadeManager fader;
     [SerializeField] private Image backgroundFrame;
     [SerializeField] private EventManager evMan;   
     [SerializeField] private LevelTreeManager treeMan;
@@ -119,13 +118,13 @@ public class Overworld : MonoBehaviour
     IEnumerator pause_before_loading_part_directly(int id)
     {
         //fader.fade_to_black_stay();
-        fader.fade_to_black(3f);
+        //fader.fade_to_black(3f);
         yield return new WaitForSeconds(3f);
         change_part(id);
     }
     IEnumerator pause_before_loading_combat_mission()
     {
-        fader.fade_to_black_stay();
+        //fader.fade_to_black_stay();
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene(2);
     }

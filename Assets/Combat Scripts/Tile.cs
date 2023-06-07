@@ -148,6 +148,24 @@ public class Tile : MonoBehaviour
         //updates tiles ZoC images based on playerControlled
         //and enemyControlled
 
+        //the ZoC colour directly below a unit is always that unit's side's colour. Makes it easier for the player to see.
+        if (occupied())
+        {
+            if (heldUnit.get_isAlly())
+            {
+                //blue
+                zocRenderer.color = new Color(32f / 255f, 201f / 255f, 1f);
+                zocRenderer.enabled = true;
+            }
+            else
+            {
+                //red
+                zocRenderer.color = Color.red;
+                zocRenderer.enabled = true;
+            }
+            return;
+        }
+
         if (player_controlled && enemy_controlled)
         {
             //purple

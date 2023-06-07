@@ -25,7 +25,6 @@ public class CombatGrid : MonoBehaviour
     [SerializeField] private MissionManager missionList; //all missions.
     private Mission loadedMission;
 
-    [SerializeField] private FadeManager fader;
     [SerializeField] private Canvas uiCanvas;
     [SerializeField] private PlayByPlay pbpManager;
     [SerializeField] private CombatAudio audio;   
@@ -136,8 +135,7 @@ public class CombatGrid : MonoBehaviour
         pbpManager.fill(gameState, active_unit, active_ability);
         update_ZoC();
 
-        fader.fade_from_black_cheat(2f);
-        //Debug.Log("fader called");
+        //fader.fade_from_black_cheat(2f);
         next_turn();
     }
     void Update()
@@ -395,7 +393,6 @@ public class CombatGrid : MonoBehaviour
             }
         }
 
-        
         foreach(Enemy u in enemyUnits)
         {
             //east and west tiles:
@@ -411,7 +408,7 @@ public class CombatGrid : MonoBehaviour
             //north and south tiles:
             for (int j = u.y - u.get_controlRange(); j < u.y + u.get_controlRange() + 1; j++)
             {
-                //if the tile is on the grid, set tile.playerControlled to true.
+                //if the tile is on the grid, set tile.enemyControlled to true.
                 if (gridHelper.within_border(u.x, j, map_x_border, map_y_border) && myGrid[u.x, j] != null && myGrid[u.x, j].get_movementCost() != -1)
                 {
                     myGrid[u.x, j].enemy_controlled = true;
@@ -663,7 +660,7 @@ public class CombatGrid : MonoBehaviour
     }
     IEnumerator pause_before_loading_scene(int sceneIndex)
     {
-        fader.fade_to_black_stay();
+        //fader.fade_to_black_stay();
         yield return new WaitForSeconds(2f);
         //Debug.Log("loading scene " + sceneIndex + " | carrier: nextpartindex = " + Carrier.Instance.get_nextPartIndex() + "carrier nextmissionindex = " + Carrier.Instance.get_nextMissionIndex());
         SceneManager.LoadScene(sceneIndex);
@@ -694,7 +691,7 @@ public class CombatGrid : MonoBehaviour
         animating = true;
         allowRoundEvent = false;
         uiCanvas.enabled = false;
-        fader.fade_to_black(pause_before_event_start);
+        //fader.fade_to_black(pause_before_event_start);
         yield return new WaitForSeconds(pause_before_event_start);
 
         //spawn enemy reinforcements, if any.
