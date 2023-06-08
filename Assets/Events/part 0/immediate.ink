@@ -2,7 +2,7 @@ EXTERNAL stop_music()
 EXTERNAL play_music(id) //plays track, looping
 EXTERNAL play_sound(id) //plays sound, once.
 
-EXTERNAL bg(id, duration) //sets background to corresponding element from BackgroundManager
+EXTERNAL bg(id, duration, text) //sets background to corresponding element from BackgroundManager
 
 EXTERNAL snow(strength) //turns weather on or off, and sets the particle count*5. -1: off, otherwise, creates strength*12 particles. Also turns off rain.
 EXTERNAL rain(strength) //turns weather on or off, and sets the particle count*5. -1: off, otherwise, Needs higher strength than snow. Also turns off snow. 
@@ -18,8 +18,8 @@ EXTERNAL show(whichSlot, portraitID) //shows full portrait
 EXTERNAL holo(whichSlot, state) //applies hologram shade to portrait slot. Instant. -1 to turn off.
 EXTERNAL speakerglow(whichSlot) //darkens all portrait slots except for whichSlot, making them seem brighter. -1 to restore everyone to full.
 EXTERNAL hide(whichSlot) //hides full portrait
-EXTERNAL v_wiggle(whichSlot, power, repeats) //causes the character portrait in the specified slot to wiggle vertically. Moves power percentage. Repeats x times.
-EXTERNAL h_wiggle(whichSlot, power, repeats) //causes the character portrait in the specified slot to wiggle horizontally. Moves power percentage. Repeats x times.
+EXTERNAL v_wiggle(whichSlot, power, repeats) //int, float, repeats; causes the character portrait in the specified slot to wiggle vertically. Moves power units. Repeats x times.
+EXTERNAL h_wiggle(whichSlot, power, repeats) //int, float, repeats; causes the character portrait in the specified slot to wiggle horizontally. Moves power units. Repeats x times.
 EXTERNAL program(name, duration) // runs program popup. Name is text displayed above bar. Duration is in seconds.
 
 //SCENE OUTLINE
@@ -49,17 +49,15 @@ Let's end.
 ->END
 */
 
-
-~play_music(0)
-
-~bg(0, 1)
-first bg switch from imm!
+//~play_music(0)
+~bg(0, 1, "BG NAME")
 ~show(3, 100)
 ~show(4, 200)
+setup.
 
-Suddenly a voice is heard from a speaker overhead.
 
-~bg(1, 1)
+
+~bg(1, 1, "BG NAME")
 second bg switch from prev!
 
 ~n("Friday")
@@ -68,7 +66,7 @@ second bg switch from prev!
 ~v_wiggle(3, 0.1, 1)
 I'm talking a little bit.
 
-~bg(1, 1)
+~bg(1, 1, "BG NAME")
 ~n("Anse")
 ~p(200)
 ~speakerglow(4)

@@ -29,8 +29,11 @@ public class EventManager : MonoBehaviour
     [SerializeField] private Button buttonPrefab = null;
     [SerializeField] private Image speakerBoxPortrait;
 
-    [SerializeField] private GameObject bgSwitchPopup;
-    [SerializeField] private GameObject musicSwitchPopup;
+    // Switch popups
+    [SerializeField] private CanvasGroup bgSwitchPopup;
+    [SerializeField] private Text bgSwitchPopupText;
+    [SerializeField] private CanvasGroup musicSwitchPopup;
+    [SerializeField] private Text musicSwitchPopupText;
 
     //[SerializeField] private Material defaultMaterial;
     [SerializeField] private Material holoMaterial;
@@ -361,7 +364,7 @@ public class EventManager : MonoBehaviour
         set_colour("white");
         set_name(""); //hide name box
         set_boxPortrait(-1); //hide box portrait
-        set_speaker_glow(-1, true);
+        set_speaker_glow(-1);
         Color initFadeTapestry = new Color(0f, 0f, 0f, 1f);
         fadeTapestry.color = initFadeTapestry;
     }
@@ -381,7 +384,6 @@ public class EventManager : MonoBehaviour
         script.ChooseChoiceIndex(choice.index);
         DisplayNextSentence();
     }
-
 
 
     // EXTERNAL FUNCTIONS
@@ -405,9 +407,9 @@ public class EventManager : MonoBehaviour
         });
         
         //visuals
-        script.BindExternalFunction("bg", (int id, float duration) => 
+        script.BindExternalFunction("bg", (int id, float duration, string popupText) => 
         {
-            this.set_bg(id, duration);
+            this.set_bg(id, duration, popupText);
         });
         script.BindExternalFunction("snow", (int strength) => 
         {
@@ -456,7 +458,7 @@ public class EventManager : MonoBehaviour
         });
         script.BindExternalFunction("speakerglow", (int which) =>
         {
-            this.set_speaker_glow(which, false);
+            this.set_speaker_glow(which);
         });
         script.BindExternalFunction("hide", (int which) =>
         {
@@ -543,11 +545,11 @@ public class EventManager : MonoBehaviour
 
 
     // BACKGROUND EFFECTS
-    void set_bg(int id, float duration)
+    void set_bg(int id, float duration, string popupText)
     {
-        StartCoroutine(handle_bg_switch_fade(id, duration));
+        StartCoroutine(handle_bg_switch_fade(id, duration, popupText));
     }
-    IEnumerator handle_bg_switch_fade(int id, float duration)
+    IEnumerator handle_bg_switch_fade(int id, float duration, string popupText)
     {
         // hide textbox
         effectsOver = false;
@@ -557,23 +559,23 @@ public class EventManager : MonoBehaviour
         // fade fadeTapestry all the way to 1f alpha (but acocunt for it already being at full alpha; never set it lower than it might be)
         // change the background and linger for a second
         // bring fadeTapestry's alpha all the way back to 0f
+        bgSwitchPopupText.text = popupText;
 
         // if we're already fully faded (i.e. first fade, ignore this.)
-        if (fadeTapestry.color.a == 1f)
+
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
         {
-            yield return new WaitForSeconds(duration);
-        }
-        else
-        {
-            float elapsedTime = 0f;
-            while (elapsedTime < duration)
+            elapsedTime += Time.deltaTime;
+            if (fadeTapestry.color.a < 1f)
             {
-                elapsedTime += Time.deltaTime;
                 Color newAlpha = new Color(0f, 0f, 0f, elapsedTime / duration);
                 fadeTapestry.color = newAlpha;
-                yield return null;
             }
+            bgSwitchPopup.alpha = 2*elapsedTime / duration;
+            yield return null;
         }
+        
         yield return new WaitForSeconds(1f);
         bg.sprite = pLibrary.retrieve_eventBg(id);
 
@@ -583,9 +585,11 @@ public class EventManager : MonoBehaviour
             elapsedTime2 += Time.deltaTime;
             Color newAlpha = new Color(0f, 0f, 0f, 1f - elapsedTime2 / duration);
             fadeTapestry.color = newAlpha;
+            bgSwitchPopup.alpha = 1f - elapsedTime2 / duration;
             yield return null;
         }
 
+        bgSwitchPopup.alpha = 0f;
         effectsOver = true;
         NormalDialogueBox.SetActive(true);
     }
@@ -652,7 +656,7 @@ public class EventManager : MonoBehaviour
         portraitSlots[whichSlot].gameObject.SetActive(false);
     }
 
-    void set_speaker_glow(int whichSlot, bool forceInstant)
+    void set_speaker_glow(int whichSlot)
     {
         StartCoroutine(run_speakerglow_anim(whichSlot)); 
     }
@@ -709,8 +713,25 @@ public class EventManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        // set to exact values at the end.
-        set_speaker_glow(whichSlot, true);
+
+        // set to exact values
+        if (whichSlot == -1)
+        {
+            // light up everything
+            for(int i = 0; i < portraitSlots.Length; i++)
+            {
+                portraitSlots[i].GetComponent<Image>().color = compareWhite;
+            }
+        }
+        else
+        {
+            // darken all but whichSlot
+            for(int i = 0; i < portraitSlots.Length; i++)
+            {
+                if (i != whichSlot) portraitSlots[i].GetComponent<Image>().color = compareDark;
+                else portraitSlots[whichSlot].GetComponent<Image>().color = compareWhite;
+            }
+        }
     }
     bool colors_equal(Color c1, Color c2)
     {
@@ -735,87 +756,84 @@ public class EventManager : MonoBehaviour
     {
         //moves the corresponding portrait up and down.
         //power is a percentage of the base amount.
-        Vector3 moveAmount = new Vector3(0f, power * -1f, 0f);
+        Vector3 moveAmount = new Vector3(0f, -Math.Abs(power), 0f);
         StartCoroutine(v_wiggle(id, repeats, moveAmount));
     }
     IEnumerator v_wiggle(int id, int repeats, Vector3 moveAmount)
     {
         //moves the corresponding portrait by the vector amount, twice. 
         //There and back, there and back.
+        effectsOver = false;
         GameObject obj = portraitSlots[id];
         for (int i = 0; i < repeats; i++)
         {
-            float elapsedTime = 0f;
-            while (elapsedTime < 0.2f)
+            float yDest = obj.transform.position.y + moveAmount.y;
+            while (obj.transform.position.y > yDest)
             {
                 obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position + moveAmount, Time.deltaTime * 500);
-                elapsedTime += Time.deltaTime;
                 yield return null;
             }
-            elapsedTime = 0f;
-            while (elapsedTime < 0.2f)
+            yDest = obj.transform.position.y - moveAmount.y;
+            while (obj.transform.position.y < yDest)
             {
                 obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position - moveAmount, Time.deltaTime * 500);
-                elapsedTime += Time.deltaTime;
                 yield return null;
             }
         }
+        effectsOver = true;
     }
     void h_wiggle(int id, float power, int repeats)
     {
         //moves the corresponding portrait side to side.
         //power is a percentage of the base amount.
-        Vector3 moveAmount = new Vector3(power * 1f, 0f, 0f);
+        Vector3 moveAmount = new Vector3(-Math.Abs(power), 0f, 0f);
         StartCoroutine(h_wiggle(id, repeats, moveAmount));
     }
     IEnumerator h_wiggle(int id, int repeats, Vector3 moveAmount)
     {
         //moves the corresponding portrait by the vector amount, twice. 
         //There and back, there and back.
+        effectsOver = false;
         GameObject obj = portraitSlots[id];
+
         for (int i = 0; i < repeats; i++)
         {
-            float elapsedTime = 0f;
-            while (elapsedTime < 0.5f)
+            float xDest = obj.transform.position.x + moveAmount.x;
+            while (obj.transform.position.x > xDest)
             {
                 obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position + moveAmount, Time.deltaTime * 200);
-                elapsedTime += Time.deltaTime;
                 yield return null;
             }
-            elapsedTime = 0f;
-            while (elapsedTime < 0.5f)
+            xDest = obj.transform.position.x - moveAmount.x;
+            while (obj.transform.position.x < xDest)
             {
                 obj.transform.position = Vector3.MoveTowards(obj.transform.position, obj.transform.position - moveAmount, Time.deltaTime * 200);
-                elapsedTime += Time.deltaTime;
                 yield return null;
-            }         
-
+            }
         }
+        effectsOver = true;
     }
     
     void camera_shake(int intensity, float duration)
     {
-        // -currently not working.
-        //intensity determines how much the camera shakes
-        //duration determines how long the shake lasts.
-        //at the end of the time elapsed, returns back to normal.
         StartCoroutine(trigger_camera_shake(intensity, duration));
     }
     IEnumerator trigger_camera_shake(int intensity, float duration)
     {
-        //save initial position.
-        Vector3 initial_position = eventObjects.transform.localPosition;
-
         //zoom in so we don't see the edges fraying
-        eventObjects.transform.localScale = new Vector3(1.05f, 1.05f, 1.05f);
+        //eventObjects.transform.localScale = new Vector3(1.05f, 1.05f, 1.05f);
+        Vector3 initial_position = eventObjects.transform.localPosition;
 
         //shake
         while (duration > 0f)
         {
-            eventObjects.transform.localPosition = initial_position + (UnityEngine.Random.insideUnitSphere * intensity);
+            //eventObjects.transform.localPosition = intensity * (initial_position - UnityEngine.Random.insideUnitSphere);
+            float offset = UnityEngine.Random.Range(0, intensity / 100f);
+            eventObjects.transform.localScale = new Vector3(1f + offset, 1f + offset, 1f);
             duration -= Time.deltaTime;
             yield return null;
         }
+
         //reset initial position
         eventObjects.transform.localPosition = initial_position;
         eventObjects.transform.localScale = new Vector3(1f, 1f, 1f);
