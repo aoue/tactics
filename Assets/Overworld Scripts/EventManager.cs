@@ -22,12 +22,14 @@ public class EventManager : MonoBehaviour
     [SerializeField] private CanvasGroup choiceParent;
     [SerializeField] private Image bg;
     [SerializeField] private Image fadeTapestry;
+    [SerializeField] private Image thinkingframe;
     [SerializeField] private GameObject NormalDialogueBox;
     [SerializeField] private GameObject nameBox;
     [SerializeField] private Text nameText;
     [SerializeField] private Text sentenceText;
     [SerializeField] private Button buttonPrefab = null;
     [SerializeField] private Image speakerBoxPortrait;
+    [SerializeField] private Image continuePopup;
 
     // Switch popups
     [SerializeField] private CanvasGroup bgSwitchPopup;
@@ -63,7 +65,6 @@ public class EventManager : MonoBehaviour
     private int historyLimit = 20; //the max number of displays the historyList stores at a time.
     private float speakerglow_anim_duration = 0.25f;
     
-    [SerializeField] private GameObject canProceedArrow; //visible when canProceed, invisible when cannot.
     private bool canProceed;
     private bool effectsOver; //block progress while effects are under way
     private EventHolder heldEv;
@@ -97,7 +98,8 @@ public class EventManager : MonoBehaviour
         }     
     }
 
-    //MANAGE EVENT SKIP/AUTO BUTTONS
+
+    // MANAGE EVENT SKIP/AUTO BUTTONS
     IEnumerator modify_diaBox_alpha(bool toTransparent, float speed = 1f)
     {
         //used by hide button to hide/show the dialogue box.
@@ -169,7 +171,8 @@ public class EventManager : MonoBehaviour
         HistoryPort.SetActive(false);
     }
 
-    //SETTINGS
+
+    // SETTINGS
     public void show_settings()
     {
         if (historyOn == true) return;
@@ -191,7 +194,8 @@ public class EventManager : MonoBehaviour
         //Debug.Log("set_textWaitTime(). value = " + value + " | textWait = " + textWait);
     }
 
-    //MANAGE EVENT RUNNING
+
+    // MANAGE EVENT RUNNING
     IEnumerator pause_before_starting_event(float duration = 1f)
     {
         //pause for a minute before starting the event. (so we can)
@@ -208,7 +212,7 @@ public class EventManager : MonoBehaviour
     }    
     IEnumerator TypeSentence(string sentence)
     {
-        canProceedArrow.SetActive(false);
+        StartCoroutine(fadeObjectOut(continuePopup, 0.3f, 1f));
         while (!effectsOver)
         {
             yield return new WaitForSeconds(0.2f);
@@ -248,9 +252,37 @@ public class EventManager : MonoBehaviour
         }
         
         audio.play_typingSound();
+        StartCoroutine(fadeObjectIn(continuePopup, 0.3f, 1f));
         yield return new WaitForSeconds(0.05f);
         canProceed = true;
     }
+    IEnumerator fadeObjectIn(Image obj, float duration, float maxAlpha)
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            Color newAlphaColor = new Color(obj.color.r, obj.color.g, obj.color.b, Math.Min(maxAlpha, elapsedTime / duration));
+            obj.color = newAlphaColor;
+            yield return null;
+        }
+        Color c = new Color(obj.color.r, obj.color.g, obj.color.b, Math.Min(maxAlpha, 1f));
+        obj.color = c;
+    }
+    IEnumerator fadeObjectOut(Image obj, float duration, float maxAlpha)
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            Color newAlphaColor = new Color(obj.color.r, obj.color.g, obj.color.b, Math.Min(maxAlpha, 1f - elapsedTime / duration));
+            obj.color = newAlphaColor;
+            yield return null;
+        }
+        Color c = new Color(obj.color.r, obj.color.g, obj.color.b, 0f);
+        obj.color = c;
+    }
+
 
     public void begin_immediate(TextAsset storyText)
     {
@@ -357,7 +389,8 @@ public class EventManager : MonoBehaviour
         overworld.load_part();
     }
 
-    //Helpers
+
+    // HELPERS
     void init_vn_elems()
     {
         //return all effects to default.
@@ -365,8 +398,14 @@ public class EventManager : MonoBehaviour
         set_name(""); //hide name box
         set_boxPortrait(-1); //hide box portrait
         set_speaker_glow(-1);
+        
+        continuePopup.gameObject.SetActive(true);
         Color initFadeTapestry = new Color(0f, 0f, 0f, 1f);
         fadeTapestry.color = initFadeTapestry;
+        fadeTapestry.gameObject.SetActive(true);
+
+        Color initAlphaZero = new Color(0f, 0f, 0f, 0f);
+        thinkingframe.color = initAlphaZero;
     }
     Button CreateChoiceView(string text)
     {
@@ -410,6 +449,10 @@ public class EventManager : MonoBehaviour
         script.BindExternalFunction("bg", (int id, float duration, string popupText) => 
         {
             this.set_bg(id, duration, popupText);
+        });
+        script.BindExternalFunction("thinkbg", (int id) => 
+        {
+            this.set_thinkbg(id);
         });
         script.BindExternalFunction("snow", (int strength) => 
         {
@@ -473,6 +516,7 @@ public class EventManager : MonoBehaviour
             this.run_program(name, duration);
         });
     }
+
 
     // TEXT EFFECTS
     void set_boxPortrait(int speakerBoxId)
@@ -579,19 +623,27 @@ public class EventManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
         bg.sprite = pLibrary.retrieve_eventBg(id);
 
-        float elapsedTime2 = 0f;
-        while (elapsedTime2 < duration)
+        elapsedTime = 0f;
+        while (elapsedTime < duration)
         {
-            elapsedTime2 += Time.deltaTime;
-            Color newAlpha = new Color(0f, 0f, 0f, 1f - elapsedTime2 / duration);
+            elapsedTime += Time.deltaTime;
+            Color newAlpha = new Color(0f, 0f, 0f, 1f - elapsedTime / duration);
             fadeTapestry.color = newAlpha;
-            bgSwitchPopup.alpha = 1f - elapsedTime2 / duration;
+            bgSwitchPopup.alpha = 1f - elapsedTime / duration;
             yield return null;
         }
 
         bgSwitchPopup.alpha = 0f;
         effectsOver = true;
         NormalDialogueBox.SetActive(true);
+    }
+
+    void set_thinkbg(int id)
+    {
+        //if id is -1, fade the thinkbg out.
+        //otherwise, fade it in.
+        if (id == -1) StartCoroutine(fadeObjectOut(thinkingframe, 1f, 160f/255f));
+        else StartCoroutine(fadeObjectIn(thinkingframe, 1f, 160f/255f));
     }
 
 
@@ -907,26 +959,80 @@ public class EventManager : MonoBehaviour
     }
     void set_wind(int strength)
     {
-        //turns wind effects on.
         if (strength == -1) windSystem.gameObject.SetActive(false);       
-        else windSystem.gameObject.SetActive(true);      
+        else windSystem.gameObject.SetActive(true);
+
+        if (strength == -1) 
+        {
+            //no wind
+            windSystem.gameObject.SetActive(false);
+            return;
+        }
+        var emission = windSystem.emission;
+        emission.rateOverTime = (float)strength;
+        windSystem.maxParticles = strength;
+        windSystem.gameObject.SetActive(true);
     }
 
     // AUDIO EFFECTS
     void stop_music()
     {
-        //GetComponent<AudioSource>().stop_music();
+        audio.stop_music();
     }
     void start_music(int id)
     {
-        //GetComponent<AudioSource>().ow_play_music(id);
+        musicSwitchPopupText.text = get_song_title(id);
+        audio.ow_play_music(id);
+        StartCoroutine(show_music_popup());
     }
     void play_sound(int id)
     {
-        //GetComponent<AudioSource>().ow_play_sound(id);
+        audio.ow_play_sound(id);
     }
+    string get_song_title(int id)
+    {
+        switch(id){
+            case 0:
+                return "track0";
+            case 1:
+                return "track1";
+            case 2:
+                return "track2";
+            case 3:
+                return "track3";
+            case 4:
+                return "track4";
+            case 5:
+                return "track5";
+        }
+        return "Track_Not_Found";
+    }
+    IEnumerator show_music_popup()
+    {
+        float duration = 1f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            musicSwitchPopup.alpha = 2*elapsedTime / duration;
+            yield return null;
+        }
+        
+        yield return new WaitForSeconds(1f);
 
-    
+        elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            musicSwitchPopup.alpha = 1f - elapsedTime / duration;
+            yield return null;
+        }
+
+        musicSwitchPopup.alpha = 0f;
+    }
 
 
 }
+
+
+        

@@ -51,18 +51,12 @@ TagManager:
   - name: Background Layer
     uniqueID: 461523099
     locked: 0
-  - name: Characters Outside Layer
+  - name: Characters Layer
     uniqueID: 3458429775
     locked: 0
   - name: Weather Layer
     uniqueID: 259154023
     locked: 0
-  - name: Overlay Layer
-    uniqueID: 4275494219
-    locked: 0
-  - name: Characters Inside Layer
-    uniqueID: 89784681
-    locked: 0
   - name: Dialogue Layer
-    uniqueID: 3871595195
+    uniqueID: 4275494219
     locked: 0

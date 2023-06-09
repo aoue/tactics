@@ -3,10 +3,11 @@ EXTERNAL play_music(id) //plays track, looping
 EXTERNAL play_sound(id) //plays sound, once.
 
 EXTERNAL bg(id, duration, text) //sets background to corresponding element from BackgroundManager
+EXTERNAL thinkbg(id) //turns thinking background on (the top bar). fades it in. -1 to turn off, anything else to turn on.
 
-EXTERNAL snow(strength) //turns weather on or off, and sets the particle count*5. -1: off, otherwise, creates strength*12 particles. Also turns off rain.
-EXTERNAL rain(strength) //turns weather on or off, and sets the particle count*5. -1: off, otherwise, Needs higher strength than snow. Also turns off snow. 
-EXTERNAL wind(strength) //turns wind on or off. -1 to turn off, anything else to turn on.
+EXTERNAL snow(strength) //turns snow on or off, higher arg for more particles. -1 to turn off. Also turns off rain.
+EXTERNAL rain(strength) //turns rain on or off, higher arg for more particles. -1 to turn off. Also turns off snow. 
+EXTERNAL wind(strength) //turns wind on or off, higher arg for more particles. -1 to turn off.
 EXTERNAL shake(intensity, duration) //Both parameters are ints. Don't be shy with intensity. 20 is moderate, 50 is heavy. Duration is in seconds.
 
 EXTERNAL n(name) //sets name text, or call with empty string to hide namebox.
@@ -49,13 +50,23 @@ Let's end.
 ->END
 */
 
-//~play_music(0)
+~play_music(0)
 ~bg(0, 1, "BG NAME")
 ~show(3, 100)
 ~show(4, 200)
+~wind(3)
 setup.
 
+~thinkbg(5)
+now we start thinking.
+cccccc
 
+~thinkbg(-1)
+now we stop thinking.
+dddddd
+eeeeee
+
+-> END
 
 ~bg(1, 1, "BG NAME")
 second bg switch from prev!

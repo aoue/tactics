@@ -1708,13 +1708,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 207656412}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1554635970}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2362,7 +2362,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 2
+    maxNumParticles: 6
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -2430,7 +2430,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: -600, y: 100, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
-    m_Scale: {x: 1800, y: 1200, z: 1}
+    m_Scale: {x: 2400, y: 1200, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -6979,7 +6979,7 @@ MonoBehaviour:
   typer: {fileID: 258864075}
   stepper: {fileID: 0}
   musicList:
-  - {fileID: 8300000, guid: a755c71e642c76043937f55c3d8e8998, type: 3}
+  - {fileID: 8300000, guid: 2457b2a9e1fe756408973dff840e2055, type: 3}
   - {fileID: 8300000, guid: 24789f97127fc5147b283e22e876b33f, type: 3}
   soundList: []
 --- !u!4 &258864079
@@ -7796,7 +7796,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 89784681
+  m_SortingLayerID: -836537521
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!1 &413898263
@@ -7893,7 +7893,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &415247904
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8330,7 +8330,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1554635970}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -13167,7 +13167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.9528302, g: 0.9528302, b: 0.9528302, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -14797,12 +14797,14 @@ MonoBehaviour:
   choiceParent: {fileID: 1959687919373213690}
   bg: {fileID: 1959687920859979103}
   fadeTapestry: {fileID: 415247905}
+  thinkingframe: {fileID: 1564901308}
   NormalDialogueBox: {fileID: 1959687919240787085}
   nameBox: {fileID: 1959687919174268570}
   nameText: {fileID: 1959687919766038753}
   sentenceText: {fileID: 1959687919422314672}
   buttonPrefab: {fileID: 11455116, guid: cf4522939551ada4d9de3a08eb51e085, type: 3}
   speakerBoxPortrait: {fileID: 568301514715138028}
+  continuePopup: {fileID: 765951632189068051}
   bgSwitchPopup: {fileID: 647406343}
   bgSwitchPopupText: {fileID: 1502536858}
   musicSwitchPopup: {fileID: 1321677425}
@@ -14814,7 +14816,6 @@ MonoBehaviour:
   programGraphicText: {fileID: 877754808}
   HistoryPort: {fileID: 3654152493960015385}
   histScroll: {fileID: 3502065891085557759}
-  canProceedArrow: {fileID: 4858900439131733709}
   portraitSlots:
   - {fileID: 1959687920471817544}
   - {fileID: 1959687919003142358}
@@ -22997,7 +22998,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.9528302, g: 0.9528302, b: 0.9528302, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -23590,9 +23591,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1959687920859979100}
+  - {fileID: 207656413}
   - {fileID: 455193325}
   - {fileID: 1917187387}
-  - {fileID: 207656413}
   m_Father: {fileID: 1191776470}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -23758,7 +23759,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1564901307
 RectTransform:
   m_ObjectHideFlags: 0
@@ -24546,7 +24547,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 881, y: -98}
+  m_AnchoredPosition: {x: 96, y: 138}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1694872965
@@ -27312,7 +27313,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1554635970}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -33470,7 +33471,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4858900439131733709}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -33483,7 +33484,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: fce2ada1a2da77e44859b30d25ebe2d3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -34301,7 +34302,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
-  m_SortingLayerID: -423372101
+  m_SortingLayerID: -19473077
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!1 &1959687920823553540
@@ -34422,7 +34423,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8207547, g: 0.8207547, b: 0.8207547, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -34666,8 +34667,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 556, y: -44}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 631, y: -13}
+  m_SizeDelta: {x: 128, y: 128}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2695907105618570248
 MonoBehaviour:

@@ -40,9 +40,6 @@ public class Overworld : MonoBehaviour
     {
         currentPartIndex = newPartIndex;
 
-        //set new music too
-        audio.ow_play_music(parts[currentPartIndex].get_musicIndex());
-
         partText.text = parts[currentPartIndex].get_dateString();
 
         for (int i = 0; i < parts.Length; i++)
@@ -86,6 +83,11 @@ public class Overworld : MonoBehaviour
             //load part's immediate
             ranImmediate = true;
             evMan.begin_immediate(parts[currentPartIndex].get_story());
+        }
+        else
+        { 
+            //if no immediate, then we play overworld music
+            audio.ow_play_music(parts[currentPartIndex].get_musicIndex());
         }
 
     }
