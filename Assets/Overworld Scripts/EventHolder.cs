@@ -68,7 +68,7 @@ public class EventHolder : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         gameObject.SetActive(false);
     }
 
-    public virtual void begin_event()
+    public void begin_event()
     {
         // called when the event button is clicked. 
         beginButton.interactable = false;

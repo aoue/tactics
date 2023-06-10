@@ -26,6 +26,7 @@ public class CombatGrid : MonoBehaviour
     private Mission loadedMission;
 
     [SerializeField] private Canvas uiCanvas;
+    [SerializeField] private CombatFader fader;
     [SerializeField] private PlayByPlay pbpManager;
     [SerializeField] private CombatAudio audio;   
     [SerializeField] private CombatDialoguer cDia;
@@ -64,7 +65,7 @@ public class CombatGrid : MonoBehaviour
     private bool enemyArrived = false; //set to true if an enemy unit ends turn on defend tile.
     //private bool anyPlayerCasualties = false; //to check if any player units were killed.
 
-    [SerializeField] private Order defaultOrder; //the default order. No effects. So we don't have to put if not null everywhere.
+    [SerializeField] private Order defaultOrder; //the default order. No effects. So we don't have to put (if not null) everywhere.
 
     //game state
     private BaseOwnership pastBaseState; //used to revert base's state on movement cancel.
@@ -135,7 +136,7 @@ public class CombatGrid : MonoBehaviour
         pbpManager.fill(gameState, active_unit, active_ability);
         update_ZoC();
 
-        //fader.fade_from_black_cheat(2f);
+        fader.fade_from_black();
         next_turn();
     }
     void Update()
@@ -660,7 +661,7 @@ public class CombatGrid : MonoBehaviour
     }
     IEnumerator pause_before_loading_scene(int sceneIndex)
     {
-        //fader.fade_to_black_stay();
+        fader.fade_to_black();
         yield return new WaitForSeconds(2f);
         //Debug.Log("loading scene " + sceneIndex + " | carrier: nextpartindex = " + Carrier.Instance.get_nextPartIndex() + "carrier nextmissionindex = " + Carrier.Instance.get_nextMissionIndex());
         SceneManager.LoadScene(sceneIndex);
@@ -691,7 +692,6 @@ public class CombatGrid : MonoBehaviour
         animating = true;
         allowRoundEvent = false;
         uiCanvas.enabled = false;
-        //fader.fade_to_black(pause_before_event_start);
         yield return new WaitForSeconds(pause_before_event_start);
 
         //spawn enemy reinforcements, if any.

@@ -75,7 +75,6 @@ public class Overworld : MonoBehaviour
                 eh.disable_event();
             }
         }
-
         messageManager.validate(parts[currentPartIndex].get_messagerID());
 
         if (!ranImmediate && parts[currentPartIndex].get_story() != null)
@@ -86,7 +85,8 @@ public class Overworld : MonoBehaviour
         }
         else
         { 
-            //if no immediate, then we play overworld music
+            //if no immediate, then we play overworld music and also fade
+            evMan.independent_from_black_fade();
             audio.ow_play_music(parts[currentPartIndex].get_musicIndex());
         }
 
@@ -101,7 +101,11 @@ public class Overworld : MonoBehaviour
     {
         //load a normal event
         //Debug.Log("loading event: " + ev.get_eventTitle());
-        evMan.begin_event(ev);        
+        
+        //fade in
+        evMan.independent_to_black_fade();
+        //evMan.begin_event(ev);
+        StartCoroutine(pause_before_loading_event(ev));
     }
     public void load_combat(int id)
     {
@@ -115,26 +119,32 @@ public class Overworld : MonoBehaviour
         StartCoroutine(pause_before_loading_part_directly(id));
     }
 
-
     //HELPERS
+    IEnumerator pause_before_loading_event(EventHolder ev)
+    {
+        yield return new WaitForSeconds(1f);
+        evMan.begin_event(ev);
+    }
     IEnumerator pause_before_loading_part_directly(int id)
     {
-        //fader.fade_to_black_stay();
-        //fader.fade_to_black(3f);
-        yield return new WaitForSeconds(3f);
+        //fade
+        evMan.independent_from_black_fade();
+        yield return new WaitForSeconds(2f);
         change_part(id);
     }
     IEnumerator pause_before_loading_combat_mission()
     {
-        //fader.fade_to_black_stay();
+        //fade
+        evMan.independent_to_black_fade();
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene(2);
     }
 
     //GETTERS
-    public void set_progression(int i) { dayProgression = i; }
-
-    //SETTERS
     public int get_progression() { return dayProgression; }
+    
+    //SETTERS
+    public void set_progression(int i) { dayProgression = i; }
+    
 
 }

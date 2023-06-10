@@ -131,7 +131,6 @@ public class Messager : MonoBehaviour
         
     }
 
-
     (string, string)[] infoTextArray = new (string, string)[2]{
         ("Sender: Friday\nRE: Drew You This", "I drew you this."),
         ("Sender: ____\nRE: ____", "hahahaahah")

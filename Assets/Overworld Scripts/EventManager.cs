@@ -213,6 +213,7 @@ public class EventManager : MonoBehaviour
     IEnumerator TypeSentence(string sentence)
     {
         StartCoroutine(fadeObjectOut(continuePopup, 0.3f, 1f));
+        continuePopup.gameObject.GetComponent<Button>().interactable = false;
         while (!effectsOver)
         {
             yield return new WaitForSeconds(0.2f);
@@ -254,6 +255,7 @@ public class EventManager : MonoBehaviour
         audio.play_typingSound();
         StartCoroutine(fadeObjectIn(continuePopup, 0.3f, 1f));
         yield return new WaitForSeconds(0.05f);
+        continuePopup.gameObject.GetComponent<Button>().interactable = true;
         canProceed = true;
     }
     IEnumerator fadeObjectIn(Image obj, float duration, float maxAlpha)
@@ -301,7 +303,7 @@ public class EventManager : MonoBehaviour
         nameText.text = "";
         sentenceText.text = "";
 
-        //reset history       
+        //reset history
         historyOn = false;
         currentSpeakerName = "NO SPEAKER";
         if (historyList == null) historyList = new List<HistoryEntry>();
@@ -320,7 +322,6 @@ public class EventManager : MonoBehaviour
         //initialize vn elements, like text color, name, etc
         init_vn_elems();
         
-
         //link
         link_external_functions();
 
@@ -382,11 +383,16 @@ public class EventManager : MonoBehaviour
             overworld.set_progression(heldEv.modify_day_progression(overworld.get_progression()));
             heldEv.set_completed();
         }
-        
-        //start a fade
-        //fader.fade_from_black_cheat();
+
+        //handle fade
+        independent_from_black_fade();
+
         eventObjects.SetActive(false);
         overworld.load_part();
+    }
+    public void press_continuePopup()
+    {
+        DisplayNextSentence();
     }
 
 
@@ -398,11 +404,12 @@ public class EventManager : MonoBehaviour
         set_name(""); //hide name box
         set_boxPortrait(-1); //hide box portrait
         set_speaker_glow(-1);
-        
-        continuePopup.gameObject.SetActive(true);
+
         Color initFadeTapestry = new Color(0f, 0f, 0f, 1f);
         fadeTapestry.color = initFadeTapestry;
         fadeTapestry.gameObject.SetActive(true);
+
+        continuePopup.gameObject.SetActive(true);
 
         Color initAlphaZero = new Color(0f, 0f, 0f, 0f);
         thinkingframe.color = initAlphaZero;
@@ -422,6 +429,58 @@ public class EventManager : MonoBehaviour
     {
         script.ChooseChoiceIndex(choice.index);
         DisplayNextSentence();
+    }
+
+
+    // INDEPENDENT FADING
+    public void independent_from_black_fade()
+    {
+        Color initFadeTapestry = new Color(0f, 0f, 0f, 1f);
+        fadeTapestry.color = initFadeTapestry;
+        fadeTapestry.gameObject.SetActive(true);
+        fadeTapestry.raycastTarget = true;
+        StartCoroutine(fade_from_black());
+    }
+    IEnumerator fade_from_black()
+    {
+        // hide textbox
+        yield return new WaitForSeconds(1f);
+        float duration = 1f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            Color newAlpha = new Color(0f, 0f, 0f, 1f - elapsedTime / duration);
+            fadeTapestry.color = newAlpha;
+            yield return null;
+        }
+        bgSwitchPopup.alpha = 0f;
+        fadeTapestry.raycastTarget = false;
+    }
+
+    public void independent_to_black_fade()
+    {
+        Color initFadeTapestry = new Color(0f, 0f, 0f, 0f);
+        fadeTapestry.color = initFadeTapestry;
+        fadeTapestry.gameObject.SetActive(true);
+        fadeTapestry.raycastTarget = true;
+        StartCoroutine(fade_to_black());
+    }
+    IEnumerator fade_to_black()
+    {
+        // hide textbox
+        float duration = 1f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            Color newAlpha = new Color(0f, 0f, 0f, elapsedTime / duration);
+            fadeTapestry.color = newAlpha;
+            yield return null;
+        }
+        bgSwitchPopup.alpha = 0f;
+        yield return new WaitForSeconds(1f);
+        fadeTapestry.raycastTarget = false;
     }
 
 

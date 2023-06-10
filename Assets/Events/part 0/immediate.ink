@@ -56,15 +56,7 @@ Let's end.
 ~show(4, 200)
 ~wind(3)
 setup.
-
-~thinkbg(5)
-now we start thinking.
-cccccc
-
-~thinkbg(-1)
-now we stop thinking.
-dddddd
-eeeeee
+end.
 
 -> END
 

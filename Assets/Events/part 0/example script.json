@@ -1,1 +1,1 @@
-﻿{"inkVersion":20,"root":[["ev","str","^","/str",{"x()":"n","exArgs":1},"pop","/ev","\n","^example script.","\n","^end.","\n","end",["done",{"#f":5,"#n":"g-0"}],null],"done",{"#f":1}],"listDefs":{}}
+﻿{"inkVersion":20,"root":[["ev","str","^","/str",{"x()":"n","exArgs":1},"pop","/ev","\n","ev",1,1,"str","^BG NAME TWO","/str",{"x()":"bg","exArgs":3},"pop","/ev","\n","^test scene launch.","\n","^end.","\n","end",["done",{"#f":5,"#n":"g-0"}],null],"done",{"#f":1}],"listDefs":{}}

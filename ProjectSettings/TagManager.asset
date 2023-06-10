@@ -60,3 +60,6 @@ TagManager:
   - name: Dialogue Layer
     uniqueID: 4275494219
     locked: 0
+  - name: Fade Layer
+    uniqueID: 2491520893
+    locked: 0
