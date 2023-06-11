@@ -54,8 +54,15 @@ Let's end.
 ~bg(0, 1, "BG NAME")
 ~show(3, 100)
 ~show(4, 200)
-~wind(3)
 setup.
+skip me 1
+skip me 2
+skip me 3
+skip me 4
+skip me 5
+skip me 6
+skip me 7
+skip me 8
 end.
 
 -> END

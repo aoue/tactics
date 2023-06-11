@@ -49,10 +49,14 @@ public class EventManager : MonoBehaviour
     private float imgFadeSpeed = 1.5f; //higher is faster. controls the speed at which char imgs are replaced/shown/hidden during events.
 
     //typing speed controllers
+    private float speakerglow_anim_duration = 0.25f;
+    private float autoWait = 1f; //how many seconds to wait before proceeding when auto mode is on.
     private float textWait = 0.035f; //how many seconds to wait after a non-period character in typesentence
     private float periodWait = 0.35f; //how many seconds to wait after a period character in typesentence
     private bool historyOn = false; //when true, viewing history and cannot continue the story.
     private bool settingsOn = false; //when true, viewing settings and cannot continue the story.
+    private bool fastOn = false; //when true, text displays instantly. press crtl to toggle.
+    private bool autoOn = false; //when true, text displays instantly. press crtl to toggle.
 
     [SerializeField] private GameObject settingsView; //lets player adjust vn settings, like text speed.
     [SerializeField] private Slider programGraphic;
@@ -63,7 +67,11 @@ public class EventManager : MonoBehaviour
     [SerializeField] private HistoryScroller histScroll; //used to fill/clear the content of the history interface.
     private List<HistoryEntry> historyList; 
     private int historyLimit = 20; //the max number of displays the historyList stores at a time.
-    private float speakerglow_anim_duration = 0.25f;
+    
+    //button preset colors
+    Color InactiveButtonColor = new Color(140f/255f, 140f/255f, 140f/255f, 1f);
+    Color activeButtonColor = new Color(0.23f, 0.23f, 0.23f, 1f);
+    [SerializeField] private Button[] diaControlButtons; //5 total. Needed to control their visual states.
     
     private bool canProceed;
     private bool effectsOver; //block progress while effects are under way
@@ -74,6 +82,25 @@ public class EventManager : MonoBehaviour
     void Update()
     {
         if (!effectsOver) return;
+
+        //press 'spacebar' or 'enter' to continue, only if canProceed if true, we aren't showing history, and we aren't hiding dialogue box
+        if (canProceed == true && historyOn == false && settingsOn == false)
+        {
+            if (!hideOn && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || autoOn == true || fastOn == true))
+            {
+                DisplayNextSentence();
+            }
+            
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            toggle_auto();
+        }
+        else if (Input.GetKeyDown(KeyCode.F))
+        {
+            toggle_fast();
+        }
         
         if (Input.GetKeyDown(KeyCode.H) && settingsOn == false)
         {
@@ -88,16 +115,8 @@ public class EventManager : MonoBehaviour
             toggle_hide();
         }
 
-        //press 'spacebar' or 'enter' to continue, only if canProceed if true, we aren't showing history, and we aren't hiding dialogue box
-        if (canProceed == true && historyOn == false && settingsOn == false)
-        {
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
-            {
-                DisplayNextSentence();
-            }
-        }     
+        
     }
-
 
     // MANAGE EVENT SKIP/AUTO BUTTONS
     IEnumerator modify_diaBox_alpha(bool toTransparent, float speed = 1f)
@@ -133,14 +152,47 @@ public class EventManager : MonoBehaviour
         if (hideAcceptsInput == false) return;
         hideAcceptsInput = false;
         hideOn = !hideOn;
+        hide_history();
+        historyOn = false;
         //we transition it to the state we want using alpha, though.
         if (hideOn == true) 
         {
             StartCoroutine(modify_diaBox_alpha(true));
+            diaControlButtons[0].GetComponent<Image>().color = activeButtonColor;
         }
         else
         {
             StartCoroutine(modify_diaBox_alpha(false));
+            diaControlButtons[0].GetComponent<Image>().color = InactiveButtonColor;
+        }
+    }
+    public void toggle_auto()
+    {
+        autoOn = !autoOn;
+        if (fastOn) toggle_fast();
+
+        //adjust button visuals
+        if (autoOn)
+        {
+            diaControlButtons[1].GetComponent<Image>().color = activeButtonColor;
+        }
+        else
+        {
+            diaControlButtons[1].GetComponent<Image>().color = InactiveButtonColor;
+        }
+    }
+    public void toggle_fast()
+    {
+        fastOn = !fastOn;
+        if (autoOn) toggle_auto();
+        //adjust button visuals
+        if (fastOn)
+        {
+            diaControlButtons[2].GetComponent<Image>().color = activeButtonColor;
+        }
+        else
+        {
+            diaControlButtons[2].GetComponent<Image>().color = InactiveButtonColor;
         }
     }
     public void toggle_history()
@@ -152,12 +204,14 @@ public class EventManager : MonoBehaviour
         if (historyOn == true)
         {
             show_history();
+            diaControlButtons[3].GetComponent<Image>().color = activeButtonColor;
         }
         else
         {
             hide_history();
+            diaControlButtons[3].GetComponent<Image>().color = InactiveButtonColor;
         }        
-    }   
+    }
     void show_history()
     {
         if (settingsOn == true) return;
@@ -169,6 +223,10 @@ public class EventManager : MonoBehaviour
     void hide_history()
     {
         HistoryPort.SetActive(false);
+    }
+    void toggle_settings()
+    {
+
     }
 
 
@@ -222,7 +280,6 @@ public class EventManager : MonoBehaviour
         string saveString;
         if (sentence[0] == '>')
         {
-            //saveString = sentenceText.text.Replace("\"", ""); // save previous sentence and remove the now-extra set of quotations
             saveString = sentenceText.text;
             sentence = sentence.Substring(1, sentence.Length - 1);
         }
@@ -231,12 +288,18 @@ public class EventManager : MonoBehaviour
             saveString = "";
             sentenceText.text = "";
         }
+        string displayString = saveString;
                                     
         yield return new WaitForSeconds(0.05f);
+        
 
-        string displayString = saveString;
         for(int i = 0; i < sentence.Length; i++)
         {
+            if (fastOn)
+            {
+                break;
+            }
+
             displayString += sentence[i];
             //control quotes, parentheses, or nothing.
             if (nameText.text == "")
@@ -245,17 +308,27 @@ public class EventManager : MonoBehaviour
             }
             else
             {
-                //sentenceText.text = "\"" + displayString + "\"";
                 sentenceText.text = displayString;
             }          
             if (i < sentence.Length - 1 && (sentence[i] == '.' || sentence[i] == '!' || sentence[i] == '?')) yield return new WaitForSeconds(periodWait);
             else yield return new WaitForSeconds(textWait);
         }
-        
-        audio.play_typingSound();
-        StartCoroutine(fadeObjectIn(continuePopup, 0.3f, 1f));
+        if (fastOn)
+        {
+            sentenceText.text = saveString + sentence;
+        }
+        else
+        {
+            audio.play_typingSound();
+            StartCoroutine(fadeObjectIn(continuePopup, 0.3f, 1f));
+            
+            continuePopup.gameObject.GetComponent<Button>().interactable = true;
+        }
+        if (autoOn)
+        {
+            yield return new WaitForSeconds(autoWait);
+        }
         yield return new WaitForSeconds(0.05f);
-        continuePopup.gameObject.GetComponent<Button>().interactable = true;
         canProceed = true;
     }
     IEnumerator fadeObjectIn(Image obj, float duration, float maxAlpha)
@@ -404,6 +477,10 @@ public class EventManager : MonoBehaviour
         set_name(""); //hide name box
         set_boxPortrait(-1); //hide box portrait
         set_speaker_glow(-1);
+        fastOn = false;
+        settingsOn = false;
+        historyOn = false;
+        autoOn = false;
 
         Color initFadeTapestry = new Color(0f, 0f, 0f, 1f);
         fadeTapestry.color = initFadeTapestry;
