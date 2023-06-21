@@ -12,14 +12,6 @@ public class Enemy : Unit
     
     [SerializeField] private SpriteRenderer sleepSpriteRenderer;
 
-    // multiplied by level for stat increases. The normal stats are the offsets.
-    [SerializeField] protected int hp_slope;
-    [SerializeField] protected int brk_slope;
-    [SerializeField] protected int pa_slope;
-    [SerializeField] protected int pd_slope;
-    [SerializeField] protected int ma_slope;
-    [SerializeField] protected int md_slope;
-
     [SerializeField] private int pri_base;
     [SerializeField] private int pri_range; //(range is -pri_range, pri_range)
     [SerializeField] private int pri_panic;
@@ -29,21 +21,10 @@ public class Enemy : Unit
     //Reset when a unit starts selection each time it's activated.
     private List<(int, List<Tile>, Tile)> moveInformationList;
 
-    public override void level_up(int times)
+    public override void level_up(int toLevel)
     {
-        //levels up the unit; meaning increasing its stats, the specified number of times.
-        //this is used so a single prefab type can be used regardless of the level it is supposed to be.
-        //Debug.Log("enemy.level_up() called with times = " + times);
+        //take an argument 'toLevel' and set the stats to preset values accordingly
 
-        //each enemy unit will be an override of the enemy class and have its own version of level_up()
-        /*
-        set_hpMax(get_hpMax() + times * hp_slope);
-        set_brkMax(get_brkMax() + times * brk_slope);
-        set_physa(get_physa() + times * pa_slope);
-        set_physd(get_physd() + times * pd_slope);
-        set_maga(get_maga() + times * ma_slope);
-        set_magd(get_magd() + times * md_slope);
-        */
     }  
 
     public override void clear_moveInformationList_except_last()

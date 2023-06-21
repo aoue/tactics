@@ -169,19 +169,19 @@ public class Tile : MonoBehaviour
         if (player_controlled && enemy_controlled)
         {
             //purple
-            zocRenderer.color = new Color(71f / 255f, 0f, 128f / 255f);
+            zocRenderer.color = new Color(71f / 255f, 0f, 128f / 255f, 0.5f);
             zocRenderer.enabled = true;
         }
         else if (player_controlled)
         {
             //blue
-            zocRenderer.color = new Color(32f / 255f, 201f / 255f, 1f);
+            zocRenderer.color = new Color(32f / 255f, 201f / 255f, 1f, 0.5f);
             zocRenderer.enabled = true;
         }
         else if (enemy_controlled)
         {
             //red
-            zocRenderer.color = Color.red;
+            zocRenderer.color = new Color(1f, 0f, 0f, 0.5f);
             zocRenderer.enabled = true;
         }
         else

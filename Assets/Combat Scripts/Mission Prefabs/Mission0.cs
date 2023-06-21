@@ -6,20 +6,25 @@ public class Mission0 : Mission
 {
     //The file for mission0.
     //tile legend:
-    // 0: tunnel floor
-    // 1: tunnel wall
-    // 2: reinforcement tile (impassable) 
-    // 3: arrive tile
-    // 4: tunnel pillar
-    // 5: tunnel boxes
+    // 0: curtain floor
+    // 1: curtain walls (impassable, blocks attacks)
+    // 2: gambling machine (impassable)
+    // 2: bar counter (impassable)
+    // 3: outside doors, (reinforcement tile)
+    // 4: doors to storage room, (reinforcement tile)
+    
+
+    //enemy legend:
+    // 0: scarabit base
+    // 1: scarabit responder
+    // 2: scarabit swarmer
 
     //mission win/loss conditions
     public override bool is_mission_won(Unit[] pl, List<Unit> el, Tile[,] grid, int roundNumber, List<Tile> baseList)
     {
         //win if all enemies are defeated.
-        //or if arrive tile reached, but that's handled in combatgrid.
-        //if (el.Count == 0) 
-        if (el.Count <= 0) 
+        //the roundNumber requirement here means the mission can't end while enemy reinforcements haven't come yet.
+        if (roundNumber > 5 && el.Count == 0) 
         {
             return true;
         }
@@ -48,20 +53,25 @@ public class Mission0 : Mission
     {
         //returns an array representing the map
         //row, depth into that row
-        Tile[,] layout0 = new Tile[7, 5] {
-            { missionTiles[1], missionTiles[0], missionTiles[5], missionTiles[0], missionTiles[1] },
-            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
-            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
-            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
-            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
-            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
-            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] }
+        Tile[,] layout = new Tile[11, 9] {
+            { null, missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[1], null },
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
+            { missionTiles[0], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[1] },
+            { missionTiles[0], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[2], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
+            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1] },
+            { null, missionTiles[1], missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[1], null }
+            
         };
         //the mission layout will maintain this orientation in game.
-        return layout0;
+        return layout;
     }
-    public override int get_layout_x_dim() { return 5; }
-    public override int get_layout_y_dim() { return 5; }
+    public override int get_layout_x_dim() { return 11; } //first index of layout array, number of rows
+    public override int get_layout_y_dim() { return 9; } //second index of layout array, number of columns
 
     //unit setup and reinforcements
     public override (int, int, int)[] get_deployment_spots()
@@ -69,10 +79,8 @@ public class Mission0 : Mission
         //returns an array of unit IDs and coords representing unit starting spots.
         //unit id, row, depth into that row (if no unit with the id in reserve party, then we fail silently. all good)
         (int, int, int)[] dep_array = {
-            (0, 0, 1),
-            (1, 0, 2)
-            //(2, 2, 1),
-            //(3, 3, 1)
+            (0, 5, 5),
+            (1, 4, 4)
         };
         return dep_array;
     }
@@ -83,19 +91,12 @@ public class Mission0 : Mission
         (Enemy, int, int, int, int)[] dep_array = {
            
             //first room group
-            (defEnemies[0], 1, 2, 0, 0),
-            (defEnemies[0], 2, 3, 0, 0),
-            (defEnemies[0], 0, 3, 1, 0),
-            (defEnemies[1], 4, 2, 0, 0)
-
-            /*
-            //final room group, sleeping 4
-            (defEnemies[0], 12, 6, 4, 0),
-            (defEnemies[0], 12, 8, 4, 0),
-            (defEnemies[1], 11, 7, 4, 0)
-            */
-            //and there are reinforcements too
-            
+            (defEnemies[0], 1, 1, 0, 0), //scarabit base
+            (defEnemies[0], 1, 3, 0, 0), //scarabit base
+            (defEnemies[0], 2, 7, 0, 0), //scarabit base
+            (defEnemies[0], 4, 1, 0, 0), //scarabit base
+            (defEnemies[0], 9, 2, 0, 0), //scarabit responder
+            (defEnemies[0], 8, 5, 0, 0) //scarabit responder
         };
 
         return dep_array;
@@ -103,37 +104,46 @@ public class Mission0 : Mission
     public override (Enemy, int, int, int, int)[] get_enemy_reinforcements(int roundNumber)
     {
         //unit, row, depth into that row, act delay, times to level up
-        /*
         switch (roundNumber)
         {
-            case 1:
+            case 2:
                 (Enemy, int, int, int, int)[] dep_array3 = {
-                    (defEnemies[0], 0, 10, 0, 1),
-                    (defEnemies[0], 1, 10, 0, 2)
+                    (defEnemies[2], 10, 4, 0, 0),
+                    (defEnemies[2], 10, 5, 0, 0)
                 };
                 return dep_array3;
+            case 5:
+                (Enemy, int, int, int, int)[] dep_array5 = {
+                    (defEnemies[1], 6, 0, 0, 0),
+                    (defEnemies[1], 7, 0, 0, 0),
+                    (defEnemies[2], 0, 2, 0, 0),
+                    (defEnemies[2], 0, 4, 0, 0),
+                    (defEnemies[2], 0, 6, 0, 0),
+                    (defEnemies[2], 0, 3, 0, 0),
+                    (defEnemies[2], 0, 5, 0, 0)
+                };
+                return dep_array5;
             default:
                 break;
         }
-        */
+        
         return null;
     }
     public override (int, int, int)[] get_player_reinforcements(int roundNumber)
     {
         //unit id, row, depth into that row
-        /*
         switch (roundNumber)
         {
-            case 1:
+            case 3:
                 (int, int, int)[] dep_array3 = {
-                    //bonelord
-                    (2, 6, 0)
+                    (2, 10, 5), // yve
+                    (3, 10, 4) // nai
                 };
                 return dep_array3;
             default:
                 break;
         }
-        */
+        
         return null;
     }
 

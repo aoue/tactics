@@ -752,12 +752,10 @@ public class CombatGrid : MonoBehaviour
             animating = true;
             allowRoundEvent = false;
             uiCanvas.enabled = false;
-            cDia.play_event(loadedMission.get_script(), 0);           
-            return;
+            cDia.play_event(loadedMission.get_script(), 0);
         }
-
         //check if end of round
-        if (is_end_of_round() || gameState == State.BETWEEN_ROUNDS)
+        else if (is_end_of_round() || gameState == State.BETWEEN_ROUNDS)
         {
             animating = false;
             gameState = State.BETWEEN_ROUNDS;

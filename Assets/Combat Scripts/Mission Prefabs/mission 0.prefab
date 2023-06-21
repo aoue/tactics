@@ -47,25 +47,26 @@ MonoBehaviour:
   missionTiles:
   - {fileID: 8614815216704928305, guid: 7ad36552d4a3c3f4bbb9f53cf4d40b0f, type: 3}
   - {fileID: 1579138454088827572, guid: f47f1c2cacfd5f742a4a09517f76bf90, type: 3}
-  - {fileID: 8470355861109346430, guid: 3e5a921c2cf75944499b33c256bf30ad, type: 3}
+  - {fileID: 1579138454088827572, guid: f47f1c2cacfd5f742a4a09517f76bf90, type: 3}
   - {fileID: 3469899315536455676, guid: b1fe2b2b03b0c894fb68b21c595a1244, type: 3}
   - {fileID: 9072927129608558545, guid: 979a01d35c153db4d8e47446c6d27ea0, type: 3}
   - {fileID: 6281772272875594664, guid: ba9dc5c34f6c3ef4096e3827388f02d8, type: 3}
   defEnemies:
   - {fileID: 1424655179639249732, guid: 0cc21903f1ef34a47a80c8112a75d524, type: 3}
-  - {fileID: 26937828575166125, guid: 93ba6687916c87d45bad4e18d53de5b0, type: 3}
+  - {fileID: 297631335910000918, guid: 684068a68c4b36f408162d008da564c3, type: 3}
+  - {fileID: 7919087845014288025, guid: 0014fe529d0ae1547a9a6dee44b09cad, type: 3}
   clearExp: 100
-  LTC: 0
+  LTC: 8
   nextPartIndex: 1
   starting_power: 2
-  win_obj_descr: 3 enemies remain
-  loss_obj_descr: All enemies are defeated
+  win_obj_descr: Defeat all enemies
+  loss_obj_descr: All allies are defeated
   side_objectives_descrs:
   - No allied unit is defeated
   - Complete within 10 rounds
   objectives_rewards: 0f0000000a000000
   script: {fileID: 4900000, guid: e546d5c0ee37fa945867533f30f8f573, type: 3}
-  eventRounds: 01000000
+  eventRounds: 020000000300000005000000
   musicList:
   - {fileID: 8300000, guid: 2bda3a795acd4ff4ab2fb654f33ef69d, type: 3}
   soundList: []

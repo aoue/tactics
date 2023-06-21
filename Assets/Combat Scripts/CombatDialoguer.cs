@@ -147,7 +147,7 @@ public class CombatDialoguer : MonoBehaviour
         script.BindExternalFunction("cg", (int which) =>
         {
             this.set_cg(which);
-        });
+        });        
         script.BindExternalFunction("jump", (int x, int y) =>
         {
             this.jump_camera(x, y);
