@@ -27,6 +27,7 @@ public class CombatDialoguer : MonoBehaviour
     [SerializeField] private Image cgFrame; //an image frame that shows up in the middle of the screen. 
     [SerializeField] private Image portrait; //for showing the speaker's (box) portrait.
     private float textWait = 0.02f;
+    private bool fastOn = false;
 
     private Story script;
     private bool canProceed;
@@ -35,10 +36,14 @@ public class CombatDialoguer : MonoBehaviour
     void Update()
     {
         //use spacebar to continue.
-        if (canProceed && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButton(0)))
+        if (canProceed && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || fastOn))
         {
             canProceed = false;
             displayNextSentence();
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            fastOn = !fastOn;
         }
     }
 
@@ -49,6 +54,7 @@ public class CombatDialoguer : MonoBehaviour
 
         //hide unit informer, tile informer, and active portrait
         cGrid.hide_informers();
+        fastOn = false;
        
         script = new Story(storyText.text);
         script.ResetState();
@@ -94,12 +100,20 @@ public class CombatDialoguer : MonoBehaviour
         string displayString = "";
         foreach(char letter in sentence.ToCharArray())
         {
+            if (fastOn)
+            {
+                sentenceText.text = sentence;
+                yield return new WaitForSeconds(0.05f);
+                break;
+            }
+
             displayString += letter;
-            sentenceText.text = "\"" + displayString + "\"";
+            sentenceText.text = displayString;
             yield return new WaitForSeconds(textWait);
         }
+        if (!fastOn) { cGrid.play_typing(); }
+        
         canProceed = true;
-        cGrid.play_typing();
     }
 
     void end_story()

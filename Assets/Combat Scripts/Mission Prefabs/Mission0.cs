@@ -93,10 +93,17 @@ public class Mission0 : Mission
             //first room group
             (defEnemies[0], 1, 1, 0, 0), //scarabit base
             (defEnemies[0], 1, 3, 0, 0), //scarabit base
+            (defEnemies[0], 1, 6, 0, 0), //scarabit base
+
             (defEnemies[0], 2, 7, 0, 0), //scarabit base
+
             (defEnemies[0], 4, 1, 0, 0), //scarabit base
-            (defEnemies[0], 9, 2, 0, 0), //scarabit responder
-            (defEnemies[0], 8, 5, 0, 0) //scarabit responder
+            (defEnemies[0], 5, 2, 0, 0), //scarabit base
+
+            
+            (defEnemies[0], 8, 5, 0, 0), //scarabit base
+            (defEnemies[0], 9, 2, 0, 0), //scarabit base
+            (defEnemies[0], 9, 6, 0, 0), //scarabit base
         };
 
         return dep_array;
@@ -108,19 +115,20 @@ public class Mission0 : Mission
         {
             case 2:
                 (Enemy, int, int, int, int)[] dep_array3 = {
-                    (defEnemies[2], 10, 4, 0, 0),
-                    (defEnemies[2], 10, 5, 0, 0)
+                    (defEnemies[1], 6, 0, 1, 0),
+                    (defEnemies[1], 7, 0, 1, 0)
                 };
                 return dep_array3;
             case 5:
                 (Enemy, int, int, int, int)[] dep_array5 = {
-                    (defEnemies[1], 6, 0, 0, 0),
-                    (defEnemies[1], 7, 0, 0, 0),
-                    (defEnemies[2], 0, 2, 0, 0),
-                    (defEnemies[2], 0, 4, 0, 0),
-                    (defEnemies[2], 0, 6, 0, 0),
-                    (defEnemies[2], 0, 3, 0, 0),
-                    (defEnemies[2], 0, 5, 0, 0)
+                    (defEnemies[2], 2, 2, 1, 0),
+                    (defEnemies[2], 3, 2, 0, 0),
+
+                    (defEnemies[2], 2, 4, 1, 0),
+                    (defEnemies[2], 3, 4, 0, 0),
+
+                    (defEnemies[2], 2, 6, 1, 0),
+                    (defEnemies[2], 3, 6, 0, 0)
                 };
                 return dep_array5;
             default:

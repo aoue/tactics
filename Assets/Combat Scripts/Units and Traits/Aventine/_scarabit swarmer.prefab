@@ -471,12 +471,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   sleepSpriteRenderer: {fileID: 4521776669097569994}
-  hp_slope: 4
-  brk_slope: 1
-  pa_slope: 1
-  pd_slope: 0
-  ma_slope: 0
-  md_slope: 0
   pri_base: 5
   pri_range: 5
   pri_panic: 3
@@ -529,7 +523,7 @@ SpriteRenderer:
   m_SortingLayerID: -480042095
   m_SortingLayer: 2
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 77ca4dbf8dfb8fb46ae1560e96847779, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bcee85417e68ecc45819df5186535f55, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

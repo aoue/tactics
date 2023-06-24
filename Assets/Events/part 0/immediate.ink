@@ -52,9 +52,18 @@ Let's end.
 
 ~play_music(0)
 ~bg(0, 1, "BG NAME")
+~show(0, 200)
 ~show(3, 100)
-~show(4, 200)
+~show(4, 300)
 setup.
+
+~n("Friday")
+~p(100)
+Hi there.
+
+~n("")
+~p(-1)
+
 skip me 1
 skip me 2
 skip me 3
