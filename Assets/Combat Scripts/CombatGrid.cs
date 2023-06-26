@@ -1761,7 +1761,7 @@ public class CombatGrid : MonoBehaviour
 
                     string dpfStr;
                     if (active_ability.get_isHeal()) dpfStr = brain.calc_heal_range_str(active_unit, t.get_heldUnit(), active_ability, active_unit.get_isAlly(), active_order); 
-                    else dpfStr = brain.calc_damage_range_str(active_unit, t.get_heldUnit(), active_ability, myGrid[t.get_heldUnit().x, t.get_heldUnit().y], active_unit.get_isAlly(), active_order, enemyUnits.ToArray());
+                    else dpfStr = brain.calc_damage_range_str(active_unit, t.get_heldUnit(), active_ability, myGrid[t.get_heldUnit().x, t.get_heldUnit().y], active_unit.get_isAlly(), active_order, playerUnits);
                     
                     dpf.setup(dpfStr, !active_ability.get_isHeal());                    
                 }

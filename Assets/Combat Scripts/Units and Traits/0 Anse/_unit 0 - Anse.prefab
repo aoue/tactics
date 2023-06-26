@@ -146,8 +146,8 @@ MonoBehaviour:
   hpBar: {fileID: 1308758430853295776}
   brkBar: {fileID: 986779691955203519}
   unitActivationSound: {fileID: 8300000, guid: db6a982144d6b0441801fc766a0e3312, type: 3}
-  box_portrait: {fileID: 21300000, guid: ac7b43e16e339644ea491b5a8e8f7e83, type: 3}
-  active_portrait: {fileID: 21300000, guid: 3e0d36631ffdb2f48ba43714fc18e201, type: 3}
+  box_portrait: {fileID: 21300000, guid: 0e89cf9fb948f094bb28efaea38d6b2b, type: 3}
+  active_portrait: {fileID: 21300000, guid: b3054c3622809954f9ff0be54c36e044, type: 3}
   unitName: Anse
   level: 1
   exp: 0
@@ -157,7 +157,7 @@ MonoBehaviour:
   controlRangeBase: 1
   phys_atk: 1
   phys_def: 0
-  magic_atk: 1
+  magic_atk: 0
   magic_def: 0
   unitOrder: {fileID: 6773564134839013533, guid: 811d92a95922178449a6c964f02d0d96,
     type: 3}

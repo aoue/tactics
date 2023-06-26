@@ -52,14 +52,26 @@ Let's end.
 
 ~play_music(0)
 ~bg(0, 1, "BG NAME")
-~show(0, 200)
-~show(3, 100)
-~show(4, 300)
-setup.
+~show(0, 100) // friday at left
+~show(1, 300) // yve at center
+~show(2, 400) // nai at right
+We all stand there in the aftermath.
 
 ~n("Friday")
 ~p(100)
-Hi there.
+... Thank you. I have to leave now.
+
+~n("Nai")
+~p(400)
+You're never too young to be a bad person.
+
+~n("Anse")
+~p(200)
+Tsk. Remember that cynicism is incorrect.
+
+~n("Yve")
+~p(300)
+Stop fighting you guys. You're making me all sad.
 
 ~n("")
 ~p(-1)

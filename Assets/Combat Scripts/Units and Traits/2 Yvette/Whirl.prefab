@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d755da71caf8e144ea51bba3446e61f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  traitIconSprite: {fileID: 0}
   traitSound: {fileID: 0}
   traitName: Whirl
   descr: '[descr]'
@@ -57,7 +58,7 @@ MonoBehaviour:
   range: 1
   dmg_range: 0200000003000000
   brkOffset: 0
-  pwCost: 2
+  pwCost: 1
   usesPhysAttack: 1
   usesPhysDefense: 1
   isHeal: 0

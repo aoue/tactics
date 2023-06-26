@@ -455,7 +455,7 @@ MonoBehaviour:
   unitName: Sc. Swarmer
   level: 1
   exp: 4
-  movement: 2
+  movement: 3
   hpMax: 4
   brkMax: 2
   controlRangeBase: 0

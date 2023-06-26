@@ -9,7 +9,6 @@ public class BattleBrain
     //calculator for combat.
 
     
-
     public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile, bool playerAttacking, Order order, Unit[] u1_allies)
     {
         //use attacker's phys a or mag a?

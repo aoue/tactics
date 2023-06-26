@@ -334,7 +334,7 @@ MonoBehaviour:
   unitOrder: {fileID: 8925131752358311678, guid: 99a6b025004365a44932e7ba788e76a0,
     type: 3}
   traitList:
-  - {fileID: 7904146275845805722, guid: e64563da5214e5140ab07bbc837ddb27, type: 3}
+  - {fileID: 2997090449510093089, guid: e64563da5214e5140ab07bbc837ddb27, type: 3}
   - {fileID: 8579950811985061860, guid: 8708c7d188eda9a4a8bd8194f290fbfe, type: 3}
   - {fileID: 8123271002466339381, guid: 2ecc10a928637704287e14e5b229d973, type: 3}
   - {fileID: 0}

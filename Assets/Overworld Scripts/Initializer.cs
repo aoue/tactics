@@ -55,10 +55,10 @@ public class Initializer : MonoBehaviour
         Unit u = Carrier.Instance.get_allUnitList()[1];
         u.set_hpMax(7);
         u.set_brkMax(4);
-        u.set_physa(0);
+        u.set_physa(1);
         u.set_physd(0);
         u.set_maga(0);
-        u.set_magd(2);
+        u.set_magd(1);
         u.set_exp(0);
         u.init_learnList();
         for(int i = 0; i < u.get_traitList().Length; i++)

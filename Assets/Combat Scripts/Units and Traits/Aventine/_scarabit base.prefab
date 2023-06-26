@@ -95,7 +95,7 @@ MonoBehaviour:
   unitName: Scarabit
   level: 1
   exp: 4
-  movement: 2
+  movement: 3
   hpMax: 4
   brkMax: 2
   controlRangeBase: 0
@@ -111,12 +111,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   sleepSpriteRenderer: {fileID: 4675782917389304599}
-  hp_slope: 4
-  brk_slope: 1
-  pa_slope: 1
-  pd_slope: 0
-  ma_slope: 0
-  md_slope: 0
   pri_base: 5
   pri_range: 5
   pri_panic: 3

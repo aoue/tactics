@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4990001081241805622
+--- !u!1 &1796712658798580616
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,57 +8,57 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4990001081241805624}
-  - component: {fileID: 4990001081241805623}
+  - component: {fileID: 1796712658798580622}
+  - component: {fileID: 1796712658798580623}
   m_Layer: 0
-  m_Name: Laserline
+  m_Name: Pierce
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4990001081241805624
+--- !u!4 &1796712658798580622
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4990001081241805622}
+  m_GameObject: {fileID: 1796712658798580616}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 721.1863, y: 413.151, z: -372.6358}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4990001081241805623
+--- !u!114 &1796712658798580623
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4990001081241805622}
+  m_GameObject: {fileID: 1796712658798580616}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d755da71caf8e144ea51bba3446e61f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  traitIconSprite: {fileID: 0}
+  traitIconSprite: {fileID: 21300000, guid: 461fdb038c38da641935cec09ed693bd, type: 3}
   traitSound: {fileID: 0}
-  traitName: Laserline
-  descr: deals -1 BRK
-  unitType: 3
+  traitName: Pierce
+  descr: Deals 1 less BRK.
+  unitType: 0
   isPassive: 0
   mustSetup: 0
   targeting: 0
   aoe: 1
   ignores_blocking_terrain: 0
-  minimum_range: 1
-  range: 3
-  dmg_range: 010000000100000002000000
+  minimum_range: 2
+  range: 2
+  dmg_range: 020000000200000003000000
   brkOffset: -1
-  pwCost: 0
-  usesPhysAttack: 0
-  usesPhysDefense: 0
+  pwCost: 2
+  usesPhysAttack: 1
+  usesPhysDefense: 1
   isHeal: 0

@@ -8,6 +8,8 @@ public class AttachmentTrait : Trait
     //this is a passive that provides some kind of bonus if a certain unit is within x tile.
     //here, mc takes 0.75x damage if within 3 tiles of friday. (id 1)
 
+    // OUT OF DATE
+
     [SerializeField] private string unitNameStr; 
 
     public override int modify_dmg_received(int dmg, Unit self, Unit enemy, Unit[] self_allies)

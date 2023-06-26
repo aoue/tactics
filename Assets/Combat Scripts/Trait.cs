@@ -180,7 +180,7 @@ public class Trait : MonoBehaviour
             }
             powerStr += "]";
 
-            buildStr += "\n" + powerStr + " | " + pwCost + " cost.";
+            buildStr += "\n" + powerStr + " | costs " + pwCost + " PW.";
         }
 
         //each has its own sep text and image

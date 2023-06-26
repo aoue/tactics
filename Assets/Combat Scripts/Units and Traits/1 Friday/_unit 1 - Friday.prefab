@@ -318,8 +318,8 @@ MonoBehaviour:
   hpBar: {fileID: 2006565731620000972}
   brkBar: {fileID: 224350195281374642}
   unitActivationSound: {fileID: 8300000, guid: 4e724768c635cff488270551ab5da7a5, type: 3}
-  box_portrait: {fileID: 21300000, guid: d48a3d41adc6a9e4ba4c9d0fb693feef, type: 3}
-  active_portrait: {fileID: 21300000, guid: 5d09b819290d9a44daa5dc095b7a0c09, type: 3}
+  box_portrait: {fileID: 21300000, guid: bcaef3fc5621003458483d9c10d6159d, type: 3}
+  active_portrait: {fileID: 21300000, guid: 6ce0139ec350ad34e87732975952b7a2, type: 3}
   unitName: Friday
   level: 1
   exp: 0
@@ -336,7 +336,7 @@ MonoBehaviour:
   traitList:
   - {fileID: 1267856805505375128, guid: 3a1394e4711069f4584c9607e563775b, type: 3}
   - {fileID: 1796712658798580623, guid: a351b471ca9b0364a944e1077dd77037, type: 3}
-  - {fileID: 9032095339413136354, guid: f633a6b5dc408614493de9224d423156, type: 3}
+  - {fileID: -2212966613958274464, guid: f633a6b5dc408614493de9224d423156, type: 3}
   - {fileID: 0}
   - {fileID: 0}
 --- !u!212 &6669561844638855849

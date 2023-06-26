@@ -45,4 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orderName: Conviction
-  orderDescr: +2 PW each time an allied unit ends its turn.
+  orderDescr: +1 PW each time an allied unit acts.
