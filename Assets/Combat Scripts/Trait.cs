@@ -90,6 +90,11 @@ public class Trait : MonoBehaviour
 
         
     }
+    public virtual int[] modify_dmg_range(int[] damage_range, Unit self, Unit enemy)
+    {
+        // can return some other version of the damage range.
+        return damage_range;
+    }
     public virtual int modify_dmg_dealt(int dmg, Unit self, Unit enemy, Unit[] self_allies)
     {
         //will probably need the grid and playerList.

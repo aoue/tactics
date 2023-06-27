@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class PaybackTrait : Trait
 {
-    public override int modify_dmg_dealt(int dmg, Unit self, Unit enemy, Unit[] self_allies)
+
+    public override int[] modify_dmg_range(int[] damage_range, Unit self, Unit enemy)
     {
-        //+1 dmg for each 25% of self hp lost.
+        //expand dmg range to +1 dmg for each 25% of self hp lost.
         double hpLeft = (double)self.get_hp() / (double)self.get_hpMax();
 
-        if (hpLeft <= 0.25) return dmg + 3;
-        if (hpLeft <= 0.50) return dmg + 2;
-        if (hpLeft <= 0.75) return dmg + 1;
-        return dmg;
+        List<int> newRange = new List<int>();
+        newRange.Add(1);
+
+        if (hpLeft <= 0.75) newRange.Add(2);
+        if (hpLeft <= 0.50) newRange.Add(3);
+        if (hpLeft <= 0.25) newRange.Add(4);
+
+        return newRange.ToArray();
     }
 
 

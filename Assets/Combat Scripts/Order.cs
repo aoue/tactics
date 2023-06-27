@@ -45,12 +45,20 @@ public class Order : MonoBehaviour
     }
 
     //called at the end of damage calculations in battlebrain.
-    public virtual int order_damage(int dmg)
+    public virtual int order_damage_dealt(int dmg)
+    {
+        return dmg;
+    }
+    public virtual int order_damage_received(int dmg) 
     {
         return dmg;
     }
     //called at the end of healing calculations in battlebrain.
-    public virtual int order_heal(int heal)
+    public virtual int order_heal_dealt(int heal)
+    {
+        return heal;
+    }
+    public virtual int order_heal_received(int heal)
     {
         return heal;
     }
