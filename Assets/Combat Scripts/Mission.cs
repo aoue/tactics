@@ -6,7 +6,7 @@ using System.Linq;
 
 public class Mission : MonoBehaviour
 {
-    [SerializeField] protected Tile[] missionTiles;
+    [SerializeField] protected Tile[] m;
     [SerializeField] protected Enemy[] defEnemies;
 
     //mission settings
@@ -99,11 +99,11 @@ public class Mission : MonoBehaviour
     {
         //returns an array representing the map
         Tile[,] layout = new Tile[5, 5] {
-            { missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0]},
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[0]},
-            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0]},
-            { missionTiles[2], missionTiles[0], missionTiles[1], missionTiles[1], missionTiles[0]},
-            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[0]}
+            { m[0], m[1], m[0], m[0], m[0]},
+            { m[0], m[0], m[0], m[1], m[0]},
+            { m[1], m[0], m[0], m[0], m[0]},
+            { m[2], m[0], m[1], m[1], m[0]},
+            { m[1], m[0], m[0], m[0], m[0]}
         };
         //the mission layout will maintain this orientation in game.
         return layout;

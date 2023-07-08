@@ -58,18 +58,18 @@ public class Mission1 : Mission
         //returns an array representing the map
         //row, depth into that row
         Tile[,] layout0 = new Tile[12, 12] {
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[4], missionTiles[4], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[7], missionTiles[0], missionTiles[0]},
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[4], missionTiles[4], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[9], missionTiles[7], missionTiles[0], missionTiles[0]},
-            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[5], missionTiles[5], missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[1], missionTiles[2], missionTiles[0], missionTiles[0]},
-            { missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[4], missionTiles[4], missionTiles[4], missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[0]},
-            { missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[4], missionTiles[4], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[2], missionTiles[3], missionTiles[0]},
-            { missionTiles[0], missionTiles[0], missionTiles[6], missionTiles[0], missionTiles[5], missionTiles[5], missionTiles[0], missionTiles[0], missionTiles[1], missionTiles[2], missionTiles[0], missionTiles[3]},
-            { missionTiles[0], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[4], missionTiles[4], missionTiles[4], missionTiles[3], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[0]},
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[3], missionTiles[4], missionTiles[4], missionTiles[4], missionTiles[1], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[0]},
-            { missionTiles[1], missionTiles[0], missionTiles[1], missionTiles[4], missionTiles[4], missionTiles[4], missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[3]},
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[4], missionTiles[4], missionTiles[4], missionTiles[1], missionTiles[1], missionTiles[0], missionTiles[2], missionTiles[1], missionTiles[0]},
-            { missionTiles[0], missionTiles[0], missionTiles[0], missionTiles[4], missionTiles[4], missionTiles[4], missionTiles[1], missionTiles[0], missionTiles[0], missionTiles[2], missionTiles[0], missionTiles[0]},
-            { missionTiles[8], missionTiles[8], missionTiles[4], missionTiles[4], missionTiles[4], missionTiles[4], missionTiles[8], missionTiles[8], missionTiles[8], missionTiles[2], missionTiles[8], missionTiles[8]}
+            { m[0], m[0], m[0], m[4], m[4], m[1], m[0], m[0], m[0], m[7], m[0], m[0]},
+            { m[0], m[0], m[0], m[4], m[4], m[0], m[0], m[0], m[9], m[7], m[0], m[0]},
+            { m[1], m[0], m[0], m[5], m[5], m[0], m[1], m[0], m[1], m[2], m[0], m[0]},
+            { m[1], m[1], m[0], m[4], m[4], m[4], m[1], m[1], m[0], m[2], m[0], m[0]},
+            { m[1], m[0], m[0], m[0], m[4], m[4], m[0], m[0], m[0], m[2], m[3], m[0]},
+            { m[0], m[0], m[6], m[0], m[5], m[5], m[0], m[0], m[1], m[2], m[0], m[3]},
+            { m[0], m[1], m[0], m[0], m[4], m[4], m[4], m[3], m[0], m[2], m[0], m[0]},
+            { m[0], m[0], m[0], m[3], m[4], m[4], m[4], m[1], m[0], m[2], m[0], m[0]},
+            { m[1], m[0], m[1], m[4], m[4], m[4], m[0], m[0], m[0], m[2], m[0], m[3]},
+            { m[0], m[0], m[0], m[4], m[4], m[4], m[1], m[1], m[0], m[2], m[1], m[0]},
+            { m[0], m[0], m[0], m[4], m[4], m[4], m[1], m[0], m[0], m[2], m[0], m[0]},
+            { m[8], m[8], m[4], m[4], m[4], m[4], m[8], m[8], m[8], m[2], m[8], m[8]}
         };
         //the mission layout will maintain this orientation in game.
 

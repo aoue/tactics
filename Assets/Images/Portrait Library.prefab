@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   full:
-  - {fileID: 21300000, guid: 6ce0139ec350ad34e87732975952b7a2, type: 3}
+  - {fileID: 21300000, guid: 51300a86754e3914d846c5b3b508e8bd, type: 3}
   box:
   - {fileID: 21300000, guid: bcaef3fc5621003458483d9c10d6159d, type: 3}
 --- !u!1 &3590644153784381142
