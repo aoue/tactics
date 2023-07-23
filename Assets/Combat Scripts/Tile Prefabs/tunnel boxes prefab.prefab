@@ -238,7 +238,7 @@ MonoBehaviour:
   blocksAttacks: 0
   canBeTargeted: 1
   movementCost: 2
-  coverReduction: 0
+  coverMult: 0.8
   descr: The scattered boxes provide slight cover.
   highlightLayer: {fileID: 1904667572332340068}
   targetIcon: {fileID: 6990453053382342198}

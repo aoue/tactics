@@ -123,7 +123,7 @@ public class Unit : MonoBehaviour
     {
         hasMoved = value;
     }
-    public void take_dmg(int dmg, int brkOffset)
+    public void take_dmg(int dmg, double brkMult)
     {
         //causes dmg to the unit.
         //Any dmg is dealt to both hp and brk.
@@ -133,7 +133,7 @@ public class Unit : MonoBehaviour
 
         if (!isBroken)
         {
-            brk = Math.Max(0, brk - (dmg + brkOffset));
+            brk = Math.Max(0, brk - (int)(dmg * brkMult));
             if (brk == 0)
             {
                 brk_self();

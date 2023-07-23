@@ -69,7 +69,7 @@ MonoBehaviour:
   blocksAttacks: 0
   canBeTargeted: 1
   movementCost: 1
-  coverReduction: 0
+  coverMult: 1
   descr: A power relay that genereates power each round for the side that controls
     it. Also recovers HP on unit standing on it at turn start.
   highlightLayer: {fileID: 604655263382334622}

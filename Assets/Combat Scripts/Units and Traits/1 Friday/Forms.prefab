@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1267856805505375127}
   - component: {fileID: 1267856805505375128}
   m_Layer: 0
-  m_Name: Flux Slash
+  m_Name: Forms
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,9 +46,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   traitIconSprite: {fileID: 21300000, guid: d194aa8eb5557db40a3701746c2b5a0e, type: 3}
   traitSound: {fileID: 0}
-  traitName: Flux Slash
+  traitName: Forms
   descr: '[descr]'
-  unitType: 3
+  unitType: 0
   isPassive: 0
   mustSetup: 0
   targeting: 0
@@ -56,8 +56,14 @@ MonoBehaviour:
   ignores_blocking_terrain: 0
   minimum_range: 0
   range: 1
-  dmg_range: 0100000001000000020000000300000004000000
-  brkOffset: 0
+  rolls:
+  - 0.3
+  - 0.4
+  - 0.5
+  - 1
+  - 1.5
+  - 2
+  brkMult: 1
   pwCost: 0
   usesPhysAttack: 1
   usesPhysDefense: 1

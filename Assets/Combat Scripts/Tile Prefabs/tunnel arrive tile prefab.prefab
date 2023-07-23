@@ -416,7 +416,7 @@ MonoBehaviour:
   blocksAttacks: 0
   canBeTargeted: 1
   movementCost: 1
-  coverReduction: 0
+  coverMult: 1
   descr: Smooth and Compact (Player arrives here to win)
   highlightLayer: {fileID: 4214709960089773034}
   targetIcon: {fileID: 4688248809208592056}

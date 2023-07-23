@@ -60,7 +60,7 @@ MonoBehaviour:
   blocksAttacks: 1
   canBeTargeted: 0
   movementCost: -1
-  coverReduction: 0
+  coverMult: 1
   descr: Needlessly supporting the tunnel from the sides.
   highlightLayer: {fileID: 6388867928106271352}
   targetIcon: {fileID: 2577317467610945322}

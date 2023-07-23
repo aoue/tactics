@@ -157,13 +157,13 @@ MonoBehaviour:
   controlRangeBase: 1
   phys_atk: 1
   phys_def: 0
-  magic_atk: 0
+  magic_atk: 1
   magic_def: 0
   unitOrder: {fileID: 6773564134839013533, guid: 811d92a95922178449a6c964f02d0d96,
     type: 3}
   traitList:
-  - {fileID: 5915920842256053762, guid: 0cb44a7af0acfbd4da5f9ee98a4f1224, type: 3}
   - {fileID: 4139798574039622529, guid: ac170af480b24354890d79b268462a91, type: 3}
+  - {fileID: 5915920842256053762, guid: 0cb44a7af0acfbd4da5f9ee98a4f1224, type: 3}
   - {fileID: 4743222501556581455, guid: 9a6e694c609a510438f7c83bad5afbcb, type: 3}
   - {fileID: 0}
   - {fileID: 0}

@@ -416,7 +416,7 @@ MonoBehaviour:
   blocksAttacks: 0
   canBeTargeted: 1
   movementCost: -1
-  coverReduction: 0
+  coverMult: 1
   descr: Reserved parking, no one can move here.
   highlightLayer: {fileID: 4093583281799614642}
   targetIcon: {fileID: 4873736324048340448}

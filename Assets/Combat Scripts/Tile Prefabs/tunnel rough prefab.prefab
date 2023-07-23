@@ -238,7 +238,7 @@ MonoBehaviour:
   blocksAttacks: 0
   canBeTargeted: 1
   movementCost: 2
-  coverReduction: 0
+  coverMult: 1
   descr: Worn and rough, making it harder to traverse.
   highlightLayer: {fileID: 255597486120537866}
   targetIcon: {fileID: 8710447234988612184}

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum AoEType { SINGLE, ALL_BETWEEN, ALL, ADJACENT_FOUR, WAVE_3 }
 public enum TargetingType { LINE, SQUARE, RADIUS, SELF }
-public enum UnitType { NOTHING, SCARECROW, HAUNT, WEAVER }
+public enum UnitType { NOTHING, BOXHAND, BEAST, MACHINE }
 public class Trait : MonoBehaviour
 {
     //passive and abilities.
@@ -54,8 +54,8 @@ public class Trait : MonoBehaviour
     [SerializeField] private bool ignores_blocking_terrain; //if true, then the move is not affected by tiles that block attacks
     [SerializeField] private int minimum_range; //used for validating tiles when attacking. Can only hit a tile where manhattan distance is >= x tiles away/
     [SerializeField] private int range; //determines how far the attack can reach
-    [SerializeField] private int[] dmg_range; //rolls for possible range.
-    [SerializeField] private int brkOffset; //determines the amount of brk dmg dealt.
+    [SerializeField] private double[] rolls; //rolls for possible range.
+    [SerializeField] private double brkMult; //determines the amount of brk dmg dealt.
     [SerializeField] private int pwCost; //the power cost to use the move.
     [SerializeField] private bool usesPhysAttack; //on true, use attacker's phys attack for dmg calc. On false, use attacker's mag attack.
     [SerializeField] private bool usesPhysDefense; //on true, use target's phys def for dmg calc. On false, use target's mag def.
@@ -90,10 +90,10 @@ public class Trait : MonoBehaviour
 
         
     }
-    public virtual int[] modify_dmg_range(int[] damage_range, Unit self, Unit enemy)
+    public virtual double[] modify_rolls(double[] rolls, Unit self, Unit enemy)
     {
         // can return some other version of the damage range.
-        return damage_range;
+        return rolls;
     }
     public virtual int modify_dmg_dealt(int dmg, Unit self, Unit enemy, Unit[] self_allies)
     {
@@ -166,22 +166,22 @@ public class Trait : MonoBehaviour
             else buildStr += " Attack Ability";
 
             if (usesPhysAttack) buildStr += "| ATK ";           
-            else buildStr += "| HAC ";
+            else buildStr += "| CHR ";
             
             if (!isHeal)
             {
-                if (usesPhysDefense) buildStr += "vs.  DEF";
-                else buildStr += "vs. ICE";
+                if (usesPhysDefense) buildStr += "vs. DEF";
+                else buildStr += "vs. INS";
             }
             
 
             if (mustSetup) buildStr += " (Setup Required) | ";
 
             string powerStr = "Rolls: [";
-            for (int i = 0; i < dmg_range.Length; i++)
+            for (int i = 0; i < rolls.Length; i++)
             {
-                powerStr += dmg_range[i];
-                if (i < dmg_range.Length - 1) powerStr += ".";
+                powerStr += (int)(rolls[i]*100);
+                if (i < rolls.Length - 1) powerStr += ".";
             }
             powerStr += "]";
 
@@ -205,8 +205,8 @@ public class Trait : MonoBehaviour
     public int get_min_range() { return minimum_range; }
     public int get_range() { return range; }
     public int get_minimum_range() { return minimum_range; }
-    public int[] get_dmg_range() { return dmg_range; }
-    public int get_brkOffset() { return brkOffset; }
+    public double[] get_rolls() { return rolls; }
+    public double get_brkMult() { return brkMult; }
     public int get_pwCost() { return pwCost; }
     public bool get_usesPhysAttack() { return usesPhysAttack; }
     public bool get_usesPhysDefense() { return usesPhysDefense; }

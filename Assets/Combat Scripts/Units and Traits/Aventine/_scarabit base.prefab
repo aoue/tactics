@@ -96,13 +96,13 @@ MonoBehaviour:
   level: 1
   exp: 4
   movement: 3
-  hpMax: 4
-  brkMax: 2
+  hpMax: 12
+  brkMax: 6
   controlRangeBase: 0
-  phys_atk: 0
-  phys_def: 0
-  magic_atk: 0
-  magic_def: 0
+  phys_atk: 6
+  phys_def: 3
+  magic_atk: 2
+  magic_def: 3
   unitOrder: {fileID: 0}
   traitList:
   - {fileID: 3498225942440549642, guid: 770ca2b25301b39499c2cbb9f3c8dd09, type: 3}

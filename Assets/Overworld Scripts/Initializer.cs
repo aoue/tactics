@@ -29,12 +29,12 @@ public class Initializer : MonoBehaviour
     void reset_anse()
     {
         Unit u = Carrier.Instance.get_allUnitList()[0];
-        u.set_hpMax(8);
-        u.set_brkMax(4);
-        u.set_physa(1);
-        u.set_physd(0);
-        u.set_maga(1);
-        u.set_magd(0);
+        u.set_hpMax(16);
+        u.set_brkMax(8);
+        u.set_physa(8);
+        u.set_physd(4);
+        u.set_maga(9);
+        u.set_magd(4);
         u.set_exp(0);
         
         u.init_learnList();
@@ -53,12 +53,12 @@ public class Initializer : MonoBehaviour
     void reset_friday()
     {
         Unit u = Carrier.Instance.get_allUnitList()[1];
-        u.set_hpMax(7);
-        u.set_brkMax(4);
-        u.set_physa(1);
-        u.set_physd(0);
-        u.set_maga(0);
-        u.set_magd(1);
+        u.set_hpMax(17);
+        u.set_brkMax(9);
+        u.set_physa(11);
+        u.set_physd(5);
+        u.set_maga(3);
+        u.set_magd(6);
         u.set_exp(0);
         u.init_learnList();
         for(int i = 0; i < u.get_traitList().Length; i++)

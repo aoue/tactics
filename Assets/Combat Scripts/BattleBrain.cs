@@ -7,8 +7,6 @@ using System.Linq;
 public class BattleBrain
 {
     //calculator for combat.
-
-    
     public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile, bool playerAttacking, Order order, Unit[] u1_allies)
     {
         //use attacker's phys a or mag a?
@@ -39,18 +37,18 @@ public class BattleBrain
         }
         if (u2.get_isBroken()) def = 0;
 
-        int coverMod;
-        if (playerAttacking) coverMod = order.order_coverMod_offense(occupied_tile.get_cover());
-        else coverMod = order.order_coverMod_defense(occupied_tile.get_cover());
+        double coverMult;
+        if (playerAttacking) coverMult = order.order_coverMult_offense(occupied_tile.get_coverMult());
+        else coverMult = order.order_coverMult_defense(occupied_tile.get_coverMult());
 
         //create damage range
-        int[] dmg_range = t.get_dmg_range();
-        dmg_range = t.modify_dmg_range(dmg_range, u1, u2);
+        double[] rolls = t.get_rolls();
+        rolls = t.modify_rolls(rolls, u1, u2);
 
         //damage formula: dmg = roll + user's atk - target's def
         //if the target is broken, then set their defense to 0
-        int dmg_range_roll = dmg_range[UnityEngine.Random.Range(0, dmg_range.Length)];
-        int dmg = dmg_range_roll + atk - def - coverMod;
+        double actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)];
+        int dmg = (int)((((int)(actual_roll * atk)) - def) * coverMult);
         dmg = t.modify_dmg_dealt(dmg, u1, u2, u1_allies);
         
         //each of user's passives interacts with dmg dealt
@@ -94,12 +92,12 @@ public class BattleBrain
             else atk = u1.get_maga();
         }
 
-        int[] dmg_range = t.get_dmg_range();
-        dmg_range = t.modify_dmg_range(dmg_range, u1, u2);
+        double[] rolls = t.get_rolls();
+        rolls = t.modify_rolls(rolls, u1, u2);
 
         //damage formula: dmg = roll + user's atk - target's def
-        int dmg_range_roll = dmg_range[UnityEngine.Random.Range(0, dmg_range.Length)];
-        int heal = dmg_range_roll + atk;
+        double actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)];
+        int heal = (int)(actual_roll * atk);
         heal = t.modify_heal_dealt(heal, u1, u2);
 
         // run user's passives
@@ -159,18 +157,18 @@ public class BattleBrain
         }
         if (u2.get_isBroken()) def = 0;
 
-        int coverMod;
-        if (playerAttacking) coverMod = order.order_coverMod_offense(occupied_tile.get_cover());
-        else coverMod = order.order_coverMod_defense(occupied_tile.get_cover());
+        double coverMult;
+        if (playerAttacking) coverMult = order.order_coverMult_offense(occupied_tile.get_coverMult());
+        else coverMult = order.order_coverMult_defense(occupied_tile.get_coverMult());
 
         
-        int[] dmg_range = t.get_dmg_range();
-        dmg_range = t.modify_dmg_range(dmg_range, u1, u2);
+        double[] rolls = t.get_rolls();
+        rolls = t.modify_rolls(rolls, u1, u2);
 
         //damage formula: dmg = roll + user's atk - target's def
         //if the target is broken, then set their defense to 0
-        int dmg_high = dmg_range.Max() + atk - def - coverMod;
-        int dmg_low = dmg_range.Min() + atk - def - coverMod;
+        int dmg_high = (int)((((int)(rolls.Max() * atk)) - def) * coverMult);
+        int dmg_low = (int)((((int)(rolls.Min() * atk)) - def) * coverMult);
         dmg_high = t.modify_dmg_dealt(dmg_high, u1, u2, u1_allies);
         dmg_low = t.modify_dmg_dealt(dmg_low, u1, u2, u1_allies);
         
@@ -228,12 +226,12 @@ public class BattleBrain
             else atk = u1.get_maga();
         }
 
-        int[] dmg_range = t.get_dmg_range();
-        dmg_range = t.modify_dmg_range(dmg_range, u1, u2);
+        double[] rolls = t.get_rolls();
+        rolls = t.modify_rolls(rolls, u1, u2);
 
         //damage formula: dmg = roll + user's atk - target's def
-        int heal_high = dmg_range.Max() + atk;
-        int heal_low = dmg_range.Min() + atk;
+        int heal_high = (int)(rolls.Max() + atk);
+        int heal_low = (int)(rolls.Min() + atk);
         heal_high = t.modify_heal_dealt(heal_high, u1, u2);
         heal_low = t.modify_heal_dealt(heal_low, u1, u2);
 
