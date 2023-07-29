@@ -50,8 +50,8 @@ Let's end.
 ->END
 */
 
-~play_music(0)
 ~bg(0, 1, "BG NAME")
+~play_music(0)
 ~show(0, 100) // friday at left
 //~show(1, 300) // yve at center
 //~show(2, 400) // nai at right

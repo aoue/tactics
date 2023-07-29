@@ -65,7 +65,7 @@ MonoBehaviour:
   - Complete within 10 rounds
   objectives_rewards: 0f0000000a000000
   script: {fileID: 4900000, guid: e546d5c0ee37fa945867533f30f8f573, type: 3}
-  eventRounds: 00000000020000000300000005000000
+  eventRounds: 
   musicList:
   - {fileID: 8300000, guid: 2bda3a795acd4ff4ab2fb654f33ef69d, type: 3}
   soundList: []

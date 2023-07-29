@@ -333,6 +333,9 @@ public class EventManager : MonoBehaviour
     }
     IEnumerator fadeObjectIn(Image obj, float duration, float maxAlpha)
     {
+        while (!effectsOver) {
+            yield return new WaitForSeconds(0.1f);
+        }
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
@@ -346,6 +349,9 @@ public class EventManager : MonoBehaviour
     }
     IEnumerator fadeObjectOut(Image obj, float duration, float maxAlpha)
     {
+        while (!effectsOver) {
+            yield return new WaitForSeconds(0.1f);
+        }
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
@@ -735,14 +741,6 @@ public class EventManager : MonoBehaviour
         effectsOver = false;
         NormalDialogueBox.SetActive(false);
 
-        // steps:
-        // fade fadeTapestry all the way to 1f alpha (but acocunt for it already being at full alpha; never set it lower than it might be)
-        // change the background and linger for a second
-        // bring fadeTapestry's alpha all the way back to 0f
-        bgSwitchPopupText.text = popupText;
-
-        // if we're already fully faded (i.e. first fade, ignore this.)
-
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
@@ -752,7 +750,6 @@ public class EventManager : MonoBehaviour
                 Color newAlpha = new Color(0f, 0f, 0f, elapsedTime / duration);
                 fadeTapestry.color = newAlpha;
             }
-            bgSwitchPopup.alpha = 2*elapsedTime / duration;
             yield return null;
         }
         
@@ -765,11 +762,10 @@ public class EventManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             Color newAlpha = new Color(0f, 0f, 0f, 1f - elapsedTime / duration);
             fadeTapestry.color = newAlpha;
-            bgSwitchPopup.alpha = 1f - elapsedTime / duration;
             yield return null;
         }
 
-        bgSwitchPopup.alpha = 0f;
+        StartCoroutine(show_popup(bgSwitchPopup));
         effectsOver = true;
         NormalDialogueBox.SetActive(true);
     }
@@ -1119,7 +1115,7 @@ public class EventManager : MonoBehaviour
     {
         musicSwitchPopupText.text = get_song_title(id);
         audio.ow_play_music(id);
-        StartCoroutine(show_music_popup());
+        StartCoroutine(show_popup(musicSwitchPopup));
     }
     void play_sound(int id)
     {
@@ -1143,28 +1139,32 @@ public class EventManager : MonoBehaviour
         }
         return "Track_Not_Found";
     }
-    IEnumerator show_music_popup()
+    IEnumerator show_popup(CanvasGroup popUp)
     {
         float duration = 1f;
+        while (!effectsOver) {
+            yield return new WaitForSeconds(0.1f);
+        }
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
-            musicSwitchPopup.alpha = 2*elapsedTime / duration;
+            popUp.alpha = 2*elapsedTime / duration;
             yield return null;
         }
-        
         yield return new WaitForSeconds(1f);
 
+        while (!effectsOver) {
+            yield return new WaitForSeconds(0.1f);
+        }
         elapsedTime = 0f;
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
-            musicSwitchPopup.alpha = 1f - elapsedTime / duration;
+            popUp.alpha = 1f - elapsedTime / duration;
             yield return null;
         }
-
-        musicSwitchPopup.alpha = 0f;
+        popUp.alpha = 0f;
     }
 
 
