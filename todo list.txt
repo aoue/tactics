@@ -1,0 +1,158 @@
+simplify, simplify...
+
+Notes for next commit message:
+-
+
+=============================================== Next Real:
+
+BUT fr fr, no more making assets until you've gotten a good distance into the script
+...and won't be making any more changes! We HATE wasted assets!
+(can work on game systems though)
+
+we're going to have to redo all the art at a later point, so don't worry too much about it.
+
+character art:
+	-friday
+	-anse
+	-rado
+	-soeso
+	-machine wolf
+	-rusted machine wolf
+
+bg art:
+	-snow dunes (reusable)
+	-snow dunes with the walker in the background (reusable)
+	-just outside the walker, in its shadow (reusable)
+	-ruins (reusable)
+
+add steadfast passive condition:
+	when unit (self) is broken, do something
+	-in this particular case, it should be: set the unit's break to 1; they cannot be broken
+	this is a defensive bonus, since their defenses aren't set to 0 ever
+	also a control bonus
+
+unit pre-turn picking:
+	consider this feature:
+	-the enemy will order all their unit picks at the start of the round.
+	-if it comes to a unit's turn and they have been defeated or broken, then the enemy simply loses the turn
+
+pathfinding:
+	enemy ai distance to player is true distance. it doesn't account for mazes or impassable tiles
+	-implement it so that it uses true distance to the nearest player unit; bfs seems appropriate
+	-BFS and stopping as soon as you come across a player unit seems like the play, returning the dist to that unit.
+	test with a circular maze, the enemy has to get out and reach the player unit.
+
+issue on return from successful mission:
+	screen all dark, can't see anything.
+	-check part 1 imm and see if anything is actually set?
+	-otherwise, fix it.
+
+combat scene:
+	fades:
+	-implement for winning or losing the mission
+	-implement for new events and reinforcements
+	option to restart mission
+	combat dialoguer:
+	-add a visual cue so the player knows they can press 'f' for fast mode
+
+vn portrait control:
+	something to move a character portrait way down and leave it there
+	-kind of like the person is trying to hide. it would be funny and charming.
+	fits friday in particular
+
+=============================================== Art:
+
+WAIT! Nothing more until more of the script is written!
+
+character full/active portraits
+
+enemy full/active portraits
+
+unit map sprites
+
+tile sprites
+
+overworld bgs
+
+vn scene bgs
+
+trait icons
+
+it sure would be nice to have additionnal active portraits of the units where they're holding their weapons
+
+=============================================== Backlog:
+
+objectives highlight:
+	should show what the win and loss conditions are.
+	should also show what the bonus objectives are. That's all.
+
+combat scene help hover:
+	(plan it out first)
+	add a help hover area, under objective button
+	-mouse over the help icon to show the help image.
+	-it overlays on top of the entire ui and has arrows pointing at stuff and text explaining functions
+	-hidden when mouse moves off the hover area
+
+vn mode:
+	-vn settings button:
+		what should it have? things like:
+		*text speed
+		*auto wait time
+		*skip entire event button
+
+combat audio:
+	framework is in place, but we need sounds for:
+	-unit activation sounds (currently it's me doing a sound lol)
+	-footsteps sound; need a better sound, it's too quiet. It's played while unit is moving.
+		-currently it's a short sound that is set on loop, but it really only plays once.
+		-so probably getting a slightly longer sound and playing it once would be better.
+	-trait sound effects. Every trait needs one.
+
+flavour:
+	since you can't draw weapons on the map sprites, change lore so that the characters don't carry weapons.
+	instead they materialize the weapons with their programs and the weapon is there for a moment and does its thing
+	-this would also involve changing active trait names to programs, i.e. variance_hammer()
+	-and also changing passive traits ingame names to 'coroutines', or something
+	i.e. actives are programs used explicitly, passives are coroutines which are always running
+	-move anims, or weapon icons can help show that. like, map sprite not carrying wpn, but we can show it floating based on the move.
+
+mission mechanics:
+	-things like door controls, or destructible tiles?
+	-basically, things like changing the map during the actual mission.
+	yeeh, we should have these implemented, because they're fun. Think about what kind we want:
+	-destroy tile: when the tile is destroyed, it should be replaced with a different tile that is holds.
+	-a remote door: i.e. move a unit onto the control tile, and then replace the closed door tiles with regular floor.
+		how? like this:
+		-the remote control tile calls a function in mission 0, which takes the control tile's coords.
+		-then, mission 0 can replace the tiles we want to change inline there.
+	a destructible tile would be very simple:
+		-removable 'destructible' image portion
+		-in tile informer, add hp bar for it or something. OR maybe add hp bar on map?
+		-when attacks occurs on that tile, damage the tile.
+		-if the tile is destroyed, then set isDestroyed variable, which can now make the tile
+			crossable, or have different movement cost, or whatever.
+
+overworld messager: (can wait)
+	reflavour or remove this, we'll see.
+	-add an animation when it's ready, in addition to/instead of just changing the picture
+	-play a jingle-sound on open and close
+
+main menu bg:
+	changed every chapter to something highlight relevant characters doing something cool or cute
+
+level tree design:
+	UI overhaul:
+	-add unit's px combat sprite in there somewhere
+	-draw px border bgs, etc
+	just in general, go over it and improve it.
+
+
+minigames:
+	(all good games have fishing minigames)
+
+options/settings menu: (we will need to be able to call it from main menu, overworld, and vn)
+	-little gear settings button. clickable in overworld and vn scene. 
+		-has sliders for volume (SE, music)
+		-has slider for text speed
+		-has slider for textbox opacity (one for centered, one for bottombox)
+		-fullscreen, etc
