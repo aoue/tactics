@@ -90,7 +90,7 @@ public class CombatGrid : MonoBehaviour
     private int pw; //party power (i.e. the party's global mana pool.)
     private BattleBrain brain;
     private GridHelper gridHelper;
-
+    private Pathfinder pather;
 
     //round event control
     private int roundNumber; //for timing round start events and reinforcements, that kind of thing.
@@ -109,6 +109,7 @@ public class CombatGrid : MonoBehaviour
     {
         playerUnits = new Unit[8];
         brain = new BattleBrain();
+        pather = new Pathfinder();
         gridHelper = new GridHelper();
         baseList = new List<Tile>();
         zocTiles = new List<Tile>();
@@ -1053,9 +1054,20 @@ public class CombatGrid : MonoBehaviour
         {
             if (!t.isValid) continue;
             //find position of closest player unit.
-            int score = chosenUnit.score_move(closestPlayerTileToTile(t), t, e_tilesAddedToZoC(chosenUnit.x, chosenUnit.y, chosenUnit), myGrid, visited, gridHelper);
+            // int score = chosenUnit.score_move(pather.manhattan_closestPlayerTileToTile(t, playerUnits, myGrid), t, e_tilesAddedToZoC(chosenUnit.x, chosenUnit.y, chosenUnit), myGrid, visited, gridHelper);
+            
+            int score = 1000;
+            foreach (Unit u in playerUnits)
+            {
+                if (u != null)
+                {
+                    Tile u_tile = myGrid[u.x, u.y];
+                    int cur_score = chosenUnit.score_move(pather.aStar_closestPlayerTileToTile(t, u_tile, myGrid, map_x_border, map_y_border), t, e_tilesAddedToZoC(chosenUnit.x, chosenUnit.y, chosenUnit), myGrid, visited, gridHelper);
+                    score = Math.Min(score, cur_score);
+                }
+            }
+            
             //Debug.Log("scoring dest: " + t.x + ", " + t.y + " | score = " + score);
-
             if (runningMax == -1)
             {
                 runningMax = score;
@@ -1172,31 +1184,6 @@ public class CombatGrid : MonoBehaviour
     }
 
     //Enemy AI helper functions
-    int closestPlayerTileToTile(Tile t)
-    {
-        //return the tile occupied by a player unit that is closest to t.
-        //(closest in manhattan distance)
-
-        int runningMin = -1;
-        //Tile closest = null;
-        for (int i = 0; i < playerUnits.Length; i++)
-        {
-            //calc manhattan distance
-            if (playerUnits[i] != null)
-            {
-                int score = Math.Abs(t.x - myGrid[playerUnits[i].x, playerUnits[i].y].x) + Math.Abs(t.y - myGrid[playerUnits[i].x, playerUnits[i].y].y);
-                //Debug.Log("score = " + score);
-                if (runningMin == -1 || score < runningMin)
-                {
-                    runningMin = score;
-                    //closest = myGrid[playerUnits[i].x, playerUnits[i].y];
-                }
-            }
-            
-        }
-        //return closest;
-        return runningMin;
-    }
     int e_tilesAddedToZoC(int x, int y, Unit u)
     {
         //returns the number of tiles a move to this tile t, by a unit u, would add enemy's ZoC.

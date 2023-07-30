@@ -29,12 +29,14 @@ public class Tile : MonoBehaviour
     public int x { get; set; }
     public int y { get; set; }
     Unit heldUnit;
+    public PathfinderTuple tup {get; set;}
 
     public bool isValid { get; set; }
     public List<Tile> path { get; set; } //used for tracing paths during movement generation.
 
     void Start()
     {
+        tup = new PathfinderTuple();
         highlightAlpha = highlightLayer.color.a;
     }
 
@@ -68,6 +70,10 @@ public class Tile : MonoBehaviour
         //Note: for better immersion, etc, have several random debris images to choose from.
         //and every time a unit is destroyed on the same tile, randomly enable another debris image.
         debrisRenderer.enabled = true;
+    }
+    public void reset_pathfinding()
+    {
+        tup.reset();
     }
 
     //Mouse
