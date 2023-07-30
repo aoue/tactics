@@ -26,12 +26,6 @@ bg art:
 	-just outside the walker, in its shadow (reusable)
 	-ruins (reusable)
 
-add steadfast passive condition:
-	when unit (self) is broken, do something
-	-in this particular case, it should be: set the unit's break to 1; they cannot be broken
-	this is a defensive bonus, since their defenses aren't set to 0 ever
-	also a control bonus
-
 unit pre-turn picking:
 	consider this feature:
 	-the enemy will order all their unit picks at the start of the round.
@@ -58,7 +52,7 @@ vn portrait control:
 
 =============================================== Art:
 
-WAIT! Nothing more until more of the script is written!
+WAIT! Nothing more until the script is written!
 
 character full/active portraits
 
@@ -74,7 +68,7 @@ vn scene bgs
 
 trait icons
 
-it sure would be nice to have additionnal active portraits of the units where they're holding their weapons
+it sure would be nice to have active portraits of the units where they're holding their weapons
 
 =============================================== Backlog:
 
@@ -98,7 +92,7 @@ vn mode:
 
 combat audio:
 	framework is in place, but we need sounds for:
-	-unit activation sounds (currently it's me doing a sound lol)
+	-unit activation sounds (currently it's me making a noise lol)
 	-footsteps sound; need a better sound, it's too quiet. It's played while unit is moving.
 		-currently it's a short sound that is set on loop, but it really only plays once.
 		-so probably getting a slightly longer sound and playing it once would be better.
@@ -113,28 +107,11 @@ flavour:
 	-move anims, or weapon icons can help show that. like, map sprite not carrying wpn, but we can show it floating based on the move.
 
 mission mechanics:
-	-things like door controls, or destructible tiles?
-	-basically, things like changing the map during the actual mission.
-	yeeh, we should have these implemented, because they're fun. Think about what kind we want:
-	-destroy tile: when the tile is destroyed, it should be replaced with a different tile that is holds.
-	-a remote door: i.e. move a unit onto the control tile, and then replace the closed door tiles with regular floor.
-		how? like this:
-		-the remote control tile calls a function in mission 0, which takes the control tile's coords.
-		-then, mission 0 can replace the tiles we want to change inline there.
-	a destructible tile would be very simple:
-		-removable 'destructible' image portion
-		-in tile informer, add hp bar for it or something. OR maybe add hp bar on map?
-		-when attacks occurs on that tile, damage the tile.
-		-if the tile is destroyed, then set isDestroyed variable, which can now make the tile
-			crossable, or have different movement cost, or whatever.
-
-overworld messager: (can wait)
-	reflavour or remove this, we'll see.
-	-add an animation when it's ready, in addition to/instead of just changing the picture
-	-play a jingle-sound on open and close
+	-things like door controls, or destructible walls?
 
 main menu bg:
-	changed every chapter to something highlight relevant characters doing something cool or cute
+	change every chapter to match current events
+	-check against progress of most recent save
 
 level tree design:
 	UI overhaul:
@@ -142,9 +119,9 @@ level tree design:
 	-draw px border bgs, etc
 	just in general, go over it and improve it.
 
-
 minigames:
 	(all good games have fishing minigames)
+	-ice fishing, aim and throw a harpoon at moving fish; idk
 
 options/settings menu: (we will need to be able to call it from main menu, overworld, and vn)
 	-little gear settings button. clickable in overworld and vn scene. 
