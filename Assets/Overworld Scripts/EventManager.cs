@@ -364,7 +364,6 @@ public class EventManager : MonoBehaviour
         obj.color = c;
     }
 
-
     public void begin_immediate(TextAsset storyText)
     {
         heldEv = null;

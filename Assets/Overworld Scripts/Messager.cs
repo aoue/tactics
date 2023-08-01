@@ -15,21 +15,6 @@ public class Messager : MonoBehaviour
     // one per part.
     // it is used for worldbuilding or character stuff.
 
-    /*
-    the visual component:
-    -sender profile picture
-	-sender text, which can be:
-		-the sender's name, can be a username, person's real name, organization name
-		-the subject title (can be an original title or can be forward)
-		e.g. Friday > Fwd: Rising Housing Prices
-		e.g. Yve > Labradors Check-in
-	-cg image (can be anything)
-		e.g. a meme, joke, spam, ads, news, an article, an advertisement (aren't you interested in this), a pamphlet sent out from a maxwell political club
-	-some accompanying text along the bottom, from the character who sent it.
-		e.g. Hey LMAO this is crazy^^^
-	it's like a mini browser window open.
-    */
-
     [SerializeField] private PortraitLibrary pLibrary;
     [SerializeField] private Image blocker; // to stop player from doing other things while the popup is showing.
     [SerializeField] private GameObject popup; // to enable/disable entire object.
@@ -38,8 +23,8 @@ public class Messager : MonoBehaviour
     [SerializeField] private Text bottomText; // the message the sender send along with the cg.
     [SerializeField] private Button closeButton; // the button used to close the popup.
 
-    [SerializeField] private Sprite noNotifSprite;
-    [SerializeField] private Sprite yesNotifSprite;
+    //[SerializeField] private Sprite noNotifSprite;
+    //[SerializeField] private Sprite yesNotifSprite;
     private bool viewed; // If false, can open. Else, cannot open.
     private float blocker_fade_anim_duration = 1f; // how long it takes for blocker alpha to fade to 60f
     private float blocker_max_alpha = 0.1f; // how long it takes for blocker alpha to fade to 60f
@@ -56,12 +41,12 @@ public class Messager : MonoBehaviour
         bool validated = true;
         if (validated)
         {
-            gameObject.GetComponent<Image>().sprite = yesNotifSprite;
+            //gameObject.GetComponent<Image>().sprite = yesNotifSprite;
             gameObject.GetComponent<Button>().interactable = true;
         }
         else
         {
-            gameObject.GetComponent<Image>().sprite = noNotifSprite;
+            //gameObject.GetComponent<Image>().sprite = noNotifSprite;
             gameObject.GetComponent<Button>().interactable = false;
         }
         
@@ -81,7 +66,7 @@ public class Messager : MonoBehaviour
         // turn it on immediately, then slide blocker's alpha from 0 to 60.
         blocker.gameObject.SetActive(true);
         closeButton.interactable = false;
-        gameObject.GetComponent<Image>().sprite = noNotifSprite;
+        //gameObject.GetComponent<Image>().sprite = noNotifSprite;
 
         // fade in popup with a fade or animation of some kind.
         popup.SetActive(true);

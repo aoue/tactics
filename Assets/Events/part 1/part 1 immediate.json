@@ -1,1 +1,1 @@
-﻿{"inkVersion":20,"root":[["ev","str","^","/str",{"x()":"n","exArgs":1},"pop","/ev","\n","^part 1 immediate.","\n","^end.","\n","end",["done",{"#f":5,"#n":"g-0"}],null],"done",{"#f":1}],"listDefs":{}}
+﻿{"inkVersion":20,"root":[["ev",0,1,"str","^P1 BG","/str",{"x()":"bg","exArgs":3},"pop","/ev","\n","ev",0,{"x()":"play_music","exArgs":1},"pop","/ev","\n","ev",0,200,{"x()":"show","exArgs":2},"pop","/ev","\n","^part 1 imm, yeah that's all.","\n","end",["done",{"#f":5,"#n":"g-0"}],null],"done",{"#f":1}],"listDefs":{}}

@@ -11,6 +11,30 @@ BUT fr fr, no more making assets until you've gotten a good distance into the sc
 
 we're going to have to redo all the art at a later point, so don't worry too much about it.
 
+vn scene:
+	popup image effect. put an image in the middle center of the screen. useful for showing a recovered object
+	-for example, the chargebox
+
+overworld bg art:
+	-there's a basic frame for the wall and map board edges
+	-then the local map picture goes inside that frame (it's pinned to it by its corners)
+		-what kind of map should this be?
+		-should it be a topographical map? with towns and other sites of interest marked? well, sure.
+	-then event pins would go on overtop of that local map picture
+	should look kind of like a survey map
+	(kind of like highfleet's bg--kind of)
+	-when one of the ui buttons is highlighted, display the action name somewhere in writing
+
+overworld ui/background style:
+	-like a map of the local area that's hung up on the wall inside the walker
+	-there are pins--different colored pins--to mark events and locations of interest
+--- (working on overworld ui above^^)
+
+
+messenger from overworld:
+	change this to be like a transmission receiver
+	something sent from walkers to other walkers. Talking about weather, directions, news or other things
+	-change the visual components so it looks like the message has been written down on a piece of telegram paper.
 
 character art:
 	-friday
@@ -20,21 +44,19 @@ character art:
 	-machine wolf
 	-rusted machine wolf
 
-bg art:
+vn bg art:
 	-snow dunes (reusable)
 	-snow dunes with the walker in the background (reusable)
+	-the walker, close up
+	-the pagodo, close up
 	-just outside the walker, in its shadow (reusable)
 	-ruins (reusable)
+	-inside the walker, pagoda
 
 unit pre-turn picking:
 	consider this feature:
 	-the enemy will order all their unit picks at the start of the round.
 	-if it comes to a unit's turn and they have been defeated or broken, then the enemy simply loses the turn
-
-issue on return from successful mission:
-	screen all dark, can't see anything.
-	-check part 1 imm and see if anything is actually set?
-	-otherwise, fix it.
 
 combat scene:
 	fades:
