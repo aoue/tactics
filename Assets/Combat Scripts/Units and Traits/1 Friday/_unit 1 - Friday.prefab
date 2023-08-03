@@ -319,7 +319,7 @@ MonoBehaviour:
   brkBar: {fileID: 224350195281374642}
   unitActivationSound: {fileID: 8300000, guid: 4e724768c635cff488270551ab5da7a5, type: 3}
   box_portrait: {fileID: 21300000, guid: bcaef3fc5621003458483d9c10d6159d, type: 3}
-  active_portrait: {fileID: 21300000, guid: 51300a86754e3914d846c5b3b508e8bd, type: 3}
+  active_portrait: {fileID: 21300000, guid: c04f87af0c17365489594bb8371a83cf, type: 3}
   unitName: Friday
   level: 1
   exp: 0
@@ -330,7 +330,7 @@ MonoBehaviour:
   phys_atk: 11
   phys_def: 5
   magic_atk: 3
-  magic_def: 7
+  magic_def: 6
   unitOrder: {fileID: 1061129556949874303, guid: e4dd241e33a19f64e954004bc480469e,
     type: 3}
   traitList:

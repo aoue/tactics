@@ -53,26 +53,14 @@ Let's end.
 ~bg(0, 1, "BG NAME")
 ~play_music(0)
 ~show(0, 100) // friday at left
+~show(2, 200) // anse at right
 //~show(1, 300) // yve at center
 //~show(2, 400) // nai at right
+
 We all stand there in the aftermath.
 
 ~n("Friday")
 ... Thank you. I have to leave now.
-
-~n("")
-~p(-1)
-
-skip me 1
-skip me 2
-skip me 3
-skip me 4
-skip me 5
-skip me 6
-skip me 7
-skip me 8
-end.
-
 -> END
 
 ~bg(1, 1, "BG NAME")

@@ -11,30 +11,35 @@ BUT fr fr, no more making assets until you've gotten a good distance into the sc
 
 we're going to have to redo all the art at a later point, so don't worry too much about it.
 
-vn scene:
-	popup image effect. put an image in the middle center of the screen. useful for showing a recovered object
-	-for example, the chargebox
+writing :)
+	-can try our vn method again.
 
-overworld bg art:
-	-there's a basic frame for the wall and map board edges
-	-then the local map picture goes inside that frame (it's pinned to it by its corners)
-		-what kind of map should this be?
-		-should it be a topographical map? with towns and other sites of interest marked? well, sure.
-	-then event pins would go on overtop of that local map picture
-	should look kind of like a survey map
-	(kind of like highfleet's bg--kind of)
-	-when one of the ui buttons is highlighted, display the action name somewhere in writing
+add to the everyone.kra file
+	one a day
+	-anse
+	-rado
+	-soeso and machine wolves (regular + rusted var.)
+		the machine wolves should have their own name, kind of like how the mach penguins are called 'pigo'
+		-wouloo (wolf, loup)
+	-machine penguins (yeah it doesnt make sense for natural animals, but machines are fine)
+		-pigo
 
-overworld ui/background style:
-	-like a map of the local area that's hung up on the wall inside the walker
-	-there are pins--different colored pins--to mark events and locations of interest
---- (working on overworld ui above^^)
-
+event holder game object:
+	-on hover, the whole image should darken. Right now, only the background does.
+	Please improve this.
 
 messenger from overworld:
 	change this to be like a transmission receiver
 	something sent from walkers to other walkers. Talking about weather, directions, news or other things
 	-change the visual components so it looks like the message has been written down on a piece of telegram paper.
+
+overworld ui frame:
+	still doesn't look exactly how i want it too, but just wait. 
+	-kind of like pyre's blackwagon interior
+
+radio/messager:
+	-change so that it fits theme better.
+	-bg, text, everything; a complete overhaul
 
 character art:
 	-friday
