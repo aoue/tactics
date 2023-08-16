@@ -5,37 +5,67 @@ Notes for next commit message:
 
 =============================================== Next Real:
 
-BUT fr fr, no more making assets until you've gotten a good distance into the script
+BUT fr fr fr, no more making assets until you've gotten a good distance into the script
 ...and won't be making any more changes! We HATE wasted assets!
 (can work on game systems though)
 
 we're going to have to redo all the art at a later point, so don't worry too much about it.
 
+overworld backgrounds:
+	-we can reuse the walker, and put it into different backgrounds, drawn individually
+	-
+
+character art:
+	badeau: same monk-like clothes, but wears a real fancy mustache
+
+cado -> rado -> bado -> badeau
+soeso -> sozo
+
+player unit portrait size:
+	-make longer to accomodate long boys like soeso
+	-in combat, have extra length go offscreen
+
+enemy unit spawn:
+	-level up unit
+	-stat variation: every stat is randomly assigned to one value in the range 0.9*stat to 0.1*stat
+
+overworld:
+	-add to main bg, a scrolling window? that display location information, longitude and latitude, temperate, etc
+
+game skeleton:
+	-part 0 immediate
+	-part 0 combat -> loads part 1
+	-part 1 immediate
+
 writing :)
-	-can try our vn method again.
+	-can try paired method again.
 
 add to the everyone.kra file
-	one a day
-	-anse
-	-rado
-	-soeso and machine wolves (regular + rusted var.)
+	-sozo (done)
+	-machine wolves (regular + rusted var.)
 		the machine wolves should have their own name, kind of like how the mach penguins are called 'pigo'
-		-wouloo (wolf, loup)
+		-jowler (+rusted var)
 	-machine penguins (yeah it doesnt make sense for natural animals, but machines are fine)
-		-pigo
+		-pigo (+rusted var)
+
+a text display sound? I think it could sound nice.
+	-constant while text is displaying. 
+
+combat scene help hover:
+	(plan it out first)
+	add a help hover area, under objective button. Just a single image, overlayed overtop the combat scene.
+	-mouse over the help icon to show the help image. Move mouse off to turn it off.
+	-it overlays on top of the entire ui and has arrows pointing at stuff and text explaining functions
+	-hidden when mouse moves off the hover area
 
 event holder game object:
 	-on hover, the whole image should darken. Right now, only the background does.
-	Please improve this.
+	Please fix this.
 
 messenger from overworld:
 	change this to be like a transmission receiver
 	something sent from walkers to other walkers. Talking about weather, directions, news or other things
 	-change the visual components so it looks like the message has been written down on a piece of telegram paper.
-
-overworld ui frame:
-	still doesn't look exactly how i want it too, but just wait. 
-	-kind of like pyre's blackwagon interior
 
 radio/messager:
 	-change so that it fits theme better.
@@ -62,6 +92,7 @@ unit pre-turn picking:
 	consider this feature:
 	-the enemy will order all their unit picks at the start of the round.
 	-if it comes to a unit's turn and they have been defeated or broken, then the enemy simply loses the turn
+	well, don't add it now. Add it as a later, last touch kind of thing.
 
 combat scene:
 	fades:
@@ -102,13 +133,6 @@ it sure would be nice to have active portraits of the units where they're holdin
 objectives highlight:
 	should show what the win and loss conditions are.
 	should also show what the bonus objectives are. That's all.
-
-combat scene help hover:
-	(plan it out first)
-	add a help hover area, under objective button
-	-mouse over the help icon to show the help image.
-	-it overlays on top of the entire ui and has arrows pointing at stuff and text explaining functions
-	-hidden when mouse moves off the hover area
 
 vn mode:
 	-vn settings button:
