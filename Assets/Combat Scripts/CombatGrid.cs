@@ -1301,11 +1301,16 @@ public class CombatGrid : MonoBehaviour
         //the move used could be an attack or it could be a heal.
         bool anyKills = false;
         int totalDmg = 0;
+
+        double[] rolls = active_ability.get_rolls();
+        rolls = active_ability.modify_rolls(rolls, active_unit);
+        double actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)];
+
         if (active_ability.get_isHeal())
         {
             foreach (Unit target in affectedUnits)
             {
-                int heal = brain.calc_heal(active_unit, target, active_ability, active_unit.get_isAlly(), active_order);
+                int heal = brain.calc_heal(active_unit, target, active_ability, actual_roll, active_unit.get_isAlly(), active_order);
                 target.take_heal(heal);
                 //show damage numbers
                 DamageFloater d = Instantiate(dmgFloater, target.gameObject.transform.position, Quaternion.identity);
@@ -1313,12 +1318,13 @@ public class CombatGrid : MonoBehaviour
             }
         }
         else
-        {            
+        {
             if (active_unit.get_isAlly())
-            {              
+            {   
+                
                 foreach (Unit target in affectedUnits)
                 {
-                    int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, playerUnits);
+                    int dmg = brain.calc_damage(active_unit, target, active_ability, actual_roll, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, playerUnits);
                     totalDmg += dmg;
                     target.take_dmg(dmg, active_ability.get_brkMult());
                     //show damage numbers
@@ -1331,7 +1337,7 @@ public class CombatGrid : MonoBehaviour
             {
                 foreach (Unit target in affectedUnits)
                 {
-                    int dmg = brain.calc_damage(active_unit, target, active_ability, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, enemyUnits.ToArray());
+                    int dmg = brain.calc_damage(active_unit, target, active_ability, actual_roll, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, enemyUnits.ToArray());
                     totalDmg += dmg;
                     target.take_dmg(dmg, active_ability.get_brkMult());
                     //show damage numbers

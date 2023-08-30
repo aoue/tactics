@@ -71,7 +71,8 @@ public class Mission0 : Mission
         //returns an array of unit IDs and coords representing unit starting spots.
         //unit id, row, depth into that row (if no unit with the id in reserve party, then we fail silently. all good)
         (int, int, int)[] dep_array = {
-            (1, 3, 0)
+            (1, 4, 4),
+            (0, 5, 3)
         };
         return dep_array;
     }
@@ -82,7 +83,8 @@ public class Mission0 : Mission
         (Enemy, int, int, int, int)[] dep_array = {
            
             //first room group
-            (defEnemies[0], 0, 0, 0, 0), //scarabit base
+            (defEnemies[0], 1, 4, 0, 0), //scarabit base
+            (defEnemies[0], 2, 4, 0, 0), //scarabit base
         };
 
         return dep_array;

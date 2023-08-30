@@ -7,7 +7,7 @@ using System.Linq;
 public class BattleBrain
 {
     //calculator for combat.
-    public int calc_damage(Unit u1, Unit u2, Trait t, Tile occupied_tile, bool playerAttacking, Order order, Unit[] u1_allies)
+    public int calc_damage(Unit u1, Unit u2, Trait t, double actual_roll, Tile occupied_tile, bool playerAttacking, Order order, Unit[] u1_allies)
     {
         //use attacker's phys a or mag a?
         int atk;
@@ -41,13 +41,8 @@ public class BattleBrain
         if (playerAttacking) coverMult = order.order_coverMult_offense(occupied_tile.get_coverMult());
         else coverMult = order.order_coverMult_defense(occupied_tile.get_coverMult());
 
-        //create damage range
-        double[] rolls = t.get_rolls();
-        rolls = t.modify_rolls(rolls, u1, u2);
-
         //damage formula: dmg = roll + user's atk - target's def
         //if the target is broken, then set their defense to 0
-        double actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)];
         int dmg = (int)((((int)(actual_roll * atk)) - def) * coverMult);
         dmg = t.modify_dmg_dealt(dmg, u1, u2, u1_allies);
         
@@ -78,7 +73,7 @@ public class BattleBrain
         
         return Math.Max(1, dmg);
     }
-    public int calc_heal(Unit u1, Unit u2, Trait t, bool playerAttacking, Order order)
+    public int calc_heal(Unit u1, Unit u2, Trait t, double actual_roll, bool playerAttacking, Order order)
     {
         int atk;
         if (playerAttacking && order != null)
@@ -91,12 +86,7 @@ public class BattleBrain
             if (t.get_usesPhysAttack()) atk = u1.get_physa();
             else atk = u1.get_maga();
         }
-
-        double[] rolls = t.get_rolls();
-        rolls = t.modify_rolls(rolls, u1, u2);
-
-        //damage formula: dmg = roll + user's atk - target's def
-        double actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)];
+        //heal formula: dmg = roll + user's atk
         int heal = (int)(actual_roll * atk);
         heal = t.modify_heal_dealt(heal, u1, u2);
 
@@ -163,7 +153,7 @@ public class BattleBrain
 
         
         double[] rolls = t.get_rolls();
-        rolls = t.modify_rolls(rolls, u1, u2);
+        rolls = t.modify_rolls(rolls, u1);
 
         //damage formula: dmg = roll + user's atk - target's def
         //if the target is broken, then set their defense to 0
@@ -227,7 +217,7 @@ public class BattleBrain
         }
 
         double[] rolls = t.get_rolls();
-        rolls = t.modify_rolls(rolls, u1, u2);
+        rolls = t.modify_rolls(rolls, u1);
 
         //damage formula: dmg = roll + user's atk - target's def
         int heal_high = (int)(rolls.Max() + atk);

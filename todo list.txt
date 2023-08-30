@@ -1,33 +1,51 @@
 simplify, simplify...
 
 Notes for next commit message:
--
+-a single damage roll is now used for attacks that hit more than one target
 
 =============================================== Next Real:
 
-BUT fr fr fr, no more making assets until you've gotten a good distance into the script
-...and won't be making any more changes! We HATE wasted assets!
-(can work on game systems though)
+Restrain yourself. Focus on writing, then art, then game systems. Everything follows from that order.
+
+writing :)
 
 we're going to have to redo all the art at a later point, so don't worry too much about it.
 
+character drawing art:
+	-machine wolves
+		-jowler (done)
+		-rusted(bw?) jowler
+	-machine penguins (yeah it doesnt make sense for penguins to be here maybe, but they're machines. They belong in snow so it's fine)
+		-adelie: silly mobber
+		-rusted(bw) adelie
+
+		later:
+		-gentoo penguin: fast rusher
+		-emperor: medium infantry, bonuses together
+
+
+combat scene assets:
+	-tiles
+	-unit sprites
+	-ui frames
+	previously this stuff was done with a pixel art style in mind.
+	Since we're now moving away from that, a redraw seems in order.
+	you can try drawing at a bigger resolution. We can just scale up the size of the tiles, no issue. Did it before.
+	Draw the tiles and unit sprites before resizing.
+	
 overworld backgrounds:
-	-we can reuse the walker, and put it into different backgrounds, drawn individually
-	-
-
-character art:
-	badeau: same monk-like clothes, but wears a real fancy mustache
-
-cado -> rado -> bado -> badeau
-soeso -> sozo
+	two types:
+	-close up of walker, we can see rooms, etc. click on rooms for events
+	-aerial shot of the walker traveling some environment. click on places for events
 
 player unit portrait size:
-	-make longer to accomodate long boys like soeso
-	-in combat, have extra length go offscreen
+	adjust to make it wider
+	-so we can accomodate long boys like sozo
+	-in combat active portrait, have the extra length go offscreen
 
 enemy unit spawn:
 	-level up unit
-	-stat variation: every stat is randomly assigned to one value in the range 0.9*stat to 0.1*stat
+	-stat variation: every stat is randomly assigned to one value in the range 0.9*stat to 1.1*stat
 
 overworld:
 	-add to main bg, a scrolling window? that display location information, longitude and latitude, temperate, etc
@@ -36,17 +54,6 @@ game skeleton:
 	-part 0 immediate
 	-part 0 combat -> loads part 1
 	-part 1 immediate
-
-writing :)
-	-can try paired method again.
-
-add to the everyone.kra file
-	-sozo (done)
-	-machine wolves (regular + rusted var.)
-		the machine wolves should have their own name, kind of like how the mach penguins are called 'pigo'
-		-jowler (+rusted var)
-	-machine penguins (yeah it doesnt make sense for natural animals, but machines are fine)
-		-pigo (+rusted var)
 
 a text display sound? I think it could sound nice.
 	-constant while text is displaying. 
@@ -88,12 +95,6 @@ vn bg art:
 	-ruins (reusable)
 	-inside the walker, pagoda
 
-unit pre-turn picking:
-	consider this feature:
-	-the enemy will order all their unit picks at the start of the round.
-	-if it comes to a unit's turn and they have been defeated or broken, then the enemy simply loses the turn
-	well, don't add it now. Add it as a later, last touch kind of thing.
-
 combat scene:
 	fades:
 	-implement for winning or losing the mission
@@ -105,7 +106,7 @@ combat scene:
 vn portrait control:
 	something to move a character portrait way down and leave it there
 	~hide() //takes on and off commands. moves them down or move thems back 
-	-kind of like the person is trying to hide. it would be funny and charming.
+	-kind of like the person is trying to hide. it would be a little bit funny and charming.
 	fits friday in particular
 
 =============================================== Art:
@@ -129,6 +130,12 @@ trait icons
 it sure would be nice to have active portraits of the units where they're holding their weapons
 
 =============================================== Backlog:
+
+unit pre-turn picking:
+	consider this feature:
+	-the enemy will order all their unit picks at the start of the round.
+	-if it comes to a unit's turn and they have been defeated or broken, then the enemy simply loses the turn
+	well, don't add it now. Add it as a later, last touch kind of thing.
 
 objectives highlight:
 	should show what the win and loss conditions are.

@@ -90,7 +90,7 @@ public class Trait : MonoBehaviour
 
         
     }
-    public virtual double[] modify_rolls(double[] rolls, Unit self, Unit enemy)
+    public virtual double[] modify_rolls(double[] rolls, Unit self)
     {
         // can return some other version of the damage range.
         return rolls;
