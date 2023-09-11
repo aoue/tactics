@@ -41,9 +41,9 @@ public class BattleBrain
         if (playerAttacking) coverMult = order.order_coverMult_offense(occupied_tile.get_coverMult());
         else coverMult = order.order_coverMult_defense(occupied_tile.get_coverMult());
 
-        //damage formula: dmg = roll + user's atk - target's def
+        //damage formula: dmg = roll * (user's atk - target's def)
         //if the target is broken, then set their defense to 0
-        int dmg = (int)((((int)(actual_roll * atk)) - def) * coverMult);
+        int dmg = (int)((atk - def) * actual_roll * coverMult);
         dmg = t.modify_dmg_dealt(dmg, u1, u2, u1_allies);
         
         //each of user's passives interacts with dmg dealt

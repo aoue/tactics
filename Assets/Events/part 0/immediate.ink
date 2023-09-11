@@ -60,7 +60,22 @@ Let's end.
 We all stand there in the aftermath.
 
 ~n("Friday")
+~p(100)
 ... Thank you. I have to leave now.
+
+~n("")
+~p(-1)
+I'm momentarily shocked into silence.
+
+~n("Anse")
+~p(200)
+... Who the hell are you?
+Like, what?
+
+~n("Friday")
+~p(100)
+Oh, I thought you... nevermind.
+Forget I said anything.
 -> END
 
 ~bg(1, 1, "BG NAME")

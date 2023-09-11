@@ -56,8 +56,7 @@ public class Mission0 : Mission
             { m[0], m[0], m[0], m[1], m[0], m[0] },
             { m[0], m[0], m[0], m[1], m[0], m[0] },
             { m[0], m[0], m[1], m[0], m[0], m[0] },
-            { m[0], m[0], m[0], m[0], m[0], m[0] },
-            
+            { m[0], m[0], m[0], m[0], m[0], m[0] }
         };
         //the mission layout will maintain this orientation in game.
         return layout;
@@ -85,6 +84,8 @@ public class Mission0 : Mission
             //first room group
             (defEnemies[0], 1, 4, 0, 0), //scarabit base
             (defEnemies[0], 2, 4, 0, 0), //scarabit base
+            (defEnemies[0], 0, 3, 0, 0), //scarabit base
+            (defEnemies[0], 0, 4, 0, 0), //scarabit base
         };
 
         return dep_array;

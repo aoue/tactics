@@ -681,7 +681,7 @@ public class EventManager : MonoBehaviour
         }
         else
         {
-            nameBox.SetActive(true);
+            // nameBox.SetActive(true);
             nameText.text = s;
         }
         currentSpeakerName = s;

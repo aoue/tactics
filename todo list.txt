@@ -1,17 +1,23 @@
 simplify, simplify...
 
 Notes for next commit message:
--a single damage roll is now used for attacks that hit more than one target
+-fixed damage calc order of operations bug
+-disabled name box
+-reverted overworld view to single bg, map idea overlay retracted
 
 =============================================== Next Real:
-
 Restrain yourself. Focus on writing, then art, then game systems. Everything follows from that order.
+- it needs to have substance
+- it needs to look good
+- it needs to be fun
+In that order.
 
 writing :)
 
 we're going to have to redo all the art at a later point, so don't worry too much about it.
 
 character drawing art:
+	-reyna corey (see picked ref)
 	-machine wolves
 		-jowler (done)
 		-rusted(bw?) jowler
@@ -23,7 +29,6 @@ character drawing art:
 		-gentoo penguin: fast rusher
 		-emperor: medium infantry, bonuses together
 
-
 combat scene assets:
 	-tiles
 	-unit sprites
@@ -31,17 +36,21 @@ combat scene assets:
 	previously this stuff was done with a pixel art style in mind.
 	Since we're now moving away from that, a redraw seems in order.
 	you can try drawing at a bigger resolution. We can just scale up the size of the tiles, no issue. Did it before.
-	Draw the tiles and unit sprites before resizing.
-	
+	draw the tiles and unit sprites before resizing.
+
 overworld backgrounds:
 	two types:
 	-close up of walker, we can see rooms, etc. click on rooms for events
 	-aerial shot of the walker traveling some environment. click on places for events
 
 player unit portrait size:
-	adjust to make it wider
+	adjust to make it wider, 1:1
 	-so we can accomodate long boys like sozo
 	-in combat active portrait, have the extra length go offscreen
+
+vn scene:
+	since we have no namebox now and will be writing in prose:
+	-probably need to move portrait box, resize font, adjust sentence bg, etc
 
 enemy unit spawn:
 	-level up unit
@@ -78,19 +87,11 @@ radio/messager:
 	-change so that it fits theme better.
 	-bg, text, everything; a complete overhaul
 
-character art:
-	-friday
-	-anse
-	-rado
-	-soeso
-	-machine wolf
-	-rusted machine wolf
-
 vn bg art:
 	-snow dunes (reusable)
 	-snow dunes with the walker in the background (reusable)
 	-the walker, close up
-	-the pagodo, close up
+	-the pagoda, close up
 	-just outside the walker, in its shadow (reusable)
 	-ruins (reusable)
 	-inside the walker, pagoda
