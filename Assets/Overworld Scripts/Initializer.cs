@@ -56,7 +56,7 @@ public class Initializer : MonoBehaviour
         u.set_hpMax(17);
         u.set_brkMax(9);
         u.set_physa(11);
-        u.set_physd(5);
+        u.set_physd(4);
         u.set_maga(3);
         u.set_magd(6);
         u.set_exp(0);

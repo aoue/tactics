@@ -1,33 +1,54 @@
 simplify, simplify...
 
 Notes for next commit message:
--fixed damage calc order of operations bug
--disabled name box
--reverted overworld view to single bg, map idea overlay retracted
+-fixed movement bug where enemies couldnt move through each other
+-changed damage/heal display preview so it shoulds the result for every possible roll instead of the range
+-
 
 =============================================== Next Real:
 Restrain yourself. Focus on writing, then art, then game systems. Everything follows from that order.
 - it needs to have substance
 - it needs to look good
 - it needs to be fun
-In that order.
+(in that order)
 
-writing :)
+-combat bug:
+	-sometimes enemies won't attack?!!?! wth
 
-we're going to have to redo all the art at a later point, so don't worry too much about it.
+-combat design change:
+	-think about this:
+	instead of the rolls being small differences like 0.9, 1.0, 1.1
+	they should be big differences, like:
+	0.5, 1.0, 1.0, 1.0
+	so it's very obvious when a roll goes bad
 
-character drawing art:
-	-reyna corey (see picked ref)
-	-machine wolves
-		-jowler (done)
-		-rusted(bw?) jowler
-	-machine penguins (yeah it doesnt make sense for penguins to be here maybe, but they're machines. They belong in snow so it's fine)
-		-adelie: silly mobber
-		-rusted(bw) adelie
+vn scene mockup:
+	-find examples
+	get all the assets necessary to have a static frame in vn mode (can construct in just as an image)
+	-bg image
+	-characters
+	-ui elements
+	-font
+	have this looking good in an example image file before implementing into the game
 
-		later:
-		-gentoo penguin: fast rusher
-		-emperor: medium infantry, bonuses together
+vn scene:
+	since we have no namebox now and will be writing in prose:
+	-probably need to move box portrait, change/resize font, new textbox bg
+
+	portrait control:
+	something to move a character portrait way down and leave it there
+	~hide() //takes on and off commands. moves them down or move thems back 
+	-kind of like the person is trying to hide. it would be a little bit funny and charming.
+	fits friday in particular
+
+	~flip() //character portrait effect
+	-fade to low
+	-flip
+	-fade back
+
+	breath effect:
+	-puff of white air that appears near the character when outside
+	-cool effect
 
 combat scene assets:
 	-tiles
@@ -43,21 +64,13 @@ overworld backgrounds:
 	-close up of walker, we can see rooms, etc. click on rooms for events
 	-aerial shot of the walker traveling some environment. click on places for events
 
-player unit portrait size:
-	adjust to make it wider, 1:1
-	-so we can accomodate long boys like sozo
-	-in combat active portrait, have the extra length go offscreen
-
-vn scene:
-	since we have no namebox now and will be writing in prose:
-	-probably need to move portrait box, resize font, adjust sentence bg, etc
-
 enemy unit spawn:
 	-level up unit
 	-stat variation: every stat is randomly assigned to one value in the range 0.9*stat to 1.1*stat
 
 overworld:
-	-add to main bg, a scrolling window? that display location information, longitude and latitude, temperate, etc
+	add to main bg, a auto-scrolling panel across the bottom? 
+	-that display location information, longitude and latitude, temperate, etc
 
 game skeleton:
 	-part 0 immediate
@@ -66,6 +79,9 @@ game skeleton:
 
 a text display sound? I think it could sound nice.
 	-constant while text is displaying. 
+
+combat scene power pool:
+	
 
 combat scene help hover:
 	(plan it out first)
@@ -96,7 +112,13 @@ vn bg art:
 	-ruins (reusable)
 	-inside the walker, pagoda
 
+level tree:
+	-on the right, instead of the active portrait, show a cg of the character lounging in the walker. 
+	so cute. adds personality.
+
 combat scene:
+	power:
+	-on plus/mius power, add a little animation to show this. Should be displayed on the unit/base that gives it.
 	fades:
 	-implement for winning or losing the mission
 	-implement for new events and reinforcements
@@ -104,11 +126,7 @@ combat scene:
 	combat dialoguer:
 	-add a visual cue so the player knows they can press 'f' for fast mode
 
-vn portrait control:
-	something to move a character portrait way down and leave it there
-	~hide() //takes on and off commands. moves them down or move thems back 
-	-kind of like the person is trying to hide. it would be a little bit funny and charming.
-	fits friday in particular
+
 
 =============================================== Art:
 

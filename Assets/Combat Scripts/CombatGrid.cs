@@ -1854,8 +1854,10 @@ public class CombatGrid : MonoBehaviour
                 //reject all non-adjacent tiles.
                 if (Math.Abs(i) + Math.Abs(j) != 1) continue;
                 
-                //if on the map and not null AND not occupied by an enemy
-                if (gridHelper.within_border(start.x + i, start.y + j, map_x_border, map_y_border) && myGrid[start.x + i, start.y + j] != null && (myGrid[start.x + i, start.y + j].get_heldUnit() == null || myGrid[start.x + i, start.y + j].get_heldUnit().get_isAlly()))
+                //if on the map and not null 
+                //AND the tile is inoccupied or is occupied by a friendly unit
+                if (gridHelper.within_border(start.x + i, start.y + j, map_x_border, map_y_border) && myGrid[start.x + i, start.y + j] != null
+                    && (myGrid[start.x + i, start.y + j].get_heldUnit() == null || (isPlayer && myGrid[start.x + i, start.y + j].get_heldUnit().get_isAlly()) || (!isPlayer && !myGrid[start.x + i, start.y + j].get_heldUnit().get_isAlly())))
                 {
                     if (myGrid[start.x + i, start.y + j].path == null) myGrid[start.x + i, start.y + j].path = new List<Tile>();
                     //overwrite tile's path IF: 

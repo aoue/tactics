@@ -151,24 +151,27 @@ public class BattleBrain
         if (playerAttacking) coverMult = order.order_coverMult_offense(occupied_tile.get_coverMult());
         else coverMult = order.order_coverMult_defense(occupied_tile.get_coverMult());
 
-        
         double[] rolls = t.get_rolls();
         rolls = t.modify_rolls(rolls, u1);
 
         //damage formula: dmg = roll + user's atk - target's def
-        //if the target is broken, then set their defense to 0
-        int dmg_high = (int)((((int)(rolls.Max() * atk)) - def) * coverMult);
-        int dmg_low = (int)((((int)(rolls.Min() * atk)) - def) * coverMult);
-        dmg_high = t.modify_dmg_dealt(dmg_high, u1, u2, u1_allies);
-        dmg_low = t.modify_dmg_dealt(dmg_low, u1, u2, u1_allies);
-        
+        List<int> damage_results = new List<int>();
+        foreach (double roll in rolls)
+        {
+            int damage_result = (int)((((roll * atk)) - def) * coverMult);
+            damage_result = t.modify_dmg_dealt(damage_result, u1, u2, u1_allies);
+            damage_results.Add(damage_result);
+        }
+
         //each of user's passives interacts with dmg dealt
         for (int i = 0; i < u1.get_traitList().Length; i++)
         {
             if (u1.get_traitList()[i] != null && u1.get_traitList()[i].get_isPassive())
             {
-                dmg_high = u1.get_traitList()[i].modify_dmg_dealt(dmg_high, u1, u2, u1_allies);
-                dmg_low = u1.get_traitList()[i].modify_dmg_dealt(dmg_low, u1, u2, u1_allies);
+                for(int j = 0; j < damage_results.Count; j++)
+                {
+                    damage_results[j] = u1.get_traitList()[i].modify_dmg_dealt(damage_results[j], u1, u2, u1_allies);
+                }
             }
         }
 
@@ -177,8 +180,10 @@ public class BattleBrain
         {
             if (u2.get_traitList()[i] != null && u2.get_traitList()[i].get_isPassive())
             {
-                dmg_high = u2.get_traitList()[i].modify_dmg_received(dmg_high, u1, u2, u1_allies);
-                dmg_low = u2.get_traitList()[i].modify_dmg_received(dmg_low, u1, u2, u1_allies);
+                for(int j = 0; j < damage_results.Count; j++)
+                {
+                    damage_results[j] = u2.get_traitList()[i].modify_dmg_received(damage_results[j], u1, u2, u1_allies);
+                }
             }
         }
 
@@ -187,19 +192,27 @@ public class BattleBrain
         {
             if (playerAttacking)
             {
-                dmg_high = order.order_damage_dealt(dmg_high);
-                dmg_low = order.order_damage_dealt(dmg_low);
+                for(int i = 0; i < damage_results.Count; i++)
+                {
+                    damage_results[i] = order.order_damage_dealt(damage_results[i]);
+                }
             }
             else 
             {
-                dmg_high = order.order_damage_received(dmg_high);
-                dmg_low = order.order_damage_received(dmg_low);
+                for(int i = 0; i < damage_results.Count; i++)
+                {
+                    damage_results[i] = order.order_damage_received(damage_results[i]);
+                }
             }
         }
         
-        dmg_high = Math.Max(1, dmg_high);
-        dmg_low = Math.Max(1, dmg_low);
-        return dmg_low.ToString() + "-" + dmg_high.ToString();
+        string return_string = "";
+        for(int i = 0; i < damage_results.Count; i++)
+        {
+            damage_results[i] = Math.Max(1, damage_results[i]);
+            return_string += damage_results[i] + ",";
+        }
+        return return_string.Substring(0, return_string.Length - 1);
     }
 
     public string calc_heal_range_str(Unit u1, Unit u2, Trait t, bool playerAttacking, Order order)
@@ -219,19 +232,31 @@ public class BattleBrain
         double[] rolls = t.get_rolls();
         rolls = t.modify_rolls(rolls, u1);
 
+        // int heal_high = (int)(rolls.Max() + atk);
+        // int heal_low = (int)(rolls.Min() + atk);
+        // heal_high = t.modify_heal_dealt(heal_high, u1, u2);
+        // heal_low = t.modify_heal_dealt(heal_low, u1, u2);
+
         //damage formula: dmg = roll + user's atk - target's def
-        int heal_high = (int)(rolls.Max() + atk);
-        int heal_low = (int)(rolls.Min() + atk);
-        heal_high = t.modify_heal_dealt(heal_high, u1, u2);
-        heal_low = t.modify_heal_dealt(heal_low, u1, u2);
+        List<int> heal_results = new List<int>();
+        foreach (double roll in rolls)
+        {
+            int heal_result = (int)(roll * atk);
+            heal_result = t.modify_heal_dealt(heal_result, u1, u2);
+            heal_results.Add(heal_result);
+        }
 
         // run user's passives
         for (int i = 0; i < u1.get_traitList().Length; i++)
         {
             if (u1.get_traitList()[i] != null && u1.get_traitList()[i].get_isPassive())
             {
-                heal_high = u1.get_traitList()[i].modify_heal_dealt(heal_high, u1, u2);
-                heal_low = u1.get_traitList()[i].modify_heal_dealt(heal_low, u1, u2);
+                // heal_high = u1.get_traitList()[i].modify_heal_dealt(heal_high, u1, u2);
+                // heal_low = u1.get_traitList()[i].modify_heal_dealt(heal_low, u1, u2);
+                for(int j = 0; j < heal_results.Count; j++)
+                {
+                    heal_results[j] = u1.get_traitList()[i].modify_heal_dealt(heal_results[j], u1, u2);
+                }
             }
         }
 
@@ -240,8 +265,12 @@ public class BattleBrain
         {
             if (u2.get_traitList()[i] != null && u2.get_traitList()[i].get_isPassive())
             {
-                heal_high = u2.get_traitList()[i].modify_heal_received(heal_high, u1, u2);
-                heal_low = u2.get_traitList()[i].modify_heal_received(heal_low, u1, u2);
+                // heal_high = u2.get_traitList()[i].modify_heal_received(heal_high, u1, u2);
+                // heal_low = u2.get_traitList()[i].modify_heal_received(heal_low, u1, u2);
+                for(int j = 0; j < heal_results.Count; j++)
+                {
+                    heal_results[j] = u2.get_traitList()[i].modify_heal_received(heal_results[j], u1, u2);
+                }
             }
         }
 
@@ -249,18 +278,34 @@ public class BattleBrain
         {
             if (playerAttacking) 
             {
-                heal_high = order.order_heal_dealt(heal_high);
-                heal_low = order.order_heal_dealt(heal_low);
+                // heal_high = order.order_heal_dealt(heal_high);
+                // heal_low = order.order_heal_dealt(heal_low);
+                for(int j = 0; j < heal_results.Count; j++)
+                {
+                    heal_results[j] = order.order_heal_dealt(heal_results[j]);
+                }
             }
             else 
             {
-                heal_high = order.order_heal_received(heal_high);
-                heal_low = order.order_heal_received(heal_low);
+                // heal_high = order.order_heal_received(heal_high);
+                // heal_low = order.order_heal_received(heal_low);
+                for(int j = 0; j < heal_results.Count; j++)
+                {
+                    heal_results[j] = order.order_heal_received(heal_results[j]);
+                }
             }
             
         }
-        
-        return heal_low.ToString() + "-" + heal_high.ToString();
+
+        string return_string = "";
+        for(int i = 0; i < heal_results.Count; i++)
+        {
+            heal_results[i] = Math.Max(1, heal_results[i]);
+            return_string += heal_results[i] + ",";
+        }
+        return return_string.Substring(0, return_string.Length - 1);
+
+        // return heal_low.ToString() + "-" + heal_high.ToString();
     }
 
 }
