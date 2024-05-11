@@ -308,7 +308,8 @@ public class EventManager : MonoBehaviour
             }
             else
             {
-                sentenceText.text = displayString;
+                // sentenceText.text = displayString;
+                sentenceText.text = "\"" + displayString + "\"";
             }          
             if (i < sentence.Length - 1 && (sentence[i] == '.' || sentence[i] == '!' || sentence[i] == '?')) yield return new WaitForSeconds(periodWait);
             else yield return new WaitForSeconds(textWait);

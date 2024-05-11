@@ -12,15 +12,26 @@ Restrain yourself. Focus on writing, then art, then game systems. Everything fol
 - it needs to be fun
 (in that order)
 
--combat bug:
-	-sometimes enemies won't attack?!!?! wth
+-exp design:
+	-all units gain a clear exp score every mission
+	-speed clear bonus
+	-base control bonus
+	(defeating enemies should not give exp; collaborative! everyone has a role!)
+	*if a unit was defeated, then it only gains a portion of clear exp
+	-capturing artifacts (i.e. towns/chests) gives an item that can be used to give exp or raise stats back at the level tree
+	*some artifacts unlock conversations/lore and affection points. So you need 'em for story i guess?
 
--combat design change:
+-combat design change: (??)
 	-think about this:
 	instead of the rolls being small differences like 0.9, 1.0, 1.1
 	they should be big differences, like:
 	0.5, 1.0, 1.0, 1.0
 	so it's very obvious when a roll goes bad
+
+-combat design:
+	unit break:
+	-should units regain to full break at start of round? should they regain some?
+	i think playtesting will help here honestly	
 
 vn scene mockup:
 	-find examples
