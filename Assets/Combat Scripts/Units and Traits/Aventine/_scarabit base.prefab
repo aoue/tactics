@@ -95,18 +95,16 @@ MonoBehaviour:
   unitName: Scarabit
   level: 1
   exp: 4
-  movement: 3
-  hpMax: 12
-  brkMax: 6
+  movement: 2
+  hpMax: 10
+  brkMax: 5
   controlRangeBase: 0
-  phys_atk: 6
-  phys_def: 3
-  magic_atk: 2
-  magic_def: 3
+  phys_def: 0
+  magic_def: 0
   unitOrder: {fileID: 0}
   traitList:
   - {fileID: 3498225942440549642, guid: 770ca2b25301b39499c2cbb9f3c8dd09, type: 3}
-  - {fileID: 0}
+  - {fileID: 6016042035377694836, guid: 2f8309ac4e394b84099713f8a55f23ee, type: 3}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

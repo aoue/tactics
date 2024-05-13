@@ -278,12 +278,10 @@ public class LevelTreeManager : MonoBehaviour
             }
         }
 
-        unitStatText.text = "HP: " +  u.get_hpMax()
-                + "\nBRK: " + u.get_brkMax()
-                + "\nATK: " + u.get_physa()
-                + "\nDEF: " + u.get_physd()
-                + "\nHAC: " + u.get_maga()
-                + "\nICE: " + u.get_magd()
+        unitStatText.text = "VITAL." +  u.get_hpMax()
+                + "\nBREAK." + u.get_brkMax()
+                + "\nBLOCK." + u.get_physd()
+                + "\nRESIS." + u.get_magd()
                 + "%\n\n" + buildUnitTypeStr;
         displayExp();
     }

@@ -44,5 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9382d9a9f0a141a469b697a5da99685c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orderName: Conviction
+  orderName: Blackbox
   orderDescr: +1 PW each time an allied unit acts.

@@ -12,7 +12,7 @@ public class Tile : MonoBehaviour
     [SerializeField] private bool blocksAttacks;
     [SerializeField] private bool canBeTargeted;
     [SerializeField] private int movementCost; //-1 for impassable.
-    [SerializeField] private double coverMult; //multiply damage taken on this tile by coverMult. e.g. if normal, the coverMult would be 1.0, if the unit is to only take 80% of dmg, it should be 0.8
+    [SerializeField] private int cover; //subtract from damage
     [SerializeField] private string descr;
 
     //for highlight and marking zoc, targeting, etc. start disabled.
@@ -202,6 +202,6 @@ public class Tile : MonoBehaviour
     public int get_movementCost() { return movementCost; }
     public string get_tileName() { return tileName; }
     public string get_descr() { return descr; }
-    public double get_coverMult() { return coverMult; }
+    public int get_cover() { return cover; }
     public Unit get_heldUnit() { return heldUnit; }
 }

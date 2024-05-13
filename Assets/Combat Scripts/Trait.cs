@@ -54,7 +54,7 @@ public class Trait : MonoBehaviour
     [SerializeField] private bool ignores_blocking_terrain; //if true, then the move is not affected by tiles that block attacks
     [SerializeField] private int minimum_range; //used for validating tiles when attacking. Can only hit a tile where manhattan distance is >= x tiles away/
     [SerializeField] private int range; //determines how far the attack can reach
-    [SerializeField] private double[] rolls; //rolls for possible range.
+    [SerializeField] private int[] rolls; //rolls for possible range.
     [SerializeField] private double brkMult; //determines the amount of brk dmg dealt.
     [SerializeField] private int pwCost; //the power cost to use the move.
     [SerializeField] private bool usesPhysAttack; //on true, use attacker's phys attack for dmg calc. On false, use attacker's mag attack.
@@ -90,7 +90,7 @@ public class Trait : MonoBehaviour
 
         
     }
-    public virtual double[] modify_rolls(double[] rolls, Unit self)
+    public virtual int[] modify_rolls(int[] rolls, Unit self)
     {
         // can return some other version of the damage range.
         return rolls;
@@ -180,7 +180,7 @@ public class Trait : MonoBehaviour
             string powerStr = "Rolls: [";
             for (int i = 0; i < rolls.Length; i++)
             {
-                powerStr += (int)(rolls[i]*100);
+                powerStr += (rolls[i]);
                 if (i < rolls.Length - 1) powerStr += ".";
             }
             powerStr += "]";
@@ -205,7 +205,7 @@ public class Trait : MonoBehaviour
     public int get_min_range() { return minimum_range; }
     public int get_range() { return range; }
     public int get_minimum_range() { return minimum_range; }
-    public double[] get_rolls() { return rolls; }
+    public int[] get_rolls() { return rolls; }
     public double get_brkMult() { return brkMult; }
     public int get_pwCost() { return pwCost; }
     public bool get_usesPhysAttack() { return usesPhysAttack; }

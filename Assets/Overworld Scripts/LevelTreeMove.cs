@@ -30,9 +30,7 @@ public class LevelTreeMove : MonoBehaviour
         // takes in the unit, and increases their stats in a way
         u.set_hpMax(u.get_hpMax() + hp_inc);
         u.set_brkMax(u.get_brkMax() + brk_inc);
-        u.set_physa(u.get_physa() + pa_inc);
         u.set_physd(u.get_physd() + pd_inc);
-        u.set_maga(u.get_maga() + ma_inc);
         u.set_magd(u.get_magd() + md_inc);
     }
     public string get_increases_string()

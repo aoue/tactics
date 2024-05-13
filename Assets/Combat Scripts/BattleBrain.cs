@@ -7,20 +7,10 @@ using System.Linq;
 public class BattleBrain
 {
     //calculator for combat.
-    public int calc_damage(Unit u1, Unit u2, Trait t, double actual_roll, Tile occupied_tile, bool playerAttacking, Order order, Unit[] u1_allies)
+    public int calc_damage(Unit u1, Unit u2, Trait t, int actual_roll, Tile occupied_tile, bool playerAttacking, Order order, Unit[] u1_allies)
     {
         //use attacker's phys a or mag a?
         int atk;
-        if (playerAttacking && order != null)
-        {
-            if (t.get_usesPhysAttack()) atk = order.order_physa(u1.get_physa());
-            else atk = order.order_maga(u1.get_maga());
-        }
-        else
-        {
-            if (t.get_usesPhysAttack()) atk = u1.get_physa();
-            else atk = u1.get_maga();
-        }
 
         int def;
         if (!playerAttacking && order != null)
@@ -37,13 +27,12 @@ public class BattleBrain
         }
         if (u2.get_isBroken()) def = 0;
 
-        double coverMult;
-        if (playerAttacking) coverMult = order.order_coverMult_offense(occupied_tile.get_coverMult());
-        else coverMult = order.order_coverMult_defense(occupied_tile.get_coverMult());
+        int cover;
+        if (playerAttacking) cover = order.order_cover_offense(occupied_tile.get_cover());
+        else cover = order.order_cover_defense(occupied_tile.get_cover());
 
-        //damage formula: dmg = roll * (user's atk - target's def)
-        //if the target is broken, then set their defense to 0
-        int dmg = (int)((atk - def) * actual_roll * coverMult);
+        //damage formula: dmg = roll - target's def - cover
+        int dmg = actual_roll - def - cover;
         dmg = t.modify_dmg_dealt(dmg, u1, u2, u1_allies);
         
         //each of user's passives interacts with dmg dealt
@@ -73,21 +62,10 @@ public class BattleBrain
         
         return Math.Max(1, dmg);
     }
-    public int calc_heal(Unit u1, Unit u2, Trait t, double actual_roll, bool playerAttacking, Order order)
+    public int calc_heal(Unit u1, Unit u2, Trait t, int actual_roll, bool playerAttacking, Order order)
     {
-        int atk;
-        if (playerAttacking && order != null)
-        {
-            if (t.get_usesPhysAttack()) atk = order.order_physa(u1.get_physa());
-            else atk = order.order_maga(u1.get_maga());
-        }
-        else
-        {
-            if (t.get_usesPhysAttack()) atk = u1.get_physa();
-            else atk = u1.get_maga();
-        }
-        //heal formula: dmg = roll + user's atk
-        int heal = (int)(actual_roll * atk);
+        //heal formula: dmg = roll
+        int heal = actual_roll;
         heal = t.modify_heal_dealt(heal, u1, u2);
 
         // run user's passives
@@ -119,19 +97,6 @@ public class BattleBrain
 
     public string calc_damage_range_str(Unit u1, Unit u2, Trait t, Tile occupied_tile, bool playerAttacking, Order order, Unit[] u1_allies)
     {
-        //use attacker's phys a or mag a?
-        int atk;
-        if (playerAttacking && order != null)
-        {
-            if (t.get_usesPhysAttack()) atk = order.order_physa(u1.get_physa());
-            else atk = order.order_maga(u1.get_maga());
-        }
-        else
-        {
-            if (t.get_usesPhysAttack()) atk = u1.get_physa();
-            else atk = u1.get_maga();
-        }
-
         int def;
         if (!playerAttacking && order != null)
         {
@@ -147,18 +112,18 @@ public class BattleBrain
         }
         if (u2.get_isBroken()) def = 0;
 
-        double coverMult;
-        if (playerAttacking) coverMult = order.order_coverMult_offense(occupied_tile.get_coverMult());
-        else coverMult = order.order_coverMult_defense(occupied_tile.get_coverMult());
+        int cover;
+        if (playerAttacking) cover = order.order_cover_offense(occupied_tile.get_cover());
+        else cover = order.order_cover_defense(occupied_tile.get_cover());
 
-        double[] rolls = t.get_rolls();
+        int[] rolls = t.get_rolls();
         rolls = t.modify_rolls(rolls, u1);
 
         //damage formula: dmg = roll + user's atk - target's def
         List<int> damage_results = new List<int>();
-        foreach (double roll in rolls)
+        foreach (int roll in rolls)
         {
-            int damage_result = (int)((((roll * atk)) - def) * coverMult);
+            int damage_result = roll - def - cover;
             damage_result = t.modify_dmg_dealt(damage_result, u1, u2, u1_allies);
             damage_results.Add(damage_result);
         }
@@ -217,31 +182,14 @@ public class BattleBrain
 
     public string calc_heal_range_str(Unit u1, Unit u2, Trait t, bool playerAttacking, Order order)
     {
-        int atk;
-        if (playerAttacking && order != null)
-        {
-            if (t.get_usesPhysAttack()) atk = order.order_physa(u1.get_physa());
-            else atk = order.order_maga(u1.get_maga());
-        }
-        else
-        {
-            if (t.get_usesPhysAttack()) atk = u1.get_physa();
-            else atk = u1.get_maga();
-        }
-
-        double[] rolls = t.get_rolls();
+        int[] rolls = t.get_rolls();
         rolls = t.modify_rolls(rolls, u1);
-
-        // int heal_high = (int)(rolls.Max() + atk);
-        // int heal_low = (int)(rolls.Min() + atk);
-        // heal_high = t.modify_heal_dealt(heal_high, u1, u2);
-        // heal_low = t.modify_heal_dealt(heal_low, u1, u2);
 
         //damage formula: dmg = roll + user's atk - target's def
         List<int> heal_results = new List<int>();
-        foreach (double roll in rolls)
+        foreach (int roll in rolls)
         {
-            int heal_result = (int)(roll * atk);
+            int heal_result = roll;
             heal_result = t.modify_heal_dealt(heal_result, u1, u2);
             heal_results.Add(heal_result);
         }

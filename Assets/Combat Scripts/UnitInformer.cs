@@ -14,7 +14,7 @@ public class UnitInformer : MonoBehaviour
     [SerializeField] private Sprite emptyTraitIconSprite; 
     
     //main display
-    [SerializeField] private Image active_portrait;    
+    [SerializeField] private Image active_portrait;
     [SerializeField] private Text nameText;
     [SerializeField] private Text unitTypesText;
     [SerializeField] private Text stats_1; //the first column of main stats view; hp, brk, mvmt, control.
@@ -101,10 +101,17 @@ public class UnitInformer : MonoBehaviour
             nameText.text = u.get_unitName();
             unitTypesText.text = buildUnitTypeStr;
 
-            stats_1.text = "HP." + u.get_hp() + "/" + u.get_hpMax()
+            string defString = u.get_physd().ToString();
+            string magdString = u.get_magd().ToString();
+            if (u.get_isBroken()) { defString = "BRK"; magdString = "BRK"; }
+
+            stats_1.text = "VITAL." + u.get_hp() + "/" + u.get_hpMax()
                 + "\nBRK." + u.get_brk() + "/" + u.get_brkMax()
                 + "\nMVMT." + u.get_movement()
-                + "\nCTRL." + u.get_controlRange();
+                + "\nCTRL." + u.get_controlRange()
+                + "\nBLOCK." + defString
+                + "\nRESIS." + magdString;
+            stats_2.text = "";
 
             if (u.get_isAlly())
             {
@@ -123,15 +130,6 @@ public class UnitInformer : MonoBehaviour
                 }
                 else order_text.text = "";
             }
-
-            string defString = u.get_physd().ToString();
-            string magdString = u.get_magd().ToString();
-            if (u.get_isBroken()) { defString = "BRK"; magdString = "BRK"; }
-            stats_2.text = "ATK." + u.get_physa()
-                + "\nDEF." + defString
-                + "\nHAC." + u.get_maga()
-                + "\nICE." + magdString;
-
             active_portrait.gameObject.SetActive(true);
 
             //trait-abiltiy window

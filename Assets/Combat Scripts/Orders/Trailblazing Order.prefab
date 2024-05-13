@@ -44,5 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08be4328a7505d241bbf3a43eb87ae4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orderName: Trailblazing
+  orderName: Fleet
   orderDescr: +1 movement to all allied units.

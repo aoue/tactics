@@ -64,16 +64,16 @@ public class Order : MonoBehaviour
     }
 
     //called when player is attacking in battleBrain to influence the cover modifier
-    public virtual double order_coverMult_offense(double coverMult)
+    public virtual int order_cover_offense(int cover)
     {
         //here, you would say: ignores defensive bonuses from cover
-        return coverMult;
+        return cover;
     }
     //called when player is defending in battleBrain to influence the cover modifier
-    public virtual double order_coverMult_defense(double coverMult)
+    public virtual int order_cover_defense(int cover)
     {
         //here, you would say: receive double defensive bonuses from cover
-        return coverMult;
+        return cover;
     }
 
     //called at the start of damage calculations in battlebrain to influence each individual stat.

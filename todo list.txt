@@ -1,8 +1,6 @@
 simplify, simplify...
 
 Notes for next commit message:
--fixed movement bug where enemies couldnt move through each other
--changed damage/heal display preview so it shoulds the result for every possible roll instead of the range
 -
 
 =============================================== Next Real:
@@ -137,7 +135,9 @@ combat scene:
 	combat dialoguer:
 	-add a visual cue so the player knows they can press 'f' for fast mode
 
-
+vn mode:
+	-change from bottom textbox to mobile textbox that appears near the speaking character?
+	
 
 =============================================== Art:
 

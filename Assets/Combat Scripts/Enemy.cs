@@ -114,7 +114,7 @@ public class Enemy : Unit
 
         if (valuesCover)
         {
-            score += (int)(dest.get_coverMult()*10);
+            score += (dest.get_cover());
         }
 
         // finally, score all possible (traits)attacks the enemy can make too and add that to the sum.

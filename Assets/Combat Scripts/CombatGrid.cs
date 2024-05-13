@@ -1302,9 +1302,9 @@ public class CombatGrid : MonoBehaviour
         bool anyKills = false;
         int totalDmg = 0;
 
-        double[] rolls = active_ability.get_rolls();
+        int[] rolls = active_ability.get_rolls();
         rolls = active_ability.modify_rolls(rolls, active_unit);
-        double actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)];
+        int actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)];
 
         if (active_ability.get_isHeal())
         {

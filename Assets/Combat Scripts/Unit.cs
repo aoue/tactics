@@ -32,9 +32,7 @@ public class Unit : MonoBehaviour
 
     [SerializeField] private int controlRangeBase; //tiles outward that their ZoC extends in each direction. Real value. 
     private int controlRange; //tiles outward that their ZoC extends in each direction. Set to 0 when unit broken.
-    [SerializeField] private int phys_atk;
     [SerializeField] private int phys_def;
-    [SerializeField] private int magic_atk;
     [SerializeField] private int magic_def;
 
     //state
@@ -231,9 +229,7 @@ public class Unit : MonoBehaviour
     public int get_controlRange() { return controlRange; }
     public int get_level() { return level; }
     public int get_exp() { return exp; }
-    public int get_physa() { return phys_atk; }
     public int get_physd() { return phys_def; }
-    public int get_maga() { return magic_atk; }
     public int get_magd() { return magic_def; }
     public bool get_hasMoved() {return hasMoved; }
     public bool get_isDead() { return isDead; }
@@ -250,9 +246,7 @@ public class Unit : MonoBehaviour
     public void set_hp(int x) { hp = x; }
     public void set_brkMax(int x) { brkMax = x; }
     public void set_brk(int brk) { brk = x; }
-    public void set_physa(int x) { phys_atk = x; }
     public void set_physd(int x) { phys_def = x; }
-    public void set_maga(int x) { magic_atk = x; }
     public void set_magd(int x) { magic_def = x; }
     public void init_learnList() { learnedList = new moveLearnState[24]; }
 

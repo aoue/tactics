@@ -54,8 +54,8 @@ Let's end.
 ~play_music(0)
 // ~show(0, 300) // yve at center
 // ~show(1, 400) // nai at right
-~show(1, 100) // friday at left
-// ~show(4, 200) // anse at right
+~show(3, 100) // friday at left
+~show(4, 200) // anse at right
 
 
 We all stand there in the aftermath.

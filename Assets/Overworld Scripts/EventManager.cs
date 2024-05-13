@@ -59,8 +59,6 @@ public class EventManager : MonoBehaviour
     private bool autoOn = false; //when true, text displays instantly. press crtl to toggle.
 
     [SerializeField] private GameObject settingsView; //lets player adjust vn settings, like text speed.
-    [SerializeField] private Slider programGraphic;
-    [SerializeField] private Text programGraphicText;
 
     private string currentSpeakerName; //used for pushing entries in history.
     [SerializeField] private GameObject HistoryPort; //master gameobject for the history interface.
@@ -653,10 +651,6 @@ public class EventManager : MonoBehaviour
         {
             this.camera_shake(intensity, duration);
         });
-        script.BindExternalFunction("program", (string name, float duration) =>
-        {
-            this.run_program(name, duration);
-        });
     }
 
 
@@ -1021,43 +1015,6 @@ public class EventManager : MonoBehaviour
         //reset initial position
         eventObjects.transform.localPosition = initial_position;
         eventObjects.transform.localScale = new Vector3(1f, 1f, 1f);
-    }
-    
-    void run_program(string name, float duration)
-    {
-        // what does this do?
-        // display program progress bar
-        //  -program name above bar
-        //  -slide bar that goes from left to right
-        //  -hold while this is going on.
-        effectsOver = false;
-        programGraphic.gameObject.SetActive(true);
-        programGraphicText.text = name + "()";
-        programGraphic.value = 0f;
-        StartCoroutine(programSlide(duration));
-    }
-    IEnumerator programSlide(float duration)
-    {
-        yield return null;
-        // increase value of programGraphic over time
-        // at end, pause.
-        // then hide.
-        float elapsedTime = 0f;
-        while (elapsedTime < duration)
-        {
-            // so we have 100 units
-            // and we have to get our value to 100 over duration seconds
-            // e.g. over 5 seconds, it should increase by 20 units every sec
-            elapsedTime += Time.deltaTime;
-            programGraphic.value = 100f * elapsedTime / duration;
-
-            yield return null;
-        }
-
-        // then let game continue.
-        yield return new WaitForSeconds(0.5f);
-        effectsOver = true;
-        programGraphic.gameObject.SetActive(false);
     }
 
     // WEATHER EFFECTS
