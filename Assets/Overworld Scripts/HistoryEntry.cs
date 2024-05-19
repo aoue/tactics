@@ -9,11 +9,16 @@ public class HistoryEntry
     public Color nameColor {get; set;}
     public Color sentenceColor {get; set;}
 
-    public HistoryEntry(string n, string s, Color nColor, Color sColor)
+    // public HistoryEntry(string n, string s, Color nColor, Color sColor)
+    // {
+    //     name = n;
+    //     sentence = s;
+    //     nameColor = nColor;
+    //     sentenceColor = sColor;
+    // }
+    public HistoryEntry(string n, string s)
     {
         name = n;
         sentence = s;
-        nameColor = nColor;
-        sentenceColor = sColor;
     }
 }

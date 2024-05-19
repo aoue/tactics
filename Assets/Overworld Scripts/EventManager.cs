@@ -16,20 +16,19 @@ public class EventManager : MonoBehaviour
     [SerializeField] private ParticleSystem rainSystem;
     [SerializeField] private ParticleSystem windSystem;
     [SerializeField] private Canvas characterCanvas; //need it to adjust layer for weather, overlay.
+    private PlaceLabels labeler = new PlaceLabels(); // need it to move around the textbox
 
     //dialogue canvas members:
     [SerializeField] private GameObject eventObjects;
     [SerializeField] private CanvasGroup choiceParent;
     [SerializeField] private Image bg;
     [SerializeField] private Image fadeTapestry;
-    [SerializeField] private Image thinkingframe;
     [SerializeField] private GameObject NormalDialogueBox;
-    [SerializeField] private GameObject nameBox;
-    [SerializeField] private Text nameText;
+    [SerializeField] private GameObject dialogueContainer;
+    [SerializeField] private Image textBox;
     [SerializeField] private Text sentenceText;
     [SerializeField] private Button buttonPrefab = null;
     [SerializeField] private Image speakerBoxPortrait;
-    [SerializeField] private Image continuePopup;
 
     // Switch popups
     [SerializeField] private CanvasGroup bgSwitchPopup;
@@ -71,6 +70,7 @@ public class EventManager : MonoBehaviour
     Color activeButtonColor = new Color(0.23f, 0.23f, 0.23f, 1f);
     [SerializeField] private Button[] diaControlButtons; //5 total. Needed to control their visual states.
     
+    private bool isNVL; 
     private bool canProceed;
     private bool effectsOver; //block progress while effects are under way
     private EventHolder heldEv;
@@ -268,22 +268,23 @@ public class EventManager : MonoBehaviour
     }    
     IEnumerator TypeSentence(string sentence)
     {
-        StartCoroutine(fadeObjectOut(continuePopup, 0.3f, 1f));
-        continuePopup.gameObject.GetComponent<Button>().interactable = false;
         while (!effectsOver)
         {
             yield return new WaitForSeconds(0.2f);
         }
         
-        string saveString;
+        string saveString = "";
         if (sentence[0] == '>')
         {
             saveString = sentenceText.text;
             sentence = sentence.Substring(1, sentence.Length - 1);
         }
+        else if (isNVL)
+        {
+            if (sentenceText.text != "") saveString = sentenceText.text + "\n\n";
+        }
         else
         {
-            saveString = "";
             sentenceText.text = "";
         }
         string displayString = saveString;
@@ -300,15 +301,10 @@ public class EventManager : MonoBehaviour
 
             displayString += sentence[i];
             //control quotes, parentheses, or nothing.
-            if (nameText.text == "")
-            {
-                sentenceText.text = displayString;
-            }
-            else
-            {
-                // sentenceText.text = displayString;
-                sentenceText.text = "\"" + displayString + "\"";
-            }          
+
+            sentenceText.text = displayString;
+            // sentenceText.text = "\"" + displayString + "\"";
+
             if (i < sentence.Length - 1 && (sentence[i] == '.' || sentence[i] == '!' || sentence[i] == '?')) yield return new WaitForSeconds(periodWait);
             else yield return new WaitForSeconds(textWait);
         }
@@ -318,10 +314,7 @@ public class EventManager : MonoBehaviour
         }
         else
         {
-            audio.play_typingSound();
-            StartCoroutine(fadeObjectIn(continuePopup, 0.3f, 1f));
-            
-            continuePopup.gameObject.GetComponent<Button>().interactable = true;
+            // audio.play_typingSound();
         }
         if (autoOn)
         {
@@ -377,7 +370,6 @@ public class EventManager : MonoBehaviour
     void setup_event(TextAsset storyText)
     {
         //setup initial view
-        nameText.text = "";
         sentenceText.text = "";
 
         //reset history
@@ -423,7 +415,8 @@ public class EventManager : MonoBehaviour
             if ( sentence.Length > 0)
             {
                 //add name, sentence pair to history
-                HistoryEntry entry = new HistoryEntry(currentSpeakerName, sentence, sentenceText.color, nameText.color);
+                // HistoryEntry entry = new HistoryEntry(currentSpeakerName, sentence, sentenceText.color, nameText.color);
+                HistoryEntry entry = new HistoryEntry(currentSpeakerName, sentence);
                 if (historyList.Count == historyLimit) //history limit is here.
                 {
                     historyList.RemoveAt(0);
@@ -467,19 +460,13 @@ public class EventManager : MonoBehaviour
         eventObjects.SetActive(false);
         overworld.load_part();
     }
-    public void press_continuePopup()
-    {
-        DisplayNextSentence();
-    }
-
 
     // HELPERS
     void init_vn_elems()
     {
         //return all effects to default.
-        set_colour("white");
-        set_name(""); //hide name box
-        set_boxPortrait(-1); //hide box portrait
+        set_colour("default");
+        set_boxPortrait(-1);
         set_speaker_glow(-1);
         fastOn = false;
         settingsOn = false;
@@ -489,11 +476,6 @@ public class EventManager : MonoBehaviour
         Color initFadeTapestry = new Color(0f, 0f, 0f, 1f);
         fadeTapestry.color = initFadeTapestry;
         fadeTapestry.gameObject.SetActive(true);
-
-        continuePopup.gameObject.SetActive(true);
-
-        Color initAlphaZero = new Color(0f, 0f, 0f, 0f);
-        thinkingframe.color = initAlphaZero;
     }
     Button CreateChoiceView(string text)
     {
@@ -590,10 +572,6 @@ public class EventManager : MonoBehaviour
         {
             this.set_bg(id, duration, popupText);
         });
-        script.BindExternalFunction("thinkbg", (int id) => 
-        {
-            this.set_thinkbg(id);
-        });
         script.BindExternalFunction("snow", (int strength) => 
         {
             this.set_snow(strength);
@@ -614,15 +592,16 @@ public class EventManager : MonoBehaviour
         {
             this.h_wiggle(id, power, repeats);
         });
-        
-        script.BindExternalFunction("n", (string name) =>
+
+        script.BindExternalFunction("place", (string label) =>
         {
-            this.set_name(name);
+            this.place_textbox(label);
         });
-        script.BindExternalFunction("c", (string colour) =>
+        script.BindExternalFunction("colour", (string c) =>
         {
-            this.set_colour(colour);
+            this.set_colour(c);
         });
+
         script.BindExternalFunction("p", (int pId) =>
         {
             this.set_boxPortrait(pId);
@@ -667,58 +646,40 @@ public class EventManager : MonoBehaviour
             speakerBoxPortrait.sprite = pLibrary.retrieve_boxp(speakerBoxId);
         }
     }
-    void set_name(string s)
+    void place_textbox(string label)
     {
-        if ( s == "" )
+        // adjusts the position of the textbox starting at the given portraitslot then offsetting by the label.
+        // (the label position is retrieved using the PlaceLabels class.)
+        // sets up:
+        //  -turn on/off NVL
+        //  -turn on/off and place textbox
+        //  -also set width of textbox.
+        dialogueContainer.SetActive(false);
+        if (label == "nvl")
         {
-            nameText.text = "";
-            nameBox.SetActive(false);
+            isNVL = true;
+            sentenceText.text = ""; // clear text so we don't save any non-nvl parts
         }
         else
         {
-            // nameBox.SetActive(true);
-            nameText.text = s;
+            isNVL = false;
         }
-        currentSpeakerName = s;
-
-        // also set colour.
-        set_colour(s);
+        (Vector2 newBoxPos, float newBoxWidth) = labeler.label_vals(label);
+        dialogueContainer.GetComponent<RectTransform>().localPosition = newBoxPos;
+        dialogueContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(newBoxWidth, dialogueContainer.GetComponent<RectTransform>().sizeDelta.y);
+        dialogueContainer.SetActive(true);
     }
     void set_colour(string c)
     {
         switch(c)
-        { 
-            //r, g, b
-            case "red":
-                nameText.color = new Color(255f/255f, 0f, 0f);
-                sentenceText.color = new Color(1f, 102f/255f, 102f/255f); break;
-            case "orange":
-                nameText.color = new Color(255f/255f, 128f/255f, 0f);
-                sentenceText.color = new Color(255f/255f, 178f/255f, 102f/255f); break;
-            case "yellow":
-                nameText.color = new Color(255f/255f, 255f/255f, 51f/255f);
-                sentenceText.color = new Color(1f, 1f, 153f/255f); break;
-            case "green": case "Anse":
-                nameText.color = new Color(51f/255f, 255f/255f, 51f/255f);
-                sentenceText.color = new Color(153f/255f, 1f, 153f/255f); break;
-            case "cyan":
-                nameText.color = new Color(51f/255f, 255f/255f, 255f/255f);
-                sentenceText.color = new Color(153f/255f, 1f, 1f); break;
-            case "blue":
-                nameText.color = new Color(51f/255f, 153f/255f, 255f/255f);
-                sentenceText.color = new Color(153f/255f, 204f/255f, 255f/255f); break;
-            case "purple": case "Friday":
-                nameText.color = new Color(180f/255f, 105f/255f, 255f/255f);
-                sentenceText.color = new Color(204f/255f, 153f/255f, 1f); break;
-            case "pink":
-                nameText.color = new Color(255f/255f, 51f/255f, 153f/255f);
-                sentenceText.color = new Color(1f, 153f/255f, 204f/255f); break;
-            case "grey":
-                nameText.color = new Color(160f/255f, 160f/255f, 160f/255f);
-                sentenceText.color = new Color(192f/255f, 192f/255f, 192f/255f); break;
-            case "": default: //i.e. white
-                nameText.color = new Color(224f/255f, 224f/255f, 224f/255f);
-                sentenceText.color = new Color(1f, 1f, 1f); break;
+        {
+            case "":
+            case "default":
+                textBox.color = new Color(0f, 0f, 0f, 120f / 255f);
+                break;
+            case "friday":
+                textBox.color = new Color(224f/255f, 184f / 255f, 255f / 255f, 120f / 255f);
+                break;
         }
         
     }
@@ -763,15 +724,6 @@ public class EventManager : MonoBehaviour
         effectsOver = true;
         NormalDialogueBox.SetActive(true);
     }
-
-    void set_thinkbg(int id)
-    {
-        //if id is -1, fade the thinkbg out.
-        //otherwise, fade it in.
-        if (id == -1) StartCoroutine(fadeObjectOut(thinkingframe, 1f, 160f/255f));
-        else StartCoroutine(fadeObjectIn(thinkingframe, 1f, 160f/255f));
-    }
-
 
     // CHARACTER PORTRAIT EFFECTS
     void set_portrait_slot(int whichSlot, int index)
@@ -841,7 +793,9 @@ public class EventManager : MonoBehaviour
     IEnumerator run_speakerglow_anim(int whichSlot)
     {
         float elapsedTime = 0f;
-        Color compareDark = new Color(0.5f, 0.5f, 0.5f, 1f);
+        // Color compareDark = new Color(0.5f, 0.5f, 0.5f, 1f);
+        float base_value = 0.9f;
+        Color compareDark = new Color(base_value, base_value, base_value, 1f);
         Color compareWhite = new Color(1f, 1f, 1f, 1f);
         while (elapsedTime < speakerglow_anim_duration)
         {
@@ -851,7 +805,7 @@ public class EventManager : MonoBehaviour
                 //we will be starting from potentially 1f or 0.5f
                 // -at 1f, don't make any change.
                 // -at 0.5f, incrementally increase from 0.5f to 1f over the duration.
-                float value = 0.5f + (elapsedTime/speakerglow_anim_duration) / 2;
+                float value = base_value + (elapsedTime/speakerglow_anim_duration) / 2;
                 Color inc_lit = new Color(value, value, value, 1f);
 
                 // light up all
@@ -882,7 +836,7 @@ public class EventManager : MonoBehaviour
                 // and at the same time, light up whichSlot
                 if (!colors_equal(portraitSlots[whichSlot].GetComponent<Image>().color, compareWhite))
                 {
-                    float light_value = 0.5f + (elapsedTime/speakerglow_anim_duration) / 2;
+                    float light_value = base_value + (elapsedTime/speakerglow_anim_duration) / 2;
                     Color inc_lit = new Color(light_value, light_value, light_value, 1f);
                     portraitSlots[whichSlot].GetComponent<Image>().color = inc_lit;
                 }
