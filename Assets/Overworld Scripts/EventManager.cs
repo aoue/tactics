@@ -11,6 +11,7 @@ public class EventManager : MonoBehaviour
 {
     [SerializeField] private Overworld overworld; //link back to the boss.
     [SerializeField] private OverworldAudio audio;
+    [SerializeField] private VoiceManager voiceAudio;
     [SerializeField] private PortraitLibrary pLibrary;
     [SerializeField] private ParticleSystem snowSystem;
     [SerializeField] private ParticleSystem rainSystem;
@@ -59,7 +60,7 @@ public class EventManager : MonoBehaviour
 
     [SerializeField] private GameObject settingsView; //lets player adjust vn settings, like text speed.
 
-    private string currentSpeakerName; //used for pushing entries in history.
+    private Sprite entrySpeaker; // speaker portrait to show with the history entry
     [SerializeField] private GameObject HistoryPort; //master gameobject for the history interface.
     [SerializeField] private HistoryScroller histScroll; //used to fill/clear the content of the history interface.
     private List<HistoryEntry> historyList; 
@@ -374,7 +375,6 @@ public class EventManager : MonoBehaviour
 
         //reset history
         historyOn = false;
-        currentSpeakerName = "NO SPEAKER";
         if (historyList == null) historyList = new List<HistoryEntry>();
         else historyList.Clear();
 
@@ -415,8 +415,8 @@ public class EventManager : MonoBehaviour
             if ( sentence.Length > 0)
             {
                 //add name, sentence pair to history
-                // HistoryEntry entry = new HistoryEntry(currentSpeakerName, sentence, sentenceText.color, nameText.color);
-                HistoryEntry entry = new HistoryEntry(currentSpeakerName, sentence);
+                HistoryEntry entry = new HistoryEntry(sentence, textBox.color, entrySpeaker);
+                entrySpeaker = null;
                 if (historyList.Count == historyLimit) //history limit is here.
                 {
                     historyList.RemoveAt(0);
@@ -601,6 +601,10 @@ public class EventManager : MonoBehaviour
         {
             this.set_colour(c);
         });
+        script.BindExternalFunction("voice", (string label) =>
+        {
+            this.play_voice(label);
+        });
 
         script.BindExternalFunction("p", (int pId) =>
         {
@@ -618,7 +622,7 @@ public class EventManager : MonoBehaviour
         {
             this.set_portrait_holo(which, state);
         });
-        script.BindExternalFunction("speakerglow", (int which) =>
+        script.BindExternalFunction("glow", (int which) =>
         {
             this.set_speaker_glow(which);
         });
@@ -671,17 +675,28 @@ public class EventManager : MonoBehaviour
     }
     void set_colour(string c)
     {
+        dialogueContainer.SetActive(false);
+        float boxAlpha = 180f / 255f;
         switch(c)
         {
-            case "":
-            case "default":
-                textBox.color = new Color(0f, 0f, 0f, 120f / 255f);
-                break;
             case "friday":
-                textBox.color = new Color(224f/255f, 184f / 255f, 255f / 255f, 120f / 255f);
+                textBox.color = new Color(85f/255f, 11f/255f, 122f/255f, boxAlpha);
+                entrySpeaker = pLibrary.retrieve_boxp(100);
+                break;
+            case "anse":
+                textBox.color = new Color(20f/255f, 18f/255f, 102f/255f, boxAlpha);
+                entrySpeaker = pLibrary.retrieve_boxp(200);
+                break;
+            case "machine":
+                textBox.color = new Color(140f/255f, 140f/255f, 140f/255f, boxAlpha);
+                entrySpeaker = null; 
+                break;
+            default:
+                textBox.color = new Color(0f, 0f, 0f, 120f/255f);
+                entrySpeaker = null; 
                 break;
         }
-        
+        dialogueContainer.SetActive(true);
     }
 
 
@@ -795,8 +810,13 @@ public class EventManager : MonoBehaviour
         float elapsedTime = 0f;
         // Color compareDark = new Color(0.5f, 0.5f, 0.5f, 1f);
         float base_value = 0.9f;
+        float divisor = 1 / (1 - base_value);
+        // float divisor = 8;
         Color compareDark = new Color(base_value, base_value, base_value, 1f);
         Color compareWhite = new Color(1f, 1f, 1f, 1f);
+        
+
+        // run darkening+lightening the animation
         while (elapsedTime < speakerglow_anim_duration)
         {
             if (whichSlot == -1)
@@ -805,7 +825,7 @@ public class EventManager : MonoBehaviour
                 //we will be starting from potentially 1f or 0.5f
                 // -at 1f, don't make any change.
                 // -at 0.5f, incrementally increase from 0.5f to 1f over the duration.
-                float value = base_value + (elapsedTime/speakerglow_anim_duration) / 2;
+                float value = base_value + (elapsedTime/speakerglow_anim_duration) / divisor;
                 Color inc_lit = new Color(value, value, value, 1f);
 
                 // light up all
@@ -823,7 +843,7 @@ public class EventManager : MonoBehaviour
                 // -if at 0.5f, don't make any change.
 
                 //after one fifth of the duration, the value should be 0.9f
-                float dark_value = 1f - ((elapsedTime/speakerglow_anim_duration) / 2);
+                float dark_value = 1f - ((elapsedTime/speakerglow_anim_duration) / divisor);
                 Color inc_darkened = new Color(dark_value, dark_value, dark_value, 1f);
 
                 // darken all but whichSlot
@@ -836,7 +856,7 @@ public class EventManager : MonoBehaviour
                 // and at the same time, light up whichSlot
                 if (!colors_equal(portraitSlots[whichSlot].GetComponent<Image>().color, compareWhite))
                 {
-                    float light_value = base_value + (elapsedTime/speakerglow_anim_duration) / 2;
+                    float light_value = base_value + (elapsedTime/speakerglow_anim_duration) / divisor;
                     Color inc_lit = new Color(light_value, light_value, light_value, 1f);
                     portraitSlots[whichSlot].GetComponent<Image>().color = inc_lit;
                 }
@@ -1018,6 +1038,10 @@ public class EventManager : MonoBehaviour
     }
 
     // AUDIO EFFECTS
+    void play_voice(string label)
+    {
+        voiceAudio.play_voice(label);
+    }
     void stop_music()
     {
         audio.stop_music();
@@ -1052,30 +1076,32 @@ public class EventManager : MonoBehaviour
     }
     IEnumerator show_popup(CanvasGroup popUp)
     {
-        float duration = 1f;
-        while (!effectsOver) {
-            yield return new WaitForSeconds(0.1f);
-        }
-        float elapsedTime = 0f;
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            popUp.alpha = 2*elapsedTime / duration;
-            yield return null;
-        }
-        yield return new WaitForSeconds(1f);
+        yield return null;
+        // Commented out due to feedback, for now
+        // float duration = 1f;
+        // while (!effectsOver) {
+        //     yield return new WaitForSeconds(0.1f);
+        // }
+        // float elapsedTime = 0f;
+        // while (elapsedTime < duration)
+        // {
+        //     elapsedTime += Time.deltaTime;
+        //     popUp.alpha = 2*elapsedTime / duration;
+        //     yield return null;
+        // }
+        // yield return new WaitForSeconds(1f);
 
-        while (!effectsOver) {
-            yield return new WaitForSeconds(0.1f);
-        }
-        elapsedTime = 0f;
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            popUp.alpha = 1f - elapsedTime / duration;
-            yield return null;
-        }
-        popUp.alpha = 0f;
+        // while (!effectsOver) {
+        //     yield return new WaitForSeconds(0.1f);
+        // }
+        // elapsedTime = 0f;
+        // while (elapsedTime < duration)
+        // {
+        //     elapsedTime += Time.deltaTime;
+        //     popUp.alpha = 1f - elapsedTime / duration;
+        //     yield return null;
+        // }
+        // popUp.alpha = 0f;
     }
 
 

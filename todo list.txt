@@ -19,107 +19,12 @@ Restrain yourself. Focus on writing, then art, then game systems. Everything fol
 	-capturing artifacts (i.e. towns/chests) gives an item that can be used to give exp or raise stats back at the level tree
 	*some artifacts unlock conversations/lore and affection points. So you need 'em for story i guess?
 
--combat design change: (??)
-	-think about this:
-	instead of the rolls being small differences like 0.9, 1.0, 1.1
-	they should be big differences, like:
-	0.5, 1.0, 1.0, 1.0
-	so it's very obvious when a roll goes bad
-
--combat design:
-	unit break:
-	-should units regain to full break at start of round? should they regain some?
-	i think playtesting will help here honestly	
-
-vn scene mockup:
-	-find examples
-	get all the assets necessary to have a static frame in vn mode (can construct in just as an image)
-	-bg image
-	-characters
-	-ui elements
-	-font
-	have this looking good in an example image file before implementing into the game
-
-vn scene:
-	since we have no namebox now and will be writing in prose:
-	-probably need to move box portrait, change/resize font, new textbox bg
-
-	portrait control:
-	something to move a character portrait way down and leave it there
-	~hide() //takes on and off commands. moves them down or move thems back 
-	-kind of like the person is trying to hide. it would be a little bit funny and charming.
-	fits friday in particular
-
-	~flip() //character portrait effect
-	-fade to low
-	-flip
-	-fade back
-
-	breath effect:
-	-puff of white air that appears near the character when outside
-	-cool effect
-
-combat scene assets:
-	-tiles
-	-unit sprites
-	-ui frames
-	previously this stuff was done with a pixel art style in mind.
-	Since we're now moving away from that, a redraw seems in order.
-	you can try drawing at a bigger resolution. We can just scale up the size of the tiles, no issue. Did it before.
-	draw the tiles and unit sprites before resizing.
-
-overworld backgrounds:
-	two types:
-	-close up of walker, we can see rooms, etc. click on rooms for events
-	-aerial shot of the walker traveling some environment. click on places for events
-
-enemy unit spawn:
-	-level up unit
-	-stat variation: every stat is randomly assigned to one value in the range 0.9*stat to 1.1*stat
-
-overworld:
-	add to main bg, a auto-scrolling panel across the bottom? 
-	-that display location information, longitude and latitude, temperate, etc
-
-game skeleton:
-	-part 0 immediate
-	-part 0 combat -> loads part 1
-	-part 1 immediate
-
-a text display sound? I think it could sound nice.
-	-constant while text is displaying. 
-
-combat scene power pool:
-	
-
 combat scene help hover:
 	(plan it out first)
 	add a help hover area, under objective button. Just a single image, overlayed overtop the combat scene.
 	-mouse over the help icon to show the help image. Move mouse off to turn it off.
 	-it overlays on top of the entire ui and has arrows pointing at stuff and text explaining functions
 	-hidden when mouse moves off the hover area
-
-event holder game object:
-	-on hover, the whole image should darken. Right now, only the background does.
-	Please fix this.
-
-messenger from overworld:
-	change this to be like a transmission receiver
-	something sent from walkers to other walkers. Talking about weather, directions, news or other things
-	-change the visual components so it looks like the message has been written down on a piece of telegram paper.
-
-radio/messager:
-	-change so that it fits theme better.
-	-bg, text, everything; a complete overhaul
-
-vn bg art:
-	-snow dunes (reusable)
-	-snow dunes with the walker in the background (reusable)
-	-the walker, close up
-	-the pagoda, close up
-	-just outside the walker, in its shadow (reusable)
-	-ruins (reusable)
-	-inside the walker, pagoda
 
 level tree:
 	-on the right, instead of the active portrait, show a cg of the character lounging in the walker. 
@@ -134,31 +39,10 @@ combat scene:
 	option to restart mission
 	combat dialoguer:
 	-add a visual cue so the player knows they can press 'f' for fast mode
+	-combat audio:
+		-stepping player: play a certain sound when a character is moving on the map. find/make sound and set up.
 
-vn mode:
-	-change from bottom textbox to mobile textbox that appears near the speaking character?
 	
-
-=============================================== Art:
-
-WAIT! Nothing more until the script is written!
-
-character full/active portraits
-
-enemy full/active portraits
-
-unit map sprites
-
-tile sprites
-
-overworld bgs
-
-vn scene bgs
-
-trait icons
-
-it sure would be nice to have active portraits of the units where they're holding their weapons
-
 =============================================== Backlog:
 
 unit pre-turn picking:
@@ -185,14 +69,6 @@ combat audio:
 		-currently it's a short sound that is set on loop, but it really only plays once.
 		-so probably getting a slightly longer sound and playing it once would be better.
 	-trait sound effects. Every trait needs one.
-
-flavour:
-	since you can't draw weapons on the map sprites, change lore so that the characters don't carry weapons.
-	instead they materialize the weapons with their programs and the weapon is there for a moment and does its thing
-	-this would also involve changing active trait names to programs, i.e. variance_hammer()
-	-and also changing passive traits ingame names to 'coroutines', or something
-	i.e. actives are programs used explicitly, passives are coroutines which are always running
-	-move anims, or weapon icons can help show that. like, map sprite not carrying wpn, but we can show it floating based on the move.
 
 mission mechanics:
 	-things like door controls, or destructible walls?
