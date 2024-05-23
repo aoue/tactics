@@ -1304,12 +1304,13 @@ public class CombatGrid : MonoBehaviour
 
         int[] rolls = active_ability.get_rolls();
         rolls = active_ability.modify_rolls(rolls, active_unit);
-        int actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)];
+        int actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)]; // yeah it will double roll, but it doesn't matter
 
         if (active_ability.get_isHeal())
         {
             foreach (Unit target in affectedUnits)
             {
+                if (!active_ability.get_rollsOnce()) { actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)]; }
                 int heal = brain.calc_heal(active_unit, target, active_ability, actual_roll, active_unit.get_isAlly(), active_order);
                 target.take_heal(heal);
                 //show damage numbers
@@ -1324,6 +1325,7 @@ public class CombatGrid : MonoBehaviour
                 
                 foreach (Unit target in affectedUnits)
                 {
+                    if (!active_ability.get_rollsOnce()) { actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)]; }
                     int dmg = brain.calc_damage(active_unit, target, active_ability, actual_roll, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, playerUnits);
                     totalDmg += dmg;
                     target.take_dmg(dmg, active_ability.get_brkMult());
@@ -1337,6 +1339,7 @@ public class CombatGrid : MonoBehaviour
             {
                 foreach (Unit target in affectedUnits)
                 {
+                    if (!active_ability.get_rollsOnce()) { actual_roll = rolls[UnityEngine.Random.Range(0, rolls.Length)]; }
                     int dmg = brain.calc_damage(active_unit, target, active_ability, actual_roll, myGrid[target.x, target.y], active_unit.get_isAlly(), active_order, enemyUnits.ToArray());
                     totalDmg += dmg;
                     target.take_dmg(dmg, active_ability.get_brkMult());

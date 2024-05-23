@@ -51,7 +51,7 @@ public class EventManager : MonoBehaviour
     //typing speed controllers
     private float speakerglow_anim_duration = 0.25f;
     private float autoWait = 1f; //how many seconds to wait before proceeding when auto mode is on.
-    private float textWait = 0.035f; //how many seconds to wait after a non-period character in typesentence
+    private float textWait = 0.03f; // 0.035f; //how many seconds to wait after a non-period character in typesentence
     private float periodWait = 0.35f; //how many seconds to wait after a period character in typesentence
     private bool historyOn = false; //when true, viewing history and cannot continue the story.
     private bool settingsOn = false; //when true, viewing settings and cannot continue the story.
@@ -70,6 +70,10 @@ public class EventManager : MonoBehaviour
     Color InactiveButtonColor = new Color(140f/255f, 140f/255f, 140f/255f, 1f);
     Color activeButtonColor = new Color(0.23f, 0.23f, 0.23f, 1f);
     [SerializeField] private Button[] diaControlButtons; //5 total. Needed to control their visual states.
+    
+    // for using spacebar to skip text
+    private bool canSkipDisplay; // only set to true after the first tiny bit of text has been displayed.
+    private bool skipDisplayOnce; // a flag used to skip text
     
     private bool isNVL; 
     private bool canProceed;
@@ -99,6 +103,10 @@ public class EventManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.F))
         {
             toggle_fast();
+        }
+        else if (canSkipDisplay && hideOn == false && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)))
+        {
+            skipDisplayOnce = true;
         }
         
         if (Input.GetKeyDown(KeyCode.H) && settingsOn == false)
@@ -269,6 +277,7 @@ public class EventManager : MonoBehaviour
     }    
     IEnumerator TypeSentence(string sentence)
     {
+        canSkipDisplay = false;
         while (!effectsOver)
         {
             yield return new WaitForSeconds(0.2f);
@@ -291,11 +300,11 @@ public class EventManager : MonoBehaviour
         string displayString = saveString;
                                     
         yield return new WaitForSeconds(0.05f);
-        
+        canSkipDisplay = true;
 
         for(int i = 0; i < sentence.Length; i++)
         {
-            if (fastOn)
+            if (fastOn || skipDisplayOnce)
             {
                 break;
             }
@@ -303,26 +312,30 @@ public class EventManager : MonoBehaviour
             displayString += sentence[i];
             //control quotes, parentheses, or nothing.
 
-            sentenceText.text = displayString;
+            if (isNVL) sentenceText.text = displayString + "\n";
+            else sentenceText.text = displayString;
             // sentenceText.text = "\"" + displayString + "\"";
 
             if (i < sentence.Length - 1 && (sentence[i] == '.' || sentence[i] == '!' || sentence[i] == '?')) yield return new WaitForSeconds(periodWait);
             else yield return new WaitForSeconds(textWait);
         }
-        if (fastOn)
+        if (fastOn || skipDisplayOnce)
         {
             sentenceText.text = saveString + sentence;
+            skipDisplayOnce = false;
         }
         else
         {
             // audio.play_typingSound();
         }
+
         if (autoOn)
         {
             yield return new WaitForSeconds(autoWait);
         }
         yield return new WaitForSeconds(0.05f);
         canProceed = true;
+        // canSkipDisplay = false;
     }
     IEnumerator fadeObjectIn(Image obj, float duration, float maxAlpha)
     {
@@ -673,7 +686,7 @@ public class EventManager : MonoBehaviour
         dialogueContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(newBoxWidth, dialogueContainer.GetComponent<RectTransform>().sizeDelta.y);
         dialogueContainer.SetActive(true);
     }
-    void set_colour(string c)
+    void set_colour(string c="")
     {
         dialogueContainer.SetActive(false);
         float boxAlpha = 180f / 255f;
@@ -692,7 +705,7 @@ public class EventManager : MonoBehaviour
                 entrySpeaker = null; 
                 break;
             default:
-                textBox.color = new Color(0f, 0f, 0f, 120f/255f);
+                textBox.color = new Color(0f, 0f, 0f, boxAlpha);
                 entrySpeaker = null; 
                 break;
         }
@@ -1040,7 +1053,7 @@ public class EventManager : MonoBehaviour
     // AUDIO EFFECTS
     void play_voice(string label)
     {
-        voiceAudio.play_voice(label);
+        if (!fastOn) { voiceAudio.play_voice(label); }
     }
     void stop_music()
     {

@@ -54,25 +54,27 @@ Let's end.
 */
 
 ~bg(0, 1, "BG NAME")
-~show(1, 100) // friday at left
-~show(3, 200) // anse at right
+~show(1, 100) // friday at center
 
 ~place("bottom-narration")
+~colour("")
 We all stand there in the aftermath.
 
 ~glow(1)
 ~colour("friday")
+~place("1-right-high")
 ~voice("friday-whatever")
 ... Thank you. I have to leave now.
 
 ~glow(-1)
 ~colour("")
+~place("2-right-low")
 I'm momentarily shocked into silence.
 
-~glow(3)
-~place("center-right-chin")
-~voice("anse-whatever")
+~p(200)
 ~colour("anse")
+~place("bottom-narration")
+~voice("anse-whatever")
 Huh? What are you even talking about, miss?
 
 I'm not after a wall that'll repel power coming from outside. What I want is the kind of strength to be able to absorb that outside power, to stand up to it. The strength to quietly endure things—unfairness, misfortune, sadness, mistakes, misunderstandings. 
@@ -84,10 +86,10 @@ You've built it before, they've built it before. Hasn't really worked out yet, b
 Just because you've apologized, you think you have a right to be forgiven?
 
 ~place("nvl")
-I hope this cleared nvl man!
+(and this should have cleared nvl yup yup yup)
 
 ~place("bottom-narration")
-... What does it even matter.
+... ok now let's end.
 -> END
 
 ~p(200)
