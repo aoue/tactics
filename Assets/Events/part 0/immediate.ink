@@ -3,21 +3,23 @@ EXTERNAL play_music(id) //plays track, looping
 EXTERNAL play_sound(id) //plays sound, once.
 
 EXTERNAL bg(id, duration, text) //sets background to corresponding element from BackgroundManager
-EXTERNAL thinkbg(id) //turns thinking background on (the top bar). fades it in. -1 to turn off, anything else to turn on.
 
 EXTERNAL snow(strength) //turns snow on or off, higher arg for more particles. -1 to turn off. Also turns off rain.
 EXTERNAL rain(strength) //turns rain on or off, higher arg for more particles. -1 to turn off. Also turns off snow. 
 EXTERNAL wind(strength) //turns wind on or off, higher arg for more particles. -1 to turn off.
 EXTERNAL shake(intensity, duration) //Both parameters are ints. Don't be shy with intensity. 20 is moderate, 50 is heavy. Duration is in seconds.
 
-EXTERNAL n(name) //sets name text, or call with empty string to hide namebox.
-EXTERNAL c(id) //id is a string. sets colour of name text and sentence text. Input as a string, e.g. "red"
+EXTERNAL place(label) //move the textbox, also sets nvl on/off.
+EXTERNAL colour(c) //pass in a character's name or "" for default. Basically, just check the labels in EventManager's set_colour() function.
+//EXTERNAL textbox(type) //used to switch the sprite of the textbox between normal, yell, whisper, etc.
+EXTERNAL voice(label) //plays a character voice sound. Call into it with a label like '[character]-[mood]' and it plays a random voice clip that matches.
 
+
+EXTERNAL glow(whichSlot) //speakerglow. darkens all portrait slots except for whichSlot, making them seem brighter. -1 to restore everyone to full.
 EXTERNAL p(pId) //pId to show corresponding BOX portrait. -1 to hide.
 EXTERNAL p_holo(pId) //turns hologram shader on to the name sprite. -1 to turn off.
 EXTERNAL show(whichSlot, portraitID) //shows full portrait
 EXTERNAL holo(whichSlot, state) //applies hologram shade to portrait slot. Instant. -1 to turn off.
-EXTERNAL speakerglow(whichSlot) //darkens all portrait slots except for whichSlot, making them seem brighter. -1 to restore everyone to full.
 EXTERNAL hide(whichSlot) //hides full portrait
 EXTERNAL v_wiggle(whichSlot, power, repeats) //int, float, repeats; causes the character portrait in the specified slot to wiggle vertically. Moves power units. Repeats x times.
 EXTERNAL h_wiggle(whichSlot, power, repeats) //int, float, repeats; causes the character portrait in the specified slot to wiggle horizontally. Moves power units. Repeats x times.
@@ -28,6 +30,7 @@ EXTERNAL program(name, duration) // runs program popup. Name is text displayed a
 //Calling inside/outside with wait=-1 also at start. Otherwise, give it any other argument.
 
 /*
+~bg(1, 1, "BG NAME")
 Here's how you do an example choice stuff:
 -> example_choices
 === example_choices ===
@@ -50,30 +53,49 @@ Let's end.
 ->END
 */
 
-~bg(0, 1, "BG NAME")
-~play_music(0)
-// ~show(0, 300) // yve at center
-// ~show(1, 400) // nai at right
-~show(3, 100) // friday at left
-~show(4, 200) // anse at right
+~bg(1, 1, "BG NAME")
+~show(1, 100) // friday at center
 
-
+~place("bottom-narration")
+~colour("")
 We all stand there in the aftermath.
 
-~n("Friday")
-~p(100)
+~glow(1)
+~colour("friday")
+~place("1-right-high")
+~voice("friday-whatever")
 ... Thank you. I have to leave now.
 
-~n("")
-~p(-1)
+~glow(-1)
+~colour("")
+~place("2-right-low")
 I'm momentarily shocked into silence.
 
-~n("Anse")
+~p(200)
+~colour("anse")
+~place("bottom-narration")
+~voice("anse-whatever")
+Huh? What are you even talking about, miss?
+
+I'm not after a wall that'll repel power coming from outside. What I want is the kind of strength to be able to absorb that outside power, to stand up to it. The strength to quietly endure things—unfairness, misfortune, sadness, mistakes, misunderstandings. 
+
+~place("nvl")
+There is something fundamentally important and distinctly human about taking a stance and engaging with the world on a deeper level than simple animal reward seeking behavior.
+While the poet themself should be a respectable person, their poetry should not be constrained.
+You've built it before, they've built it before. Hasn't really worked out yet, but neither has love. Should we stop building love?
+Just because you've apologized, you think you have a right to be forgiven?
+
+~place("nvl")
+(and this should have cleared nvl yup yup yup)
+
+~place("bottom-narration")
+... ok now let's end.
+-> END
+
 ~p(200)
 ... Who the hell are you?
 Like, what?
 
-~n("Friday")
 ~p(100)
 Oh, I thought you... nevermind.
 Forget I said anything.
@@ -82,16 +104,12 @@ Forget I said anything.
 ~bg(1, 1, "BG NAME")
 second bg switch from prev!
 
-~n("Friday")
 ~p(100)
-~speakerglow(3)
 ~v_wiggle(3, 0.1, 1)
 I'm talking a little bit.
 
 ~bg(1, 1, "BG NAME")
-~n("Anse")
 ~p(200)
-~speakerglow(4)
 And now I'm talking.
 lalala.
 

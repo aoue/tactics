@@ -54,6 +54,7 @@ public class Trait : MonoBehaviour
     [SerializeField] private bool ignores_blocking_terrain; //if true, then the move is not affected by tiles that block attacks
     [SerializeField] private int minimum_range; //used for validating tiles when attacking. Can only hit a tile where manhattan distance is >= x tiles away/
     [SerializeField] private int range; //determines how far the attack can reach
+    [SerializeField] private bool rollsOnce; //on true, rolls a single time for all targets. If false, rolls indivdually for each target.
     [SerializeField] private int[] rolls; //rolls for possible range.
     [SerializeField] private double brkMult; //determines the amount of brk dmg dealt.
     [SerializeField] private int pwCost; //the power cost to use the move.
@@ -206,6 +207,7 @@ public class Trait : MonoBehaviour
     public int get_range() { return range; }
     public int get_minimum_range() { return minimum_range; }
     public int[] get_rolls() { return rolls; }
+    public bool get_rollsOnce() { return rollsOnce; }
     public double get_brkMult() { return brkMult; }
     public int get_pwCost() { return pwCost; }
     public bool get_usesPhysAttack() { return usesPhysAttack; }

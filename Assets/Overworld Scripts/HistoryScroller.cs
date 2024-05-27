@@ -26,10 +26,11 @@ public class HistoryScroller : MonoBehaviour
         for (int i = 0; i < he.Count; i++)
         {
             GameObject entry = Instantiate(entryPrefab) as GameObject;
-            entry.transform.GetChild(0).GetComponent<Text>().text = he[i].name;
+            entry.transform.GetChild(0).GetComponent<Image>().color = he[i].bgColor;
             entry.transform.GetChild(1).GetComponent<Text>().text = he[i].sentence;
-            entry.transform.GetChild(0).GetComponent<Text>().color = he[i].sentenceColor;
-            entry.transform.GetChild(1).GetComponent<Text>().color = he[i].nameColor;
+            // entry.transform.GetChild(1).GetComponent<Text>().color = he[i].sentenceColor;
+            if (he[i].speakerSprite != null) entry.transform.GetChild(2).GetComponent<Image>().sprite = he[i].speakerSprite;
+            else entry.transform.GetChild(2).gameObject.SetActive(false);
 
             entry.transform.SetParent(content.transform, false);
         }
@@ -37,8 +38,8 @@ public class HistoryScroller : MonoBehaviour
         //finally, add a dummy entry - but make it invisible.
         //this is for alignment
         GameObject lastEntry = Instantiate(entryPrefab) as GameObject;
-        lastEntry.transform.GetChild(0).GetComponent<Text>().text = "";
         lastEntry.transform.GetChild(1).GetComponent<Text>().text = "";
+        lastEntry.transform.GetChild(2).gameObject.SetActive(false);
 
         lastEntry.transform.SetParent(content.transform, false);
 
