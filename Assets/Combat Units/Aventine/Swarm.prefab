@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6016042035377694839}
   - component: {fileID: 6016042035377694836}
   m_Layer: 0
-  m_Name: Swarm Attack - Scarabyte
+  m_Name: Swarm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,8 +56,9 @@ MonoBehaviour:
   ignores_blocking_terrain: 0
   minimum_range: 0
   range: 0
-  dmg_range: 
-  brkOffset: 0
+  rollsOnce: 0
+  rolls: 
+  brkMult: 0
   pwCost: 0
   usesPhysAttack: 0
   usesPhysDefense: 0

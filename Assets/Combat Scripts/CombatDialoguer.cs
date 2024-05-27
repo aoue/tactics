@@ -20,9 +20,9 @@ public class CombatDialoguer : MonoBehaviour
     [SerializeField] private CameraController cammy; //ref to to the combat scene's camera. For jumping.
     [SerializeField] private PortraitLibrary pLibrary; //
 
-    [SerializeField] private GameObject nameBox;
+    // [SerializeField] private GameObject nameBox;
+    // [SerializeField] private Text nameText;
 
-    [SerializeField] private Text nameText;
     [SerializeField] private Text sentenceText;
     [SerializeField] private Image cgFrame; //an image frame that shows up in the middle of the screen. 
     [SerializeField] private Image portrait; //for showing the speaker's (box) portrait.
@@ -178,13 +178,14 @@ public class CombatDialoguer : MonoBehaviour
     }
     void set_name(string name)
     {
+        return; // disabled
         //sets name.
-        if (name == "") nameBox.gameObject.SetActive(false);
-        else
-        {
-            nameText.text = name;
-            nameBox.gameObject.SetActive(true);
-        }
+        // if (name == "") nameBox.gameObject.SetActive(false);
+        // else
+        // {
+        //     nameText.text = name;
+        //     nameBox.gameObject.SetActive(true);
+        // }
     }
     void set_portrait(int which)
     {

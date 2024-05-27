@@ -30,7 +30,7 @@ EXTERNAL program(name, duration) // runs program popup. Name is text displayed a
 //Calling inside/outside with wait=-1 also at start. Otherwise, give it any other argument.
 
 /*
-~bg(0, 1, "BG NAME")
+~bg(1, 1, "BG NAME")
 Here's how you do an example choice stuff:
 -> example_choices
 === example_choices ===
@@ -53,7 +53,7 @@ Let's end.
 ->END
 */
 
-~bg(0, 1, "BG NAME")
+~bg(1, 1, "BG NAME")
 ~show(1, 100) // friday at center
 
 ~place("bottom-narration")
