@@ -56,9 +56,10 @@ MonoBehaviour:
   ignores_blocking_terrain: 0
   minimum_range: 0
   range: 1
-  dmg_range: 0200000003000000
-  brkOffset: 0
-  pwCost: 1
+  rollsOnce: 1
+  rolls: 090000000a000000
+  brkMult: 1
+  pwCost: 0
   usesPhysAttack: 1
   usesPhysDefense: 1
   isHeal: 0

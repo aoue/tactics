@@ -163,16 +163,13 @@ public class Trait : MonoBehaviour
         {
             buildStr += "Active — ";
 
-            if (isHeal) buildStr += " Support Ability";
-            else buildStr += " Attack Ability";
-
-            if (usesPhysAttack) buildStr += "| ATK ";           
-            else buildStr += "| CHR ";
+            if (isHeal) buildStr += " Support";
+            else buildStr += " Attack";
             
             if (!isHeal)
             {
-                if (usesPhysDefense) buildStr += "vs. DEF";
-                else buildStr += "vs. INS";
+                if (usesPhysDefense) buildStr += " | vs. BLOCK";
+                else buildStr += " | vs. RESIS";
             }
             
 

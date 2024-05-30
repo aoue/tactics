@@ -234,11 +234,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42def98c3e6c2c446b141f665833ef9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileName: Tunnel Floor (Boxes)
+  tileName: Boxes
   blocksAttacks: 0
   canBeTargeted: 1
   movementCost: 2
-  coverMult: 0.8
+  cover: 2
   descr: The scattered boxes provide slight cover.
   highlightLayer: {fileID: 1904667572332340068}
   targetIcon: {fileID: 6990453053382342198}

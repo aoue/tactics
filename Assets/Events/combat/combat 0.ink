@@ -28,86 +28,32 @@ VAR label = 0
 //the indices for the labels here, in the mission's reinforcement functions, and in the mission's event rounds should all be the same.
 {
 - label == 0: -> mission_begin
-- label == 2: -> e_reinforce2
-- label == 3: -> p_reinforce3
-- label == 5: -> e_reinforce5
+//- label == 1: -> p_reinforce1
 - label == -2: -> mission_end_win
 - label == -3: -> mission_end_loss
 }
 
 === mission_begin ===
 ~play_music(0)
-~jump(5, 5)
+~jump(9, 5)
 
-~n("Anse")
 ~p(200)
-That's a lot of them.
-~n("Friday")
-~p(100)
-This is a spiritual matter. There's no need for you to trouble yourself.
-~n("Anse")
-~p(200)
-...A member of the Circle doesn't shirk his part that easily.
-~n("Anse")
-(If we can last for a little while, those two should get here...)
+Here we go.
 -> END
 
-=== e_reinforce2 ===
-~jump(7,5)
-reinforcements just before round 3 starts (two scarabit responders)!
+=== p_reinforce1 ===
+~jump(9, 5)
 //draw attention to these reinforcements, and that they're different.
 //show picture in middle cg?
 
 //mc: there's more of them, etc
 //friday: ...this changes nothing.
--> END
-
-=== p_reinforce3 ===
-~jump(7,5)
-reinforcements just before round 4 starts (yve and nai)!
-
-//anse is annoyed that they're later
-//yve apologizes insincerely
-//nai tells yve not to bother apologizing if she's going to do it like that
-//...well, it's nice that you're finally here.
-
-~n("Nai")
-~p(400) //nai annoyed
-...What the hell's happening here?
-
-~n("Yvette")
-~p(300) //yve grin
-Ha, great! Looks like the boring part's already over.
-Just stay behind me, Nai.  
--> END
-
-=== e_reinforce5 ===
-~jump(7,5)
-reinforcements just before round 6 (6 scarabit swarmers)!
-//draw attention to these reinforcements, and that they're different AGAIN.
-//show picture in middle cg?
-
-~n("Friday")
 ~p(100)
-...This is the last of them.
-
-~n("Anse")
+Now I'm here.
 ~p(200)
-Hmm? How do you know that?
-
-~n("Friday")
-~p(100)
-...
-
-~n("Yvette")
-~p(300)
-Hey now, speak up. Don't be so mysterious.
-
-~n("Anse")
-~p(200)
-The real mystery is where the hell you two were...
-
+Cool.
 -> END
+
 
 === mission_end_win ===
 This is dummy text for triumph at the end of the mission.

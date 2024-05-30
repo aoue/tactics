@@ -58,7 +58,7 @@ public class Enemy : Unit
         int relevanceAdd = 0;
         if (relevantTile != null)
         {
-            relevanceAdd = 10 / (Math.Abs(x - relevantTile.x) + Math.Abs(y - relevantTile.y));
+            relevanceAdd = (pri_base*10) / (Math.Abs(x - relevantTile.x) + Math.Abs(y - relevantTile.y));
         }
 
         return pri_base + UnityEngine.Random.Range(-pri_range, pri_range) + panicAdd + relevanceAdd;

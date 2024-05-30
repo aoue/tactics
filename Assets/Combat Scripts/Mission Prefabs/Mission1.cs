@@ -15,7 +15,6 @@ public class Mission1 : Mission
     // 6: neutral base
     // 7: train (impassable to all)
     // 8: reinforce
-    // 9: defend
 
     //enemy legend:
     // 0: light
@@ -59,7 +58,7 @@ public class Mission1 : Mission
         //row, depth into that row
         Tile[,] layout0 = new Tile[12, 12] {
             { m[0], m[0], m[0], m[4], m[4], m[1], m[0], m[0], m[0], m[7], m[0], m[0]},
-            { m[0], m[0], m[0], m[4], m[4], m[0], m[0], m[0], m[9], m[7], m[0], m[0]},
+            { m[0], m[0], m[0], m[4], m[4], m[0], m[0], m[0], m[0], m[7], m[0], m[0]},
             { m[1], m[0], m[0], m[5], m[5], m[0], m[1], m[0], m[1], m[2], m[0], m[0]},
             { m[1], m[1], m[0], m[4], m[4], m[4], m[1], m[1], m[0], m[2], m[0], m[0]},
             { m[1], m[0], m[0], m[0], m[4], m[4], m[0], m[0], m[0], m[2], m[3], m[0]},
@@ -84,11 +83,10 @@ public class Mission1 : Mission
         //returns an array of unit IDs and coords representing unit starting spots.
         //unit id, row, depth into that row (if no unit with the id in reserve party, then we fail silently. all good)
         (int, int, int)[] dep_array = {
-            (0, 4, 8), //mc
-            (1, 3, 9), //yve
-            (2, 3, 10), //nai
-            (4, 0, 1), //bergen
-            (5, 0, 2)  //alta
+            (0, 3, 9), //anse
+            (1, 4, 8), //friday
+            (2, 3, 10), //yve
+            (3, 2, 9), //nai
         };
         return dep_array;
     }
@@ -125,19 +123,29 @@ public class Mission1 : Mission
             case 3:
                 (Enemy, int, int, int, int)[] dep_array3 = {
                     //heavy on the left
-                    (defEnemies[2], 11, 1, 0, 0),
+                    (defEnemies[0], 11, 1, 0, 0),
+                    (defEnemies[0], 11, 0, 0, 0),
 
                     //heavy on the right
-                    (defEnemies[2], 11, 7, 0, 0)
+                    (defEnemies[1], 11, 6, 0, 0),
+                    (defEnemies[1], 11, 7, 0, 0),
+                    (defEnemies[1], 11, 8, 0, 0),
+                    (defEnemies[1], 11, 10, 0, 0),
+                    (defEnemies[1], 11, 11, 0, 0),
                 };
                 return dep_array3;
             case 6:
                 (Enemy, int, int, int, int)[] dep_array6 = {
                     //heavy on the left
                     (defEnemies[2], 11, 1, 0, 0),
+                    (defEnemies[2], 11, 0, 0, 0),
 
-                    //light and medium on the right
-                    (defEnemies[2], 11, 7, 0, 0)
+                    //heavy on the right
+                    (defEnemies[0], 11, 6, 0, 0),
+                    (defEnemies[0], 11, 7, 0, 0),
+                    (defEnemies[0], 11, 8, 0, 0),
+                    (defEnemies[1], 11, 10, 0, 0),
+                    (defEnemies[1], 11, 11, 0, 0),
                 };
                 return dep_array6;
             case 9:
@@ -147,9 +155,11 @@ public class Mission1 : Mission
                     (defEnemies[1], 11, 1, 0, 0),
 
                     //medium, heavy, and light on the right
-                    (defEnemies[1], 11, 7, 0, 0),                    
+                    (defEnemies[1], 11, 6, 0, 0),                    
+                    (defEnemies[0], 11, 7, 0, 0),                    
                     (defEnemies[2], 11, 8, 0, 0),
-                    (defEnemies[0], 11, 10, 0, 0)
+                    (defEnemies[0], 11, 10, 0, 0),
+                    (defEnemies[1], 11, 10, 0, 0),
                 };
                 return dep_array9;
             case 12:

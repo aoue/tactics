@@ -47,17 +47,18 @@ MonoBehaviour:
   m:
   - {fileID: 8614815216704928305, guid: 7ad36552d4a3c3f4bbb9f53cf4d40b0f, type: 3}
   - {fileID: 1579138454088827572, guid: f47f1c2cacfd5f742a4a09517f76bf90, type: 3}
-  - {fileID: 1579138454088827572, guid: f47f1c2cacfd5f742a4a09517f76bf90, type: 3}
+  - {fileID: 6281772272875594664, guid: ba9dc5c34f6c3ef4096e3827388f02d8, type: 3}
   - {fileID: 1579138454088827572, guid: f47f1c2cacfd5f742a4a09517f76bf90, type: 3}
   - {fileID: 8470355861109346430, guid: 3e5a921c2cf75944499b33c256bf30ad, type: 3}
   defEnemies:
   - {fileID: 1424655179639249732, guid: 0cc21903f1ef34a47a80c8112a75d524, type: 3}
   - {fileID: 297631335910000918, guid: 684068a68c4b36f408162d008da564c3, type: 3}
   - {fileID: 7919087845014288025, guid: 0014fe529d0ae1547a9a6dee44b09cad, type: 3}
+  - {fileID: 26937828575166125, guid: 93ba6687916c87d45bad4e18d53de5b0, type: 3}
   clearExp: 100
   LTC: 8
   nextPartIndex: 1
-  starting_power: 2
+  starting_power: 3
   win_obj_descr: Defeat all enemies
   loss_obj_descr: All allies are defeated
   side_objectives_descrs:

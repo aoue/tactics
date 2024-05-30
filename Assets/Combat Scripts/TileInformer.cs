@@ -22,7 +22,7 @@ public class TileInformer : MonoBehaviour
         else descrText.text = "Movement cost: " + t.get_movementCost();
 
 
-        descrText.text +=".\nResists " + (t.get_cover()) + "damage.\n" + t.get_descr();
+        descrText.text +=".\nProtects from " + (t.get_cover()) + " damage.\n" + t.get_descr();
 
         if (!gameObject.activeSelf) gameObject.SetActive(true);
     }

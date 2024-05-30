@@ -57,9 +57,9 @@ MonoBehaviour:
   minimum_range: 3
   range: 3
   rollsOnce: 0
-  rolls: 090000000a000000
+  rolls: 0a0000000c000000
   brkMult: 1
-  pwCost: 0
+  pwCost: 3
   usesPhysAttack: 0
   usesPhysDefense: 0
   isHeal: 0

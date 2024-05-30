@@ -57,7 +57,7 @@ MonoBehaviour:
   minimum_range: 0
   range: 1
   rollsOnce: 0
-  rolls: 030000000300000004000000
+  rolls: 040000000400000005000000
   brkMult: 2
   pwCost: 0
   usesPhysAttack: 0
