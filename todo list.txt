@@ -3,93 +3,32 @@ simplify, simplify...
 Notes for next commit message:
 -
 
+=============================================== To Draw:
+Try drawing at 9000x9000
+just to see
+try drawing free more too. Doing shape, then refining, etc
+like a real artist
+
+let's do a whole 'nother pass on everyone.
+try kind of a style change
+
+friday redraw
+-see the bookmarked ref. Try that style
+
 =============================================== Next Real:
-Restrain yourself. Focus on writing, then art, then game systems. Everything follows from that order.
-- it needs to have substance
-- it needs to look good
-- it needs to be fun
-(in that order)
 
--exp design:
-	-all units gain a clear exp score every mission
-	-speed clear bonus
-	-base control bonus
-	(defeating enemies should not give exp; collaborative! everyone has a role!)
-	*if a unit was defeated, then it only gains a portion of clear exp
-	-capturing artifacts (i.e. towns/chests) gives an item that can be used to give exp or raise stats back at the level tree
-	*some artifacts unlock conversations/lore and affection points. So you need 'em for story i guess?
 
-combat scene help hover:
-	(plan it out first)
-	add a help hover area, under objective button. Just a single image, overlayed overtop the combat scene.
-	-mouse over the help icon to show the help image. Move mouse off to turn it off.
-	-it overlays on top of the entire ui and has arrows pointing at stuff and text explaining functions
-	-hidden when mouse moves off the hover area
 
-level tree:
-	-on the right, instead of the active portrait, show a cg of the character lounging in the walker. 
-	so cute. adds personality.
-
-combat scene:
-	power:
-	-on plus/mius power, add a little animation to show this. Should be displayed on the unit/base that gives it.
-	fades:
-	-implement for winning or losing the mission
-	-implement for new events and reinforcements
-	option to restart mission
-	combat dialoguer:
-	-add a visual cue so the player knows they can press 'f' for fast mode
-	-combat audio:
-		-stepping player: play a certain sound when a character is moving on the map. find/make sound and set up.
-
-	
 =============================================== Backlog:
 
-unit pre-turn picking:
-	consider this feature:
-	-the enemy will order all their unit picks at the start of the round.
-	-if it comes to a unit's turn and they have been defeated or broken, then the enemy simply loses the turn
-	well, don't add it now. Add it as a later, last touch kind of thing.
-
-objectives highlight:
-	should show what the win and loss conditions are.
-	should also show what the bonus objectives are. That's all.
-
-vn mode:
-	-vn settings button:
-		what should it have? things like:
-		*text speed
-		*auto wait time
-		*skip entire event button
-
-combat audio:
-	framework is in place, but we need sounds for:
-	-unit activation sounds (currently it's me making a noise lol)
-	-footsteps sound; need a better sound, it's too quiet. It's played while unit is moving.
-		-currently it's a short sound that is set on loop, but it really only plays once.
-		-so probably getting a slightly longer sound and playing it once would be better.
-	-trait sound effects. Every trait needs one.
-
-mission mechanics:
-	-things like door controls, or destructible walls?
+action combat overhaul:
+	create new branch and follow notes in drive design sheet
+	-break down into steps: movement -> attacks -> damage ai -> ai attacks -> dodge
 
 main menu bg:
 	change every chapter to match current events
 	-check against progress of most recent save
 
-level tree design:
-	UI overhaul:
-	-add unit's px combat sprite in there somewhere
-	-draw px border bgs, etc
-	just in general, go over it and improve it.
-
 minigames:
 	(all good games have fishing minigames)
 	-ice fishing, aim and throw a harpoon at moving fish; idk
-
-options/settings menu: (we will need to be able to call it from main menu, overworld, and vn)
-	-little gear settings button. clickable in overworld and vn scene. 
-		-has sliders for volume (SE, music)
-		-has slider for text speed
-		-has slider for textbox opacity (one for centered, one for bottombox)
-		-fullscreen, etc

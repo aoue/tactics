@@ -55,6 +55,7 @@ Let's end.
 
 ~bg(1, 1, "BG NAME")
 ~show(1, 100) // friday at center
+~show(3, 200) 
 
 ~place("bottom-narration")
 ~colour("")
@@ -80,10 +81,10 @@ Huh? What are you even talking about, miss?
 I'm not after a wall that'll repel power coming from outside. What I want is the kind of strength to be able to absorb that outside power, to stand up to it. The strength to quietly endure things—unfairness, misfortune, sadness, mistakes, misunderstandings. 
 
 ~place("nvl")
-There is something fundamentally important and distinctly human about taking a stance and engaging with the world on a deeper level than simple animal reward seeking behavior.
-While the poet themself should be a respectable person, their poetry should not be constrained.
 You've built it before, they've built it before. Hasn't really worked out yet, but neither has love. Should we stop building love?
-Just because you've apologized, you think you have a right to be forgiven?
+I can't tell you what it is. I can only tell you what it feels like.
+It's simple but it's not easy.
+It would be nice if things could stay the way they are for a little while longer.
 
 ~place("nvl")
 (and this should have cleared nvl yup yup yup)

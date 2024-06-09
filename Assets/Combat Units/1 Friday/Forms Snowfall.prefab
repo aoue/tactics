@@ -56,7 +56,8 @@ MonoBehaviour:
   ignores_blocking_terrain: 0
   minimum_range: 1
   range: 1
-  rolls: 060000000700000009000000
+  rollsOnce: 0
+  rolls: 0c0000000d0000000e000000
   brkMult: 1
   pwCost: 0
   usesPhysAttack: 1

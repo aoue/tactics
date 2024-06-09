@@ -58,7 +58,7 @@ public class Enemy : Unit
         int relevanceAdd = 0;
         if (relevantTile != null)
         {
-            relevanceAdd = 10 / (Math.Abs(x - relevantTile.x) + Math.Abs(y - relevantTile.y));
+            relevanceAdd = (pri_base*10) / (Math.Abs(x - relevantTile.x) + Math.Abs(y - relevantTile.y));
         }
 
         return pri_base + UnityEngine.Random.Range(-pri_range, pri_range) + panicAdd + relevanceAdd;
@@ -114,7 +114,7 @@ public class Enemy : Unit
 
         if (valuesCover)
         {
-            score += (dest.get_cover());
+            score += 10 * (dest.get_cover());
         }
 
         // finally, score all possible (traits)attacks the enemy can make too and add that to the sum.
@@ -178,7 +178,7 @@ public class Enemy : Unit
             //(check is in here, otherwise they would never approach the target)
             if (valuesLethargy)
             {
-                score -= Math.Abs(x - dest.x) + Math.Abs(y - dest.y);
+                score -= 2 * (Math.Abs(x - dest.x) + Math.Abs(y - dest.y));
             }
         }
         else
@@ -210,7 +210,10 @@ public class Enemy : Unit
                     score += 100;
                     if (valuesKills)
                     {
-                        score = (int)(score * (4f - targetTile.get_heldUnit().get_hpPercentage()));
+                        // score = (int)(score / targetTile.get_heldUnit().get_hpPercentage());
+
+                        // subtract points the healthier the unit is. Go for units with low hp!
+                        score += -1 * targetTile.get_heldUnit().get_hp();
                     }
                 }
                 else 

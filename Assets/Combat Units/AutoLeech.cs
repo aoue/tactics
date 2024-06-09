@@ -17,7 +17,7 @@ public class AutoLeech : Trait
                 double d = Math.Abs(self.x - u.x) + Math.Abs(self.y - u.y);
                 if (d <= 2){
                     //Debug.Log("auto leech returning dmg + 1");
-                    return dmg + 1;
+                    return dmg + 2;
                 }
                     
             }

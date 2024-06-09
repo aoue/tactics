@@ -416,8 +416,8 @@ MonoBehaviour:
   blocksAttacks: 0
   canBeTargeted: 1
   movementCost: 1
-  coverMult: 1
-  descr: Smooth and compact
+  cover: 0
+  descr: Smooth and featureless.
   highlightLayer: {fileID: 4237345476172937981}
   targetIcon: {fileID: 4729828893141266351}
   zocRenderer: {fileID: 2077694349289995101}

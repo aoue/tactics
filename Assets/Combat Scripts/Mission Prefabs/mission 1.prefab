@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -43,26 +44,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3c28d40bf123b24089709fa226ed2e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  missionTiles:
+  m:
   - {fileID: 8614815216704928305, guid: 7ad36552d4a3c3f4bbb9f53cf4d40b0f, type: 3}
-  - {fileID: 5033814340394539930, guid: 8405b815fbea1e141b69d4a6eacc4df1, type: 3}
-  - {fileID: 196231913458543859, guid: 4a570ac076656be4eb784be2e0da00fc, type: 3}
-  - {fileID: 8261461106731035461, guid: 2f2a30aa26b99e145aeb79e63de8c14b, type: 3}
-  - {fileID: 7605697864910535891, guid: 5750b01dcd2c8ed409be7605b56e61da, type: 3}
-  - {fileID: 6846161010129698190, guid: f0fd82b7c0106cb4eb337076dc934769, type: 3}
-  - {fileID: 5281483637158938816, guid: 9e340a6f0e49ecd41932ab5343a75fff, type: 3}
-  - {fileID: 7559071158257939169, guid: 9a3cc8e7d15dd0f4a971cf1b0de94783, type: 3}
+  - {fileID: 6281772272875594664, guid: ba9dc5c34f6c3ef4096e3827388f02d8, type: 3}
+  - {fileID: 5679033660221968326, guid: e34b2faabc0c76f42b6f180c8cd05320, type: 3}
+  - {fileID: 6281772272875594664, guid: ba9dc5c34f6c3ef4096e3827388f02d8, type: 3}
+  - {fileID: 1579138454088827572, guid: f47f1c2cacfd5f742a4a09517f76bf90, type: 3}
+  - {fileID: 5679033660221968326, guid: e34b2faabc0c76f42b6f180c8cd05320, type: 3}
+  - {fileID: 9072927129608558545, guid: 979a01d35c153db4d8e47446c6d27ea0, type: 3}
+  - {fileID: 1579138454088827572, guid: f47f1c2cacfd5f742a4a09517f76bf90, type: 3}
   - {fileID: 8470355861109346430, guid: 3e5a921c2cf75944499b33c256bf30ad, type: 3}
-  - {fileID: 311290863175812104, guid: 64b1ee65297495242b3a03f46e4cf150, type: 3}
   defEnemies:
-  - {fileID: 9058339554153977831, guid: b657ca90e263fba4fba9f41372472438, type: 3}
-  - {fileID: 4853002422607599292, guid: ff95880ba4be206459e52cc71d2244b5, type: 3}
-  - {fileID: 3682136070609519798, guid: ffdd08a2d4627aa4197f04891caf1194, type: 3}
+  - {fileID: 1424655179639249732, guid: 0cc21903f1ef34a47a80c8112a75d524, type: 3}
+  - {fileID: 297631335910000918, guid: 684068a68c4b36f408162d008da564c3, type: 3}
+  - {fileID: 7919087845014288025, guid: 0014fe529d0ae1547a9a6dee44b09cad, type: 3}
+  clearExp: 0
+  LTC: 0
   nextPartIndex: 2
   starting_power: 4
   win_obj_descr: Survive 15 rounds
   loss_obj_descr: Fail to defend the train, or all allied units defeated
-  mission_clear_exp: 100
   side_objectives_descrs:
   - All allied units survive
   - Capture and hold the base on the left of the river
@@ -70,5 +71,5 @@ MonoBehaviour:
   script: {fileID: 4900000, guid: 24b5641536d58f24f9abb2e2d536e965, type: 3}
   eventRounds: 0300000006000000090000000c000000
   musicList:
-  - {fileID: 8300000, guid: 3ca75270e3e8af648bbac6b36dee409f, type: 3}
+  - {fileID: 8300000, guid: 2bda3a795acd4ff4ab2fb654f33ef69d, type: 3}
   soundList: []

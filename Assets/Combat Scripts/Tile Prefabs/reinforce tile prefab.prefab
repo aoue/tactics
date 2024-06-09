@@ -412,11 +412,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42def98c3e6c2c446b141f665833ef9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileName: Snow (Impassable)
+  tileName: Tunnel Floor
   blocksAttacks: 0
   canBeTargeted: 1
   movementCost: -1
-  coverMult: 1
+  cover: 0
   descr: Reserved parking, no one can move here.
   highlightLayer: {fileID: 4093583281799614642}
   targetIcon: {fileID: 4873736324048340448}
