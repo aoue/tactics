@@ -544,7 +544,7 @@ MonoBehaviour:
   unitName: Jowler
   level: 1
   exp: 4
-  movement: 3
+  movement: 4
   hpMax: 18
   brkMax: 9
   controlRangeBase: 1
@@ -558,7 +558,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   sleepSpriteRenderer: {fileID: 4521776669097569994}
-  pri_base: 5
+  pri_base: -10
   pri_range: 5
   pri_panic: 3
   panic_threshold: 0.5

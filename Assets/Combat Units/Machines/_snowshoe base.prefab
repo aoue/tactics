@@ -78,10 +78,10 @@ MonoBehaviour:
   panic_threshold: 0.5
   valuesRange: 0
   valuesZOC: 0
-  valuesLethargy: 0
+  valuesLethargy: 1
   valuesBases: 0
   valuesCover: 0
-  valuesKills: 1
+  valuesKills: 0
   hitAllyMod: 0
 --- !u!1 &297631335964031669
 GameObject:

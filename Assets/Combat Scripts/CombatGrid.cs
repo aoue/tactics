@@ -1981,6 +1981,7 @@ public class CombatGrid : MonoBehaviour
     public void play_music_track(int which)
     {
         //which corresponds to an index in mission's musicList
+        return;
         audio.play_music(loadedMission.get_track(which));
     }
     public void play_sound(int which)

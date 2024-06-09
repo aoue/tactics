@@ -324,7 +324,7 @@ MonoBehaviour:
   level: 1
   exp: 0
   movement: 4
-  hpMax: 17
+  hpMax: 10
   brkMax: 9
   controlRangeBase: 1
   phys_def: 0

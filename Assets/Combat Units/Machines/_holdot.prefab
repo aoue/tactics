@@ -61,7 +61,7 @@ MonoBehaviour:
   movement: 2
   hpMax: 10
   brkMax: 4
-  controlRangeBase: 2
+  controlRangeBase: 0
   phys_def: 5
   magic_def: 5
   unitOrder: {fileID: 0}
@@ -82,7 +82,7 @@ MonoBehaviour:
   valuesBases: 0
   valuesCover: 1
   valuesKills: 0
-  hitAllyMod: -50
+  hitAllyMod: -500
 --- !u!212 &26937828575166127
 SpriteRenderer:
   m_ObjectHideFlags: 0
